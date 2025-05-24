@@ -1,4 +1,4 @@
-/EduShare-Escritorio/.vs
-/EduShare-Escritorio/EduShare-Escritorio/bin
-/EduShare-Escritorio/EduShare-Escritorio/obj
-/EduShare-Escritorio/EduShare-Escritorio/.vs
+# Ignorar carpetas de Visual Studio y build
+**/.vs/
+**/bin/
+**/obj/
