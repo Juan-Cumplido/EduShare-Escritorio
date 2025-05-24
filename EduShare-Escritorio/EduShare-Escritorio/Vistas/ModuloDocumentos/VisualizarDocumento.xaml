@@ -1,0 +1,67 @@
+﻿<Page x:Class="EduShare_Escritorio.Vistas.ModuloDocumentos.VisualizarDocumento"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EduShare_Escritorio.Vistas.ModuloDocumentos"
+      mc:Ignorable="d" 
+      Background="White"
+      d:DesignHeight="574" d:DesignWidth="1280">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Panel Izquierdo: Información del documento -->
+        <StackPanel Grid.Column="0" Margin="20" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <TextBlock Text="100% (2)" FontWeight="Bold" Margin="0,0,10,0"/>
+                <TextBlock Text="• 510 vistas" Margin="0,0,10,0"/>
+                <TextBlock Text="• 40 páginas"/>
+            </StackPanel>
+
+            <TextBlock Text="HILOS" FontSize="28" FontWeight="Bold" Margin="0,0,0,10"/>
+
+            <TextBlock TextWrapping="Wrap">
+                Este documento describe los diferentes tipos de hilos, incluyendo hilos de filamentos lisos e hilados, 
+                hilos texturizados voluminizados, elásticos y estabilizados, y hilos hilados de fibras ...
+            </TextBlock>
+
+            <TextBlock Text="Descripción completa" FontWeight="Bold" Margin="0,10,0,10"/>
+
+            <TextBlock>
+                <Run Text="Cargado por "/>
+                <Hyperlink NavigateUri="#" Foreground="Blue">Mau Kmacho</Hyperlink>
+                <Run Text=" el Sep 13, 2019"/>
+            </TextBlock>
+
+            <StackPanel Orientation="Horizontal" Margin="0,20,0,0" HorizontalAlignment="Left">
+                <Button Width="60" Height="60" Margin="0,0,20,0">
+                    <StackPanel>
+                        <TextBlock FontSize="20" Text="⬇" HorizontalAlignment="Center"/>
+                        <TextBlock FontSize="12" Text="Descargar" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Width="60" Height="60">
+                    <StackPanel>
+                        <TextBlock FontSize="20" Text="👍" HorizontalAlignment="Center"/>
+                        <TextBlock FontSize="12" Text="100%" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Panel Derecho: Documento -->
+        <Grid Grid.Column="1">
+            <StackPanel Margin="20" VerticalAlignment="Top">
+                <Button Content="Descargar ahora" Background="Green" Foreground="White"
+                        FontWeight="Bold" Width="180" Height="40" Margin="0,0,0,10"/>
+                <TextBlock Text="Descargar como pdf" Foreground="Gray" Margin="0,0,0,20"/>
+                <TextBlock Text="1 / 40" FontSize="16" FontWeight="Bold"/>
+                <!-- Aquí podrías agregar un visor de PDF o imágenes del documento -->
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
