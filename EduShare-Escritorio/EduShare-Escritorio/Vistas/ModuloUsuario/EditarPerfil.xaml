@@ -93,19 +93,6 @@
             </DockPanel>
         </Border>
 
-        <!-- Carrera -->
-        <Label Content="Carrera" FontFamily="Calibri"  FontSize="18" Margin="685,364,159,176" />
-        <Border x:Name="brd_Carrera" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="690,403,26,128">
-            <DockPanel Margin="0,0,0,-1">
-                <Image Source="/Vistas/Recursos/Iconos/Carrera.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                <ComboBox x:Name="cmb_Carrera" Width="223" Height="26" FontSize="18" Cursor="Hand"
-                          Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
-                    <ComboBoxItem Content="LIS" Cursor="Hand" />
-                    <ComboBoxItem Content="Redes" Cursor="Hand" />
-                </ComboBox>
-            </DockPanel>
-        </Border>
-
         <Label Content="← Volver al perfil" FontFamily="Calibri" FontWeight="Bold" MouseDown="RegresarAlPerfil" Cursor="Hand" FontSize="20" Margin="0,26,807,514" />
         <Line X1="0" Y1="20" X2="145" Y2="20" Stroke="Gray" StrokeThickness="1"
           HorizontalAlignment="Left" VerticalAlignment="Top" Width="145" Canvas.Top="10" Margin="6,36,0,0" />

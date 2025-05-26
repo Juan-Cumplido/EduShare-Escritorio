@@ -67,7 +67,7 @@
 
             </StackPanel>
 
-            <Border x:Name="brd_BotonSi" Background="#16b555" CornerRadius="4" Margin="109,53,156,6" Height="18" Visibility="Collapsed" Grid.Column="1" >
+            <Border x:Name="brd_BotonSi" Background="#16b555" CornerRadius="4" Margin="162,69,103,-10" Height="18" Visibility="Collapsed" Grid.Column="1" >
                 <Button x:Name="btn_Si" 
                         Content="Sí"
                         FontSize="13"
@@ -101,9 +101,9 @@
                 </Button>
             </Border>
 
-            <Border x:Name="brd_BotonNo" Background="Gray" CornerRadius="4" Margin="158,53,107,6" Height="18" Visibility="Collapsed" Grid.Column="1" >
+            <Border x:Name="brd_BotonNo" Background="Gray" CornerRadius="4" Margin="109,69,156,-10" Height="18" Visibility="Collapsed" Grid.Column="1" >
                 <Button x:Name="btn_No" 
-                    Content="Sí"
+                    Content="No"
                     FontSize="13"
                     FontFamily="Calibri"
                     Background="Transparent" 
@@ -112,7 +112,7 @@
                     FontWeight="Bold"
                     Cursor="Hand"
                     OverridesDefaultStyle="True"
-                    Click="Aceptar" Margin="4,-2,4,0">
+                    Click="Cancelar" Margin="4,-2,4,0">
                     <Button.Style>
                         <Style TargetType="Button">
                             <Setter Property="Background" Value="Transparent" />
@@ -124,7 +124,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="Button">
-                                        <Border Background="Transparent" CornerRadius="15" Padding="0" Width="13">
+                                        <Border Background="Transparent" CornerRadius="15" Padding="0" Width="17">
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
                                     </ControlTemplate>

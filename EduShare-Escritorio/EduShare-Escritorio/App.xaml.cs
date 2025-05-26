@@ -6,6 +6,7 @@ namespace EduShare_Escritorio
 {
     public partial class App : Application
     {
+
     }
 
 }

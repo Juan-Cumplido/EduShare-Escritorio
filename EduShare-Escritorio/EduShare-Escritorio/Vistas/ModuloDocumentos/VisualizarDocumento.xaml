@@ -4,64 +4,272 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EduShare_Escritorio.Vistas.ModuloDocumentos"
+      xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+      
+
       mc:Ignorable="d" 
       Background="White"
       d:DesignHeight="574" d:DesignWidth="1280">
+
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Page.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="300"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <!-- Panel Izquierdo: Información del documento -->
-        <StackPanel Grid.Column="0" Margin="20" VerticalAlignment="Top">
+        <StackPanel Grid.Column="0" Margin="20,30,20,0" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                <TextBlock Text="100% (2)" FontWeight="Bold" Margin="0,0,10,0"/>
-                <TextBlock Text="• 510 vistas" Margin="0,0,10,0"/>
-                <TextBlock Text="• 40 páginas"/>
+                <TextBlock  Margin="0,0,20,0">
+                <Run Text="👍 "/>
+                <Run Text="2"  Foreground="#3b3b3b" FontSize="15"/>
+                </TextBlock>
+                <TextBlock Text="•" Foreground="#3b3b3b" Margin="0,0,3,0" FontSize="15"/>
+                <TextBlock Text="510" Margin="0,0,0,0" FontSize="15" Foreground="#3b3b3b"/>
+                <TextBlock Text="k Vistas " Margin="0,0,10,0" FontSize="15" Foreground="#3b3b3b"/>
+
+
+                <TextBlock Text="•" Foreground="#3b3b3b" Margin="0,0,3,0" FontSize="15"/>
+                <TextBlock Text="40" Margin="0,0,0,0" FontSize="15" Foreground="#3b3b3b"/>
+                <TextBlock Text="Descargas " Margin="5,0,10,0" FontSize="15" Foreground="#3b3b3b"/>
             </StackPanel>
 
-            <TextBlock Text="HILOS" FontSize="28" FontWeight="Bold" Margin="0,0,0,10"/>
+            <TextBlock Text="HILOS" FontSize="30" FontWeight="Bold" Margin="0,10,0,40"/>
 
-            <TextBlock TextWrapping="Wrap">
+            <TextBlock TextWrapping="Wrap" FontFamily="Calibri" FontSize="18">
                 Este documento describe los diferentes tipos de hilos, incluyendo hilos de filamentos lisos e hilados, 
                 hilos texturizados voluminizados, elásticos y estabilizados, y hilos hilados de fibras ...
             </TextBlock>
 
-            <TextBlock Text="Descripción completa" FontWeight="Bold" Margin="0,10,0,10"/>
-
-            <TextBlock>
+            <TextBlock TextWrapping="Wrap" Margin="0,20,0,0">
                 <Run Text="Cargado por "/>
-                <Hyperlink NavigateUri="#" Foreground="Blue">Mau Kmacho</Hyperlink>
-                <Run Text=" el Sep 13, 2019"/>
+                <Run Text="Max" FontWeight="Bold" Foreground="#007ACC"/>
+                <Run Text=" el "/>
+                <Run Text="23/02/2029"/>
             </TextBlock>
 
-            <StackPanel Orientation="Horizontal" Margin="0,20,0,0" HorizontalAlignment="Left">
-                <Button Width="60" Height="60" Margin="0,0,20,0">
-                    <StackPanel>
-                        <TextBlock FontSize="20" Text="⬇" HorizontalAlignment="Center"/>
-                        <TextBlock FontSize="12" Text="Descargar" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
+            <StackPanel x:Name="stckp_Accesorios" Visibility="Collapsed" Orientation="Horizontal" Margin="0,50,0,0" HorizontalAlignment="Left">
+                <ToggleButton
+                           Visibility="Visible"
+                           Cursor="Hand"
+                           Width="60"
+                           FontFamily="Calibri"
+                           FontSize="12"
+                           Foreground="#2e2b2b"
+                           HorizontalContentAlignment="Right"
+                           VerticalContentAlignment="Center"
+                           Background="Transparent"
+                           BorderThickness="0" Margin="0,0,20,0" Height="60">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="border"
+                                 CornerRadius="10"
+                                 Background="#f9f8f4"
+                                 BorderBrush="Transparent"
+                                 BorderThickness="0"
+                                 Padding="10" Cursor="Hand" Margin="0,0,0,0">
+                                <StackPanel Margin="-10,-10,-10,-10" >
+                                    <Image Source="/Vistas/Recursos/Iconos/Descargar.png"
+                                        Width="25" Height="25" Margin="0,5,0,0"
+                                        VerticalAlignment="Center"/>
+                                    <TextBlock  Text="Descargar" 
+                                        VerticalAlignment="Center"
+                                        Margin="6,10,6,0"/>
 
-                <Button Width="60" Height="60">
-                    <StackPanel>
-                        <TextBlock FontSize="20" Text="👍" HorizontalAlignment="Center"/>
-                        <TextBlock FontSize="12" Text="100%" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#f5f5f5"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+
+                <ToggleButton
+                    Visibility="Visible"
+                    Cursor="Hand"
+                    Width="60"
+                    FontFamily="Calibri"
+                    FontSize="12"
+                    Foreground="#2e2b2b"
+                    HorizontalContentAlignment="Right"
+                    VerticalContentAlignment="Center"
+                    Background="Transparent"
+                    BorderThickness="0" Margin="20,0,0,0" Height="60">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="border"
+                    CornerRadius="10"
+                    Background="#f9f8f4"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    Padding="10" Cursor="Hand" Margin="0,0,0,0">
+                                <StackPanel Margin="-10,-10,-10,-10">
+                                    <Image x:Name="likeImage"
+                           Source="/Vistas/Recursos/Iconos/DisLike.png"
+                           Width="25" Height="25" Margin="0,5,0,0"
+                           VerticalAlignment="Center"/>
+                                    <TextBlock Text="Me gusta" 
+                               VerticalAlignment="Center"
+                               Margin="6,10,6,0"/>
+                                </StackPanel>
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="#f5f5f5"/>
+                                </Trigger>
+
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="likeImage" Property="Source" Value="/Vistas/Recursos/Iconos/Like.png"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+
             </StackPanel>
         </StackPanel>
 
-        <!-- Panel Derecho: Documento -->
-        <Grid Grid.Column="1">
-            <StackPanel Margin="20" VerticalAlignment="Top">
-                <Button Content="Descargar ahora" Background="Green" Foreground="White"
-                        FontWeight="Bold" Width="180" Height="40" Margin="0,0,0,10"/>
-                <TextBlock Text="Descargar como pdf" Foreground="Gray" Margin="0,0,0,20"/>
-                <TextBlock Text="1 / 40" FontSize="16" FontWeight="Bold"/>
-                <!-- Aquí podrías agregar un visor de PDF o imágenes del documento -->
-            </StackPanel>
+        <Grid Grid.Column="1" Margin="0,0,300,0">
+            <Border x:Name="brd_Descargar" Background="Gray" CornerRadius="6" Margin="10,29,514,517" Cursor="No">
+                <Button x:Name="btn_Descargar"  FontSize="18" FontFamily="Calibri" IsEnabled="False"
+                        Background="Transparent" Foreground="White" FontWeight="Bold"
+                        BorderThickness="0" Cursor="Hand"
+                        OverridesDefaultStyle="True" >
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="3,0,3,0">
+                            <Image Source="/Vistas/Recursos/Iconos/DescargarBlanca.png" Height="20" Width="20" Margin="0,0,3,0"/>
+                            <TextBlock Text="Descargar ahora" VerticalAlignment="Center" Width="127"/>
+                        </StackPanel>
+                    </Button.Content>
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="FontSize" Value="22"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="Transparent"
+                                            CornerRadius="10"
+                                            Padding="10"
+                                            
+                                             Margin="-8,-6,-14,-4">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                            VerticalAlignment="Center" Height="22" Width="156"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Border>
+
+            <TextBlock Text="Descargar como PDF"  Margin="46,59,550,501" FontSize="9"/>
+
+            <wv2:WebView2 x:Name="PdfWebView" Margin="0,78,0,78" Visibility="Collapsed"/>
+            
+            <TextBlock x:Name="txtb_Frase" TextWrapping="Wrap" FontFamily="Calibri" FontStyle="Italic" FontWeight="Bold" Text="¿Te interesa el contenido completo? Regístrate gratis y accede al documento completo al instante."  Margin="178,132,180,287" FontSize="30"/>
+
+            <Image x:Name="img_Visualizar" Source="/Vistas/Recursos/Iconos/Login.png" Margin="224,314,224,94"/>
         </Grid>
+
+
+        <Grid Grid.Column="2" Margin="680,0,0,0">
+            <Grid Margin="20">
+                <TextBlock x:Name="txtb_Comentarios"  TextWrapping="Wrap"
+                   Text="💬 Comentarios"
+                   FontSize="16"
+                   FontWeight="Bold"
+                   Margin="10,0,36,502"
+                   Visibility="Visible" Width="214"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,27,0,180">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="txtb_SinComentarios"  TextWrapping="Wrap"
+                           Text="No hay comentarios, ¡sé el primero en comentar!"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="Gray"
+                           Margin="10"
+                           Visibility="Visible" Width="214"/>
+
+                        
+
+                        <ItemsControl x:Name="ListaComentarios" Margin="0,10,0,10">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,5" HorizontalAlignment="{Binding Alineacion}">
+                                        <Border Background="#f0f2f5" CornerRadius="20" Padding="10" MaxWidth="300">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Ellipse  Width="40" Height="40" Margin="0,0,10,0">
+                                                    <Ellipse.Fill>
+                                                        <ImageBrush ImageSource="{Binding Imagen}"/>
+                                                    </Ellipse.Fill>
+                                                </Ellipse>
+
+                                                <StackPanel Width="220">
+                                                    <TextBlock Text="{Binding Usuario}" FontWeight="Bold" />
+                                                    <TextBlock Text="{Binding Texto}" 
+                                                       TextWrapping="Wrap" 
+                                                       TextTrimming="None"
+                                                       FontSize="13"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Button Content="🗑️" Width="25" Height="25" Background="Transparent" BorderThickness="0"
+                                        HorizontalAlignment="Right" VerticalAlignment="Top" 
+                                        Visibility="{Binding EsPropio, Converter={StaticResource BoolToVisibilityConverter}}"
+                                        Click="EliminarComentario"
+                                        Tag="{Binding}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                    </StackPanel>
+                </ScrollViewer>
+
+
+                <Ellipse x:Name="elp_Perfil" Visibility="Collapsed" Width="38" Height="38" VerticalAlignment="Top" Margin="0,370,222,0">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="/Vistas/Recursos/Iconos/A.jpg"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <Border x:Name="brd_Comentarios" Visibility="Collapsed" Background="#f0f1f4" CornerRadius="8" Margin="41,370,0,104">
+                    <Grid>
+                        <TextBox x:Name="txtb_NuevoComentario" 
+                          TextWrapping="Wrap"
+                          MaxLength="100"
+                          FontSize="15"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          Margin="5,5,33,5"
+                          TextChanged="TxtbNuevoComentario"/>
+
+                        <Image x:Name="img_EnviarComentario"
+                           Source="/Vistas/Recursos/Iconos/EnviarDesactivado.png"
+                           Margin="196,36,6,4"
+                           MouseDown="EnviarComentario"
+                           Cursor="No"/>
+
+                    </Grid>
+                </Border>
+            </Grid>
+
+        </Grid>
+
     </Grid>
+
 </Page>

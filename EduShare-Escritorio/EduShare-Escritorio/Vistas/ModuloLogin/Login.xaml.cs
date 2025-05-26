@@ -137,7 +137,7 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
             if (VerificarCampos())
             {
                 CrearPerfilSingleton();
-                NavigationService.Navigate(new MenuPrincipal("Login"));
+                NavigationService.Navigate(new MenuPrincipal());
             }
             else
             {

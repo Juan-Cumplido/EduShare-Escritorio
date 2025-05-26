@@ -13,9 +13,11 @@ namespace EduShare_Escritorio.Utilidades
         public string Autor { get; set; }
         public string Fecha { get; set; }
         public string ImagenRuta { get; set; }
-        public string Vistas { get; set; }
-        public string Descargas { get; set; }
-        public string Likes { get; set; }
+
+        public int Vistas { get; set; }
+        public int Descargas { get; set; }
+        public int Likes { get; set; }
+
 
         public Documento()
         {
@@ -24,9 +26,9 @@ namespace EduShare_Escritorio.Utilidades
             Autor = string.Empty;
             Fecha = string.Empty;
             ImagenRuta = string.Empty;
-            Vistas = string.Empty;
-            Descargas = string.Empty;
-            Likes = string.Empty;
+            Vistas = 0;
+            Descargas = 0;
+            Likes = 0;
         }
     }
 
