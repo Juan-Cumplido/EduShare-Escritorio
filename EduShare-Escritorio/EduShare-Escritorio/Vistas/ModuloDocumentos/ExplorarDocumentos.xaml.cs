@@ -35,10 +35,10 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 Descripcion = "Este documento describe los diferentes tipos de hilos, incluyendo hilos de filamentos lisos e hilados, hilos texturizados voluminizados, elásticos y estabilizados, y hilos hilados de fibras …",
                 Autor = "Max Kmacho",
                 Fecha = "13 de septiembre de 2019",
-                ImagenRuta = "/Vistas/Recursos/Fondos/Arte.jpg", 
-                Vistas = "365 vistas",
-                Descargas = "40",
-                Likes = "2"
+                ImagenRuta = "/Vistas/Recursos/Fondos/Arte.jpg",
+                Vistas = 365 ,
+                Descargas = 40,
+                Likes = 2
             },
             new () {
                 Titulo = "Tecnología Textil Hilos",
@@ -46,9 +46,9 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 Autor = "Andrea Vázquez",
                 Fecha = "4 de abril de 2023",
                 ImagenRuta = "/Vistas/Recursos/Fondos/Derecho.jpg",
-                Vistas = "77 vistas",
-                Descargas = "63",
-                Likes = "100% (1)"
+                Vistas = 77,
+                Descargas = 63,
+                Likes = 1
             },
             new () {
                 Titulo = "Fibra Textil",
@@ -56,9 +56,9 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 Autor = "Carlos Rivera",
                 Fecha = "10 de marzo de 2022",
                 ImagenRuta = "/Vistas/Recursos/Fondos/Ingenieria.jpg",
-                Vistas = "198 vistas",
-                Descargas = "35",
-                Likes = "95% (3)"
+                Vistas = 198,
+                Descargas = 35,
+                Likes = 3
             },
             new () {
                 Titulo = "Análisis de Tejidos",
@@ -66,9 +66,9 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 Autor = "Laura Méndez",
                 Fecha = "22 de junio de 2020",
                 ImagenRuta = "/Vistas/Recursos/Iconos/A.jpg",
-                Vistas = "430 vistas",
-                Descargas = "52",
-                Likes = "98% (5)"
+                Vistas = 43,
+                Descargas = 52,
+                Likes = 5
             },
             new () {
                 Titulo = "Manual de Hilatura",
@@ -76,9 +76,9 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 Autor = "Jorge Escobar",
                 Fecha = "15 de enero de 2021",
                 ImagenRuta = "/Vistas/Recursos/Fondos/Ingenieria.jpg",
-                Vistas = "312 vistas",
-                Descargas = "47",
-                Likes = "100% (4)"
+                Vistas = 312,
+                Descargas = 47,
+                Likes = 4
             },
         };
 

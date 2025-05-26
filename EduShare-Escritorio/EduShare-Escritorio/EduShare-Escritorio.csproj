@@ -15,27 +15,43 @@
     <None Remove="Vistas\Recursos\Fondos\Ingenieria.jpg" />
     <None Remove="Vistas\Recursos\Fondos\MenuPrincipal.jpg" />
     <None Remove="Vistas\Recursos\Fondos\Programacion.gif" />
+    <None Remove="Vistas\Recursos\Fondos\SubirDocumento.gif" />
     <None Remove="Vistas\Recursos\Iconos\A.jpg" />
     <None Remove="Vistas\Recursos\Iconos\Alerta.png" />
+    <None Remove="Vistas\Recursos\Iconos\Amigos.gif" />
     <None Remove="Vistas\Recursos\Iconos\Camara.png" />
     <None Remove="Vistas\Recursos\Iconos\Candado.png" />
     <None Remove="Vistas\Recursos\Iconos\Carrera.png" />
     <None Remove="Vistas\Recursos\Iconos\Codigo.png" />
     <None Remove="Vistas\Recursos\Iconos\Correo.png" />
     <None Remove="Vistas\Recursos\Iconos\CorreoEnviado.png" />
+    <None Remove="Vistas\Recursos\Iconos\Descargar.png" />
+    <None Remove="Vistas\Recursos\Iconos\DescargarBlanca.png" />
+    <None Remove="Vistas\Recursos\Iconos\DisLike.png" />
+    <None Remove="Vistas\Recursos\Iconos\EnviarActivado.png" />
+    <None Remove="Vistas\Recursos\Iconos\EnviarDesactivado.png" />
     <None Remove="Vistas\Recursos\Iconos\Error.png" />
     <None Remove="Vistas\Recursos\Iconos\Exitoso.png" />
+    <None Remove="Vistas\Recursos\Iconos\ImagenSubido.png" />
     <None Remove="Vistas\Recursos\Iconos\Institucion.png" />
+    <None Remove="Vistas\Recursos\Iconos\Like.png" />
     <None Remove="Vistas\Recursos\Iconos\Login.png" />
     <None Remove="Vistas\Recursos\Iconos\LogoEduShare.png" />
     <None Remove="Vistas\Recursos\Iconos\Lupa.jpg" />
     <None Remove="Vistas\Recursos\Iconos\NivelEducativo.png" />
     <None Remove="Vistas\Recursos\Iconos\Pregunta.png" />
+    <None Remove="Vistas\Recursos\Iconos\SubirPdf.png" />
     <None Remove="Vistas\Recursos\Iconos\Usuario.png" />
     <None Remove="Vistas\Recursos\Iconos\UsuarioLogin.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Vistas\Recursos\Fondos\SubirDocumento.gif">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Vistas\Recursos\Iconos\Amigos.gif">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Vistas\Recursos\Iconos\Correo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -43,6 +59,7 @@
 
   <ItemGroup>
     <PackageReference Include="log4net" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3240.44" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
   </ItemGroup>
 
@@ -83,13 +100,34 @@
     <Resource Include="Vistas\Recursos\Iconos\CorreoEnviado.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Vistas\Recursos\Iconos\Descargar.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Vistas\Recursos\Iconos\DescargarBlanca.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Vistas\Recursos\Iconos\DisLike.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Vistas\Recursos\Iconos\EnviarActivado.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Vistas\Recursos\Iconos\EnviarDesactivado.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Vistas\Recursos\Iconos\Error.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Vistas\Recursos\Iconos\Exitoso.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Vistas\Recursos\Iconos\ImagenSubido.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Vistas\Recursos\Iconos\Institucion.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Vistas\Recursos\Iconos\Like.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Vistas\Recursos\Iconos\Login.png">
@@ -105,6 +143,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Vistas\Recursos\Iconos\Pregunta.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Vistas\Recursos\Iconos\SubirPdf.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Vistas\Recursos\Iconos\Usuario.png">

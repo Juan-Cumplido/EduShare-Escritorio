@@ -1,4 +1,5 @@
 ﻿using EduShare_Escritorio.Utilidades;
+using EduShare_Escritorio.Vistas.ModuloDocumentos;
 using EduShare_Escritorio.Vistas.ModuloLogin;
 using EduShare_Escritorio.Vistas.ModuloUsuario;
 using System;
@@ -22,20 +23,10 @@ namespace EduShare_Escritorio.Vistas.Menus
 {
     public partial class MenuPrincipal : Page
     {
-        private string _origen;
-        public MenuPrincipal(string _origen = "")
+        public MenuPrincipal()
         {
             InitializeComponent();
-            this._origen = _origen;
             this.Loaded += VerificarSiInicioSesion;
-
-            if (_origen == "Login")
-            {
-                tgbtn_Registrarse.Visibility = Visibility.Collapsed;
-                tgbtn_MenuLogin.Visibility = Visibility.Collapsed;
-                tgbtn_SubirArchivo.Visibility = Visibility.Visible;
-                tgbtn_MenuPerfil.Visibility = Visibility.Visible;
-            }
         }
 
         private void MostrarMensajePersonalizado(string message, DialogType type)
@@ -50,18 +41,23 @@ namespace EduShare_Escritorio.Vistas.Menus
         private void VerificarSiInicioSesion(object sender, RoutedEventArgs e)
         {
             var perfil = PerfilSingleton.Instance;
-            var textBlock = (TextBlock)tgbtn_MenuPerfil.Template.FindName("txtb_Perfil", tgbtn_MenuPerfil);
-            if (textBlock != null)
+
+            if (!string.IsNullOrEmpty(perfil.Correo))
             {
-                if (!string.IsNullOrEmpty(perfil.Correo))
+                tgbtn_Registrarse.Visibility = Visibility.Collapsed;
+                tgbtn_MenuLogin.Visibility = Visibility.Collapsed;
+                tgbtn_SubirArchivo.Visibility = Visibility.Visible;
+                tgbtn_MenuPerfil.Visibility = Visibility.Visible;
+
+                tgbtn_MenuPerfil.ApplyTemplate();
+                var textBlock = (TextBlock)tgbtn_MenuPerfil.Template.FindName("txtb_Perfil", tgbtn_MenuPerfil);
+                if (textBlock != null)
                 {
-                    
-                    textBlock.Text = $"{perfil.NombreUsuario}";
+                    textBlock.Text = perfil.NombreUsuario;
                 }
             }
-
-            
         }
+
 
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
@@ -95,15 +91,32 @@ namespace EduShare_Escritorio.Vistas.Menus
 
         private void IrASubirArchivo(object sender, RoutedEventArgs e)
         {
-
+            fra_Menu.Navigate(new SubirDocumento(fra_Menu));
         }
 
+        private void IrAMisDocumentos(object sender, RoutedEventArgs e)
+        {
+            fra_Menu.Navigate(new MisDocumentos(fra_Menu));
+        }
+        
 
         private void IrALaCuenta(object sender, MouseButtonEventArgs e)
         {
             fra_Menu.Navigate(new Perfil(fra_Menu));
 
         }
+
+        private void IrALaComunidad(object sender, MouseButtonEventArgs e)
+        {
+            fra_Menu.Navigate(new BuscarPerfil(fra_Menu));
+
+        }
+        private void IrATusAmigos(object sender, MouseButtonEventArgs e)
+        {
+            fra_Menu.Navigate(new Amigos());
+
+        }
+        
 
         private void MostrarPantallaPrincipal(object sender, MouseButtonEventArgs e)
         {
