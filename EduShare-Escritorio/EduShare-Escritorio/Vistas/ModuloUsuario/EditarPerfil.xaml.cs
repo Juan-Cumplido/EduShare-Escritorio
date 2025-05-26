@@ -73,7 +73,6 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
             brd_Usuario.BorderBrush = verde;
             brd_NivelEducativo.BorderBrush = verde;
             brd_Institucion.BorderBrush = verde;
-            brd_Carrera.BorderBrush = verde;
 
         }
 
@@ -103,8 +102,6 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
 
             bool cmbNivelEducativo = cmb_NivelEducativo.SelectedItem != null;
             bool cmbInstitucion = cmb_Institución.SelectedItem != null;
-            bool cmbCarrera = cmb_Carrera.SelectedItem != null;
-
 
 
             if (!nombre) brd_Nombre.BorderBrush = Brushes.Red;
@@ -114,10 +111,9 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
 
             if (!cmbNivelEducativo) brd_NivelEducativo.BorderBrush = Brushes.Red;
             if (!cmbInstitucion) brd_Institucion.BorderBrush = Brushes.Red;
-            if (!cmbCarrera) brd_Carrera.BorderBrush = Brushes.Red;
 
             return nombre && primerApellido && correo && usuario
-            && cmbNivelEducativo && cmbInstitucion && cmbCarrera;
+            && cmbNivelEducativo && cmbInstitucion;
         }
     }
 }

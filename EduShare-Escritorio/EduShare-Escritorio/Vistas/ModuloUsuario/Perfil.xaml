@@ -81,16 +81,6 @@
             </DockPanel>
         </Border>
 
-        <!-- Carrera -->
-        <Label Content="Carrera" FontFamily="Calibri" FontWeight="Bold" FontSize="18" Margin="685,364,159,176" />
-        <Border x:Name="brd_Carrera" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="690,403,26,128">
-            <DockPanel Margin="0,0,0,-1">
-                <Image Source="/Vistas/Recursos/Iconos/Carrera.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                <TextBox x:Name="Carrera" Height="26" FontSize="18" Background="Transparent" IsReadOnly="True"
-                     BorderThickness="0" Foreground="Black" FontFamily="Calibri" MaxLength="30" Margin="3,9,3,6" />
-            </DockPanel>
-        </Border>
-
         <Label Content="Editar" FontFamily="Calibri" FontWeight="Bold" MouseDown="Editar" Cursor="Hand" FontSize="20" Margin="858,81,48,459" />
         <Line X1="0" Y1="20" X2="56" Y2="20" Stroke="Gray" StrokeThickness="1"
           HorizontalAlignment="Left" VerticalAlignment="Top" Width="56" Canvas.Top="10" Margin="860,90,0,0" />

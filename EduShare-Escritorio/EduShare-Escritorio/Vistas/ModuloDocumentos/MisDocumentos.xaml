@@ -1,0 +1,125 @@
+﻿<Page x:Class="EduShare_Escritorio.Vistas.ModuloDocumentos.MisDocumentos"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EduShare_Escritorio.Vistas.ModuloDocumentos"
+      xmlns:util="clr-namespace:EduShare_Escritorio.Utilidades"
+
+
+      mc:Ignorable="d" 
+      Background="White"
+      d:DesignHeight="574" d:DesignWidth="1280">
+    
+    <Page.Resources>
+        <util:EscalaConverter x:Key="EscalaConverter" MaxValor="1000" MaxAncho="150"/>
+    </Page.Resources>
+
+
+
+    <Grid Margin="157,0,157,0">
+        <!-- Título -->
+        <Label Content="Subidos" FontWeight="Bold" FontSize="35" Margin="0,16,439,496" />
+        <Label Content="(2)" FontWeight="Bold" Foreground="#16b555" FontSize="35" Margin="140,16,580,496" />
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,83,0,0">
+            <ItemsControl x:Name="itmc_DocumentosControl">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="#DDD" BorderThickness="1" Margin="0 10" Padding="10" CornerRadius="8">
+                            <Grid>
+                                <!-- CONTENIDO PRINCIPAL -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="250" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Imagen -->
+                                    <StackPanel>
+                                        <Image Source="{Binding ImagenRuta}" Width="120" Height="150"/>
+                                        <TextBlock Text="PDF" Background="Black" Foreground="White" HorizontalAlignment="Left" Padding="5,1" Margin="0,5,0,0" FontWeight="Bold"/>
+                                    </StackPanel>
+
+                                    <!-- Info -->
+                                    <StackPanel Grid.Column="1" Margin="10,0">
+                                        <TextBlock Text="{Binding Titulo}" FontSize="20" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding Descripcion}" TextWrapping="Wrap" Foreground="Black" Margin="0,5,0,0"/>
+                                        <TextBlock Text="Interés: ninguno" Foreground="Gray" Margin="0,0,0,10"/>
+                                        <TextBlock>
+                                            <Run Text="Cargado por "/>
+                                            <Run Text="{Binding Autor}" FontWeight="Bold" Foreground="#007ACC"/>
+                                            <Run Text=" el "/>
+                                            <Run Text="{Binding Fecha}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <!-- Estadísticas -->
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Top" Margin="10,0,0,0">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
+                                            <TextBlock Text="Estado:" FontWeight="Bold"/>
+                                            <TextBlock Text=" Éxito" Foreground="#16b555" Margin="5,0,0,0"/>
+                                        </StackPanel>
+
+                                        <TextBlock Margin="0,5,0,0">
+                                            <Run Text="👍 " FontWeight="Bold"/>
+                                            <Run Text="{Binding Likes}" FontWeight="Bold"/>
+                                        </TextBlock>
+                                        <TextBlock Margin="0,5,0,0">
+                                            <Run Text="{Binding Descargas}" FontWeight="Bold"/>
+                                            <Run Text=" Descargas " FontWeight="Bold"/>
+                                        </TextBlock>
+                                        <TextBlock Margin="0,5,0,0">
+                                            <Run Text="Vistas: " FontWeight="Bold"/>
+                                            <Run Text="{Binding Vistas}"/>
+                                        </TextBlock>
+
+                                        <!-- Gráfica de barras simulada -->
+                                        <StackPanel Margin="0,10,0,0">
+                                            <!-- Likes -->
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2">
+                                                <TextBlock Text="Likes" Width="60" FontSize="10" VerticalAlignment="Center"/>
+                                                <Rectangle Height="8" Width="{Binding Likes, Converter={StaticResource EscalaConverter}}" Fill="#007ACC" RadiusX="4" RadiusY="4"/>
+                                            </StackPanel>
+
+                                            <!-- Vistas -->
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2">
+                                                <TextBlock Text="Vistas" Width="60" FontSize="10" VerticalAlignment="Center"/>
+                                                <Rectangle Height="8" Width="{Binding Vistas, Converter={StaticResource EscalaConverter}}" Fill="#16b555" RadiusX="4" RadiusY="4"/>
+                                            </StackPanel>
+
+                                            <!-- Descargas -->
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2">
+                                                <TextBlock Text="Descargas" Width="60" FontSize="10" VerticalAlignment="Center"/>
+                                                <Rectangle Height="8" Width="{Binding Descargas, Converter={StaticResource EscalaConverter}}" Fill="#e6781d" RadiusX="4" RadiusY="4"/>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- BOTÓN BORRAR EN ESQUINA SUPERIOR DERECHA -->
+                                <Button Content="🗑️"
+                                Width="30" Height="30"
+                                Cursor="Hand"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Margin="0"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                ToolTip="Eliminar documento"
+                                Panel.ZIndex="10"
+                                Click="EliminarDocumento_Click"
+                                Tag="{Binding}"/>
+                            </Grid>
+                        </Border>
+
+                    </DataTemplate>
+
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+    </Grid>
+</Page>

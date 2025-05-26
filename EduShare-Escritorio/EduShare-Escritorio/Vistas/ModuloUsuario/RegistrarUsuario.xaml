@@ -134,18 +134,7 @@
             </DockPanel>
         </Border>
 
-        <!-- Carrera -->
-        <Label Content="Carrera" FontFamily="Calibri" FontSize="18" Margin="962,411,135,276" />
-        <Border x:Name="brd_Carrera" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="968,449,116,228">
-            <DockPanel Margin="0,0,0,-1">
-                <Image Source="/Vistas/Recursos/Iconos/Carrera.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                <ComboBox x:Name="cmb_Carrera" Width="171" Height="26" FontSize="18" Cursor="Hand"
-                          Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
-                    <ComboBoxItem Content="LIS" Cursor="Hand" />
-                    <ComboBoxItem Content="Redes" Cursor="Hand" />
-                </ComboBox>
-            </DockPanel>
-        </Border>
+       
 
         <!-- Botón Registrarse -->
         <Border Background="#16b555" CornerRadius="8" Margin="637,575,260,98">

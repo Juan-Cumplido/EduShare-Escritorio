@@ -28,13 +28,17 @@
                                
                                 <StackPanel Grid.Column="1">
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock Margin="0,0,10,0">
+                                        <TextBlock Margin="0,0,30,0">
                                         <Run Text="👍 "/>
                                         <Run Text="{Binding Likes}" FontWeight="Bold" Foreground="Gray"/>
                                         </TextBlock>
                                             
                                         <TextBlock Text="•" Foreground="Gray" Margin="0,0,5,0"/>
-                                        <TextBlock Text="{Binding Vistas}" Foreground="Gray" Margin="0,0,10,0"/>
+                                        <TextBlock Margin="0,0,30,0">
+                                             <Run Text="{Binding Vistas}" Foreground="Gray"/> 
+                                             <Run Text=" Vistas " Foreground="Gray"/>
+                                        </TextBlock>
+
                                         <TextBlock Text="•" Foreground="Gray" Margin="0,0,5,0"/>
                                         <TextBlock>
                                          <Run Text="{Binding Descargas}" Foreground="Gray"/> 

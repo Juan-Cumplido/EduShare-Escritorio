@@ -7,7 +7,45 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Vistas\Menus\MenuAdministrador.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Vistas\ModuloDocumentos\MisDocumentos.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Vistas\ModuloDocumentos\SubirDocumento.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Vistas\ModuloUsuario\Amigos.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Vistas\ModuloUsuario\BuscarPerfil.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Vistas\ModuloUsuario\VisualizarPerfilAmigo.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Vistas\Menus\MenuAdministrador.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Vistas\ModuloDocumentos\MisDocumentos.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Vistas\ModuloDocumentos\SubirDocumento.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Vistas\ModuloUsuario\Amigos.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Vistas\ModuloUsuario\BuscarPerfil.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Vistas\ModuloUsuario\VisualizarPerfilAmigo.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
