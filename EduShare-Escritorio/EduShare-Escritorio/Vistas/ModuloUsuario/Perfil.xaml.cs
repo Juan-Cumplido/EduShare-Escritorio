@@ -41,7 +41,7 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
 
         private void CambiarImagen(object sender, MouseButtonEventArgs e)
         {
-            LoggerManager logger = new (this.GetType());
+            LoggerManager logger = new(this.GetType());
             OpenFileDialog dialogo = new()
             {
                 Title = "Selecciona una imagen de perfil",
@@ -53,16 +53,16 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
 
             if (resultado == true)
             {
-                FileInfo archivo = new (dialogo.FileName);
-                if (archivo.Length > 5 * 1024 * 1024)
+                FileInfo archivo = new(dialogo.FileName);
+                if (archivo.Length > 20 * 1024 * 1024)
                 {
-                    MostrarMensajePersonalizado("¡Tamaño excedido!\r\nLa imagen debe ser menor a 5 MB.", DialogType.Warning);
+                    MostrarMensajePersonalizado("¡Tamaño excedido!\r\nLa imagen debe ser menor a 20 MB.", DialogType.Warning);
                     return;
                 }
 
                 try
                 {
-                    BitmapImage nuevaImagen = new ();
+                    BitmapImage nuevaImagen = new();
                     nuevaImagen.BeginInit();
                     nuevaImagen.UriSource = new Uri(archivo.FullName);
                     nuevaImagen.CacheOption = BitmapCacheOption.OnLoad;
@@ -77,6 +77,7 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
                 }
             }
         }
+
 
         private void Editar(object sender, MouseButtonEventArgs e)
         {

@@ -28,7 +28,7 @@
 
         <Grid Width="120" Height="120" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="762,72,0,0">
 
-            <Ellipse Width="120" Height="120" Cursor="Hand" >
+            <Ellipse Width="120" Height="118" Cursor="Hand" >
                 <Ellipse.Fill>
                     <ImageBrush x:Name="img_FotoPerfil" ImageSource="/Vistas/Recursos/Fondos/Arte.jpg"/>
                 </Ellipse.Fill>

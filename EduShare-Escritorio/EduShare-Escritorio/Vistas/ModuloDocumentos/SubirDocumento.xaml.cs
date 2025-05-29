@@ -187,9 +187,46 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
 
         private void ProcesarPDF(string ruta)
         {
+            FileInfo fileInfo = new FileInfo(ruta);
+            long sizeInBytes = fileInfo.Length;
+            long maxSizeInBytes = 20 * 1024 * 1024;
+
+            if (sizeInBytes > maxSizeInBytes)
+            {
+                MostrarMensajePersonalizado("El archivo PDF excede el tamaño máximo permitido de 20 MB.", DialogType.Warning);
+                return;
+            }
+
             _rutaPDF = ruta;
+
+            string nombreArchivo = System.IO.Path.GetFileNameWithoutExtension(ruta);
+            nombreArchivo = SanitizarNombreArchivo(nombreArchivo);
+
+
+            if (string.IsNullOrWhiteSpace(txtb_Titulo.Text) || txtb_Titulo.Text == "Escribe un título")
+            {
+                txtb_Titulo.Text = nombreArchivo;
+                txtb_Titulo.Foreground = Brushes.Black;
+            }
+
             MostrarPreview();
         }
+
+        private string SanitizarNombreArchivo(string nombre)
+        {
+            string limpio = nombre.Replace(' ', '_');
+
+            limpio = new string(limpio
+                .Where(c => char.IsLetterOrDigit(c) || c == '_')
+                .ToArray());
+
+            if (limpio.Length > 100)
+                limpio = limpio.Substring(0, 100);
+
+            return limpio;
+        }
+
+
 
         private void MostrarPreview()
         {
@@ -232,12 +269,16 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
             panel.Children.Add(deleteIcon);
 
             grd_DropContent.Children.Add(panel);
+
         }
 
         private void LimpiarPreview()
         {
             _rutaPDF = null;
             _pdfCargado = false;
+
+            txtb_Titulo.Text = "Escribe un título";
+            txtb_Titulo.Foreground = Brushes.Gray;
 
             SolidColorBrush gris = new((Color)ColorConverter.ConvertFromString("#f0f0f0"));
             brd_DropArea.Background = gris;
