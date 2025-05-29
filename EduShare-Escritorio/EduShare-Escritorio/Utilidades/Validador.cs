@@ -78,12 +78,13 @@ namespace EduShare_Escritorio.Utilidades
 
         public static bool ValidarUsuario(string usuario)
         {
-            bool esValido = false;
-            string usuarioLimpio = Regex.Replace(usuario.Trim(), @"\s+", " ", RegexOptions.None, TimeSpan.FromMilliseconds(500));
-            if (!string.IsNullOrWhiteSpace(usuarioLimpio))
-            {
-                esValido = true;
-            }
+            if (string.IsNullOrWhiteSpace(usuario))
+                return false;
+
+            string usuarioLimpio = usuario.Trim();
+
+            bool esValido = Regex.IsMatch(usuarioLimpio, @"^[a-zA-Z0-9]+$");
+
             return esValido;
         }
     }
