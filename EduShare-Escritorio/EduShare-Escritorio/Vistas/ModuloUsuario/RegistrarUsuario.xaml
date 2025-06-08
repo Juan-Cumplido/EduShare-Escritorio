@@ -113,10 +113,8 @@
         <Border x:Name="brd_NivelEducativo" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="444,449,640,228">
             <DockPanel Margin="0,0,0,-1">
                 <Image Source="/Vistas/Recursos/Iconos/NivelEducativo.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                <ComboBox x:Name="cmb_NivelEducativo" Width="171" Height="26" FontSize="18" Cursor="Hand"
+                <ComboBox x:Name="cmb_NivelEducativo" Width="171" Height="26" FontSize="18" Cursor="Hand" SelectionChanged="Cmb_NivelEducativoSeleccion"
                           Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
-                    <ComboBoxItem Content="Preparatoria" Cursor="Hand" />
-                    <ComboBoxItem Content="Universidad" Cursor="Hand" />
                 </ComboBox>
             </DockPanel>
         </Border>
@@ -126,10 +124,8 @@
         <Border x:Name="brd_Institucion" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="707,449,378,228">
             <DockPanel Margin="0,0,0,-1">
                 <Image Source="/Vistas/Recursos/Iconos/Institucion.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                <ComboBox x:Name="cmb_Institución" Width="171" Height="26" FontSize="18" Cursor="Hand"
+                <ComboBox x:Name="cmb_Institución" Width="171" Height="26" FontSize="18" Cursor="Hand" SelectionChanged="Cmb_InstitucionSeleccion"
                           Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
-                    <ComboBoxItem Content="UV" Cursor="Hand" />
-                    <ComboBoxItem Content="UNAM" Cursor="Hand" />
                 </ComboBox>
             </DockPanel>
         </Border>
