@@ -1,9 +1,12 @@
-﻿using EduShare_Escritorio.Utilidades;
+﻿using EduShare_Escritorio.Modelos;
+using EduShare_Escritorio.Servicio;
+using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas.Menus;
 using EduShare_Escritorio.Vistas.ModuloLogin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,10 +24,75 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
 {
     public partial class RegistrarUsuario : Page
     {
+        private List<Institucion> _todasLasInstituciones = new();
+        private bool _cargandoDatos = false;
+
         public RegistrarUsuario()
         {
             InitializeComponent();
+            this.Loaded += RegistrarUsuarioLoaded;
+
         }
+
+        private async void RegistrarUsuarioLoaded(object sender, RoutedEventArgs e)
+        {
+            await InicializarCombosAsync();
+        }
+
+        private async Task InicializarCombosAsync()
+        {
+            _cargandoDatos = true;
+
+            List<string> niveles = new() { "Preparatoria", "Universidad" };
+            cmb_NivelEducativo.ItemsSource = niveles;
+
+            var respuesta = await InstitucionServicio.ObtenerInstitucionesAsync();
+
+            if (respuesta.Resultado != (int)HttpStatusCode.OK || respuesta.Datos == null)
+            {
+                MostrarMensajePersonalizado("No se pudieron cargar las instituciones. Intente más tarde.", DialogType.Error);
+                Login login = new();
+                this.NavigationService?.Navigate(login);
+                return;
+            }
+
+            _todasLasInstituciones = respuesta.Datos;
+
+            cmb_Institución.ItemsSource = _todasLasInstituciones;
+            cmb_Institución.DisplayMemberPath = "NombreInstitucion";
+            cmb_Institución.SelectedValuePath = "IdInstitucion";
+
+            _cargandoDatos = false;
+        }
+
+        private void Cmb_NivelEducativoSeleccion(object sender, SelectionChangedEventArgs e)
+        {
+            if (_cargandoDatos) return;
+
+            string nivelSeleccionado = cmb_NivelEducativo.SelectedItem as string;
+            if (!string.IsNullOrEmpty(nivelSeleccionado))
+            {
+                var filtradas = _todasLasInstituciones
+                    .Where(i => i.NivelEducativo == nivelSeleccionado)
+                    .ToList();
+
+                cmb_Institución.ItemsSource = filtradas;
+                cmb_Institución.SelectedIndex = -1;
+            }
+        }
+
+        private void Cmb_InstitucionSeleccion(object sender, SelectionChangedEventArgs e)
+        {
+            if (_cargandoDatos) return;
+
+            if (cmb_Institución.SelectedItem is Institucion seleccionada)
+            {
+                cmb_NivelEducativo.SelectedItem = seleccionada.NivelEducativo;
+            }
+        }
+
+
+
         private void MostrarMensajePersonalizado(string message, DialogType type)
         {
             var dialog = new VentanaEmergentePersonalizada(message, type)
@@ -36,16 +104,14 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
 
         private void BtnRegistrar(object sender, RoutedEventArgs e)
         {
-            string hashedPassword = Hasher.HashToSHA2(txtb_Contraseña.Text);
             RegresarBordeOriginal();
             if (ValidarCamposVacios())
             {
                 
                 if (VerificarCampos())
                 {
-                    MostrarMensajePersonalizado("¡Registro exitoso!\r\nAhora puedes disfrutar de todo lo que EduShare tiene para ofrecer. ¡Bienvenido a la comunidad!", DialogType.Success);
-                    Login login = new ();
-                    this.NavigationService.Navigate(login);
+                    UsuarioRegistro nuevoUsuario = CrearPerfil();
+                    RespuestaDeLaAPI(nuevoUsuario);
                 }
                 else
                 {
@@ -58,6 +124,53 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
             }
 
           
+        }
+
+        private async void RespuestaDeLaAPI(UsuarioRegistro usuarioRegistro)
+        {
+            Respuesta respuesta = await UsuarioServicio.RegistrarUsuarioAsync(usuarioRegistro);
+            switch (respuesta.Codigo)
+            {
+                case (int) HttpStatusCode.OK:
+                    MostrarMensajePersonalizado("¡Registro exitoso!\r\nAhora puedes disfrutar de todo lo que EduShare tiene para ofrecer. ¡Bienvenido a la comunidad!", DialogType.Success);
+                    Login login = new();
+                    this.NavigationService.Navigate(login);
+                    break;
+
+                case (int) HttpStatusCode.Conflict:
+                    MostrarMensajePersonalizado($"{respuesta.Mensaje} Pruebe con otro por favor ", DialogType.Warning);
+                    break;
+                case (int) HttpStatusCode.InternalServerError:
+                    MostrarMensajePersonalizado("Error interno del servidor. Inténtelo más tarde.", DialogType.Error);
+                    break;
+
+                default:
+                    MostrarMensajePersonalizado(respuesta.Mensaje,
+                        DialogType.Error
+                    );
+                    break;
+
+            }
+        }
+
+        private UsuarioRegistro CrearPerfil()
+        {
+            UsuarioRegistro perfil = new();
+            perfil.Correo = txtb_Correo.Text;
+            string hashedPassword = Hasher.HashToSHA2(txtb_Contraseña.Text);
+            perfil.Contrasenia = hashedPassword;
+            perfil.NombreUsuario = txtb_Usuario.Text;
+            perfil.Nombre = txtb_Nombre.Text;   
+            perfil.PrimerApellido = txtb_PrimerApellido.Text;
+            perfil.SegundoApellido = txtb_SegundoApellido.Text;
+            string fotoPorDefecto = "Imagen/porDefecto/1.png";
+            perfil.FotoPerfil = fotoPorDefecto;
+            if (cmb_Institución.SelectedItem is Institucion seleccionada)
+            {
+                perfil.IdInstitucion = seleccionada.IdInstitucion;
+            }
+
+            return perfil;
         }
 
         public void RegresarBordeOriginal()
