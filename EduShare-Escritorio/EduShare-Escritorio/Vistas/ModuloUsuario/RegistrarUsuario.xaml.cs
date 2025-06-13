@@ -1,4 +1,6 @@
 ﻿using EduShare_Escritorio.Modelos;
+using EduShare_Escritorio.Modelos.Catalogos;
+using EduShare_Escritorio.Modelos.Perfil;
 using EduShare_Escritorio.Servicio;
 using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas.Menus;
@@ -46,7 +48,7 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
             List<string> niveles = new() { "Preparatoria", "Universidad" };
             cmb_NivelEducativo.ItemsSource = niveles;
 
-            var respuesta = await InstitucionServicio.ObtenerInstitucionesAsync();
+            var respuesta = await CatalogosServicio.ObtenerInstitucionesAsync();
 
             if (respuesta.Resultado != (int)HttpStatusCode.OK || respuesta.Datos == null)
             {
@@ -75,7 +77,7 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
                 var filtradas = _todasLasInstituciones
                     .Where(i => i.NivelEducativo == nivelSeleccionado)
                     .ToList();
-
+                grd_Institucion.Visibility = Visibility.Visible;  
                 cmb_Institución.ItemsSource = filtradas;
                 cmb_Institución.SelectedIndex = -1;
             }
@@ -157,7 +159,8 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
         {
             UsuarioRegistro perfil = new();
             perfil.Correo = txtb_Correo.Text;
-            string hashedPassword = Hasher.HashToSHA2(txtb_Contraseña.Text);
+            string contrasenia = isPasswordVisible ? txt_ContraseñaVisible.Text : pwb_PasswordBox.Password;
+            string hashedPassword = Hasher.HashToSHA2(contrasenia);
             perfil.Contrasenia = hashedPassword;
             perfil.NombreUsuario = txtb_Usuario.Text;
             perfil.Nombre = txtb_Nombre.Text;   

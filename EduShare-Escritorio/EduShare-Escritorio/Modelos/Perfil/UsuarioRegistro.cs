@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace EduShare_Escritorio.Modelos
+namespace EduShare_Escritorio.Modelos.Perfil
 {
     public class UsuarioRegistro
     {

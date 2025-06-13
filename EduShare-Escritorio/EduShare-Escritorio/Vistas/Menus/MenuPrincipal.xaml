@@ -120,7 +120,7 @@
                         <StackPanel Orientation="Horizontal" Margin="-10,-10,-10,-10">
                             <Ellipse Width="42" Height="42" VerticalAlignment="Center" Margin="7,0,0,0">
                                 <Ellipse.Fill>
-                                    <ImageBrush ImageSource="/Vistas/Recursos/Iconos/A.jpg"/>
+                                    <ImageBrush x:Name="img_Perfil"/>
                                 </Ellipse.Fill>
                             </Ellipse>
                             <TextBlock x:Name="txtb_Perfil"

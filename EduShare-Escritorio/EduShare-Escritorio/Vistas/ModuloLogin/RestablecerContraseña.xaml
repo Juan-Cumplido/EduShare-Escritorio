@@ -8,24 +8,39 @@
       d:DesignHeight="720" d:DesignWidth="1280">
 
     <Grid Background="#BEBEBE">
-        <Grid Margin="393,30,392,30" Background="White">
-            <Image Source="/Vistas/Recursos/Iconos/LogoEduShare.png" MouseDown="RegresarAlMenuPrincipal" Margin="192,24,192,568" Cursor="Hand"/>
+        <Grid Margin="393,30,393,30" Background="White">
+            <Image Source="/Vistas/Recursos/Iconos/LogoEduShare.png" MouseDown="RegresarAlMenuPrincipal" Margin="192,0,192,592" Cursor="Hand"/>
+            <Image Source="/Vistas/Recursos/Iconos/CorreoEnviado.png"  Margin="317,102,139,541" />
 
-            <Label Content="Restablecer contraseña" FontWeight="Bold" FontSize="27" FontFamily="Calibri" Margin="113,107,111,509"/>
+            <Label Content="¡Ingrese el código!" FontWeight="Bold" FontSize="22" FontFamily="Calibri"  Margin="150,91,150,525"/>
 
-            <TextBlock x:Name="txtb_Mensaje"
-                       Text="La contraseña debe contener al menos 8 caracteres, incluyendo una letra mayúscula, una minúscula, un número, un símbolo especial y no debe contener espacios. Evita usar datos personales para mayor seguridad."
-                       FontSize="17"
-                       FontFamily="Calibri"
-                       Foreground="Black"
-                       TextWrapping="Wrap"
-                       LineHeight="31"
-                       TextAlignment="Center" Margin="50,160,50,384"/>
+            <Label Content="Restablezca su contraseña" FontWeight="Bold" FontSize="22" FontFamily="Calibri" Margin="124,218,124,398"/>
 
-            <Border BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="50,300,50,300">
+            <Border BorderThickness="1" BorderBrush="#16b555"  CornerRadius="8" Margin="75,136,75,478">
+                <DockPanel Margin="0,0,0,-1">
+                    <Image Source="/Vistas/Recursos/Iconos/Codigo.png" Width="35" Margin="8" DockPanel.Dock="Right"/>
+                    <TextBox x:Name="txtb_Codigo" Width="295" Height="26" FontSize="20" Background="Transparent" MaxLength="6"
+                                         BorderThickness="0" Text="Código de Verificación" Foreground="Gray" FontFamily="Calirbi" 
+                                         GotFocus="UserIdTextBox_GotFocus" LostFocus="UserIdTextBox_LostFocus"  PreviewTextInput="CodigoPreviewTextInput" PreviewKeyDown="CodigoPreviewKeyDown" />
+                </DockPanel>
+            </Border>
+
+
+            <TextBlock 
+               FontSize="12"
+               FontFamily="Calibri"
+               Foreground="Black"
+               TextWrapping="Wrap"
+               TextAlignment="Left"
+               Margin="83,381,86,193"
+               Text="La contraseña debe tener un mínimo de 8 caracteres y debe incluir al menos una letra mayúscula, una letra minúscula, un número y un símbolo. No se permiten espacios y no debe contener datos personales.">
+               
+            </TextBlock>
+
+            <Border BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="75,264,75,350">
                 <DockPanel>
                     <Image Source="/Vistas/Recursos/Iconos/Candado.png"
-                       Width="35" Height="35" Margin="10"
+                       Width="26" Height="24" Margin="10"
                        DockPanel.Dock="Right"
                        Cursor="Hand"
                        MouseLeftButtonUp="ActivarDesactivarVisibilidad1"/>
@@ -43,21 +58,21 @@
                         <TextBox x:Name="txt_ContraseñaVisible" FontSize="20" FontFamily="Calibri" 
                          Background="Transparent" BorderThickness="0"
                          Visibility="Collapsed"
-                         TextChanged="VisiblePasswordTextChanged1" Margin="0,10,12,7"/>
+                         TextChanged="VisiblePasswordTextChanged1" Margin="-2,11,10,6"/>
                     </Grid>
                 </DockPanel>
             </Border>
 
-            <Border BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="50,376,50,224">
+            <Border BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="75,330,75,284">
                 <DockPanel>
                     <Image Source="/Vistas/Recursos/Iconos/Candado.png"
-                       Width="35" Height="35" Margin="10"
+                       Width="26" Height="24" Margin="10"
                        DockPanel.Dock="Right"
                        Cursor="Hand"
                        MouseLeftButtonUp="ActivarDesactivarVisibilidad2"/>
                     <Grid Width="304">
                         <TextBlock x:Name="txtb_ConfirmarContraseña" Text="Confirmar Contraseña" Foreground="Gray" FontFamily="Calibri" 
-                            FontSize="20" VerticalAlignment="Top" Margin="0,11,10,0"/>
+                            FontSize="20" VerticalAlignment="Top" Margin="0,11,10,0" />
 
                         <PasswordBox x:Name="pwb_ConfirmarContraseña" FontSize="20" FontFamily="Calibri"
                              Background="Transparent" BorderThickness="0"
@@ -69,13 +84,13 @@
                         <TextBox x:Name="txt_ConfirmarContraseñaVisible" FontSize="20" FontFamily="Calibri" 
                          Background="Transparent" BorderThickness="0"
                          Visibility="Collapsed"
-                         TextChanged="VisiblePasswordTextChanged2" Margin="0,10,12,7"/>
+                         TextChanged="VisiblePasswordTextChanged2" Margin="-2,11,10,6"/>
                     </Grid>
                 </DockPanel>
             </Border>
 
-            <Border Background="#16b555" CornerRadius="8" Margin="50,448,50,152">
-                <Button x:Name="btn_Restablecer" Content="Restablecer Contraseña" Width="350" Height="60" FontSize="20" FontFamily="Calibri" 
+            <Border Background="#16b555" CornerRadius="8" Margin="75,510,75,104">
+                <Button x:Name="btn_Restablecer" Content="Restablecer Contraseña" FontSize="20" FontFamily="Calibri" 
                         Background="Transparent" Foreground="White" FontWeight="Bold"
                         BorderThickness="0" Cursor="Hand" Click="CambiarContraseña">
                     <Button.Style>
@@ -100,9 +115,9 @@
                 </Button>
             </Border>
 
-            <Label Content="Volver" FontWeight="Bold" FontSize="20" FontFamily="Calibri" Cursor="Hand" Margin="217,525,216,101" MouseDown="RegresarLogin"/>
+            <Label Content="Volver" FontWeight="Bold" FontSize="20" FontFamily="Calibri" Cursor="Hand" Margin="217,559,216,67" MouseDown="RegresarLogin"/>
 
-            <Canvas Margin="50,598,51,40">
+            <Canvas Margin="50,620,51,18">
                 <TextBlock x:Name="txtb_RecuperarContraseña" Cursor="Hand" FontFamily="Calibri" Foreground="Gray"
                            Text="UNA SUSCRIPCIÓN PARA" FontSize="14" />
                 <Line X1="140" Y1="20" X2="392" Y2="20" Stroke="Gray" StrokeThickness=".6" Canvas.Top="-11"

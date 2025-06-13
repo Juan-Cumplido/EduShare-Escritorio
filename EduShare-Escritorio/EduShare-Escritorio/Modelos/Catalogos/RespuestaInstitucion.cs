@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EduShare_Escritorio.Modelos
+namespace EduShare_Escritorio.Modelos.Catalogos
 {
     public class RespuestaInstitucion<T>
     {

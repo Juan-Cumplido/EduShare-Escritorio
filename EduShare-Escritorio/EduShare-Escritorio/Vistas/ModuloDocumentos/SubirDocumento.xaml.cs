@@ -1,5 +1,8 @@
-﻿using EduShare_Escritorio.Utilidades;
+﻿using EduShare_Escritorio.Modelos.Catalogos;
+using EduShare_Escritorio.Servicio;
+using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas.Menus;
+using EduShare_Escritorio.Vistas.ModuloLogin;
 using EduShare_Escritorio.Vistas.ModuloUsuario;
 using Microsoft.Win32;
 using System;
@@ -7,6 +10,7 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,6 +28,9 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
 {
     public partial class SubirDocumento : Page
     {
+        private List<Categoria> _todasLasCategorias = new();
+        private List<Rama> _todasLasRamas = new();
+
         private string _rutaPDF;
         private bool _pdfCargado = false;
         private Frame _frame;
@@ -31,7 +38,79 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
         {
             InitializeComponent();
             _frame = frame;
+            this.Loaded += CargarComboBox;
         }
+
+        private async void CargarComboBox(object sender, RoutedEventArgs e)
+        {
+            await InicializarCombosAsync();
+        }
+
+        private async Task InicializarCombosAsync()
+        {
+
+            var categorias = await CatalogosServicio.ObtenerCategoriasAsync();
+            var ramas = await CatalogosServicio.ObtenerRamasAsync();
+
+            if (categorias.Resultado != (int)HttpStatusCode.OK || categorias.Datos == null || ramas.Datos == null)
+            {
+                MostrarMensajePersonalizado("No hay conexion con el servidor. Intente más tarde cargar su documento.", DialogType.Error);
+                return;
+            }
+
+            _todasLasCategorias = categorias.Datos;
+
+            cmb_Categoria.ItemsSource = _todasLasCategorias;
+            cmb_Categoria.DisplayMemberPath = "NombreCategoria";
+            cmb_Categoria.SelectedValuePath = "IdCategoria";
+
+            _todasLasRamas = ramas.Datos;
+            cmb_Rama.ItemsSource = _todasLasRamas;
+            cmb_Rama.DisplayMemberPath = "NombreRama";
+            cmb_Rama.SelectedValuePath = "IdRama";
+            cmb_Rama.Items.Refresh();
+
+        }
+
+        private void Cmb_CategoriaSeleccion(object sender, SelectionChangedEventArgs e)
+        {
+       
+        }
+
+        private async void Cmb_RamaSeleccion(object sender, SelectionChangedEventArgs e)
+        {
+            if (cmb_Rama.SelectedValue == null)
+                return;
+
+            int idRamaSeleccionado = (int)cmb_Rama.SelectedValue;
+
+            var respuesta = await CatalogosServicio.ObtenerMateriaPorRamaAsync(idRamaSeleccionado);
+
+            if (respuesta.Resultado == 200 && respuesta.Datos != null)
+            {
+                grd_Materia.Visibility = Visibility.Visible;
+                cmb_Materia.ItemsSource = respuesta.Datos;
+                cmb_Materia.DisplayMemberPath = "NombreMateria";
+                cmb_Materia.SelectedValuePath = "idMateriaYRama";
+            }
+            else
+            {
+                MostrarMensajePersonalizado("No se pudieron cargar las materias para la rama seleccionada.", DialogType.Warning);
+                cmb_Materia.ItemsSource = null;
+            }
+        }
+
+
+        private void Cmb_MateriaSeleccion(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void Cmb_NivelEducativoSeleccion(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
 
         private void MostrarMensajePersonalizado(string message, DialogType type)
         {
@@ -55,6 +134,61 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 MostrarMensajePersonalizado("Por favor, llena todos los campos que se solicitan", DialogType.Warning);
             }
         }
+
+        private async Task<bool> SubirArchivoPDFAsync()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(_rutaPDF) || !File.Exists(_rutaPDF))
+                {
+                    MostrarMensajePersonalizado("Archivo no encontrado.", DialogType.Error);
+                    return false;
+                }
+
+                byte[] pdfBytes = File.ReadAllBytes(_rutaPDF);
+
+                if (!EsPDFValido(pdfBytes))
+                {
+                    MostrarMensajePersonalizado("El archivo seleccionado no es un PDF.", DialogType.Error);
+                    return false;
+                }
+
+                string usuario = PerfilSingleton.Instance.NombreUsuario;
+
+                string nombreArchivo = System.IO.Path.GetFileName(_rutaPDF);
+
+                var grpc = new FileServiceClientHandler();
+
+                var resultado = await grpc.UploadPdfAsync(usuario, nombreArchivo, pdfBytes);
+
+                if (string.IsNullOrWhiteSpace(resultado.filePath) || string.IsNullOrWhiteSpace(resultado.coverPath))
+                {
+                    MostrarMensajePersonalizado("Error al subir el archivo.", DialogType.Error);
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Grpc.Core.RpcException ex)
+            {
+                MostrarMensajePersonalizado("El servidor de archivos no está disponible. Intenta más tarde.", DialogType.Error);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MostrarMensajePersonalizado("Ocurrió un error al subir el archivo.", DialogType.Error);
+                return false;
+            }
+        }
+
+        private bool EsPDFValido(byte[] bytes)
+        {
+            if (bytes == null || bytes.Length < 4)
+                return false;
+
+            return bytes[0] == 0x25 && bytes[1] == 0x50 && bytes[2] == 0x44 && bytes[3] == 0x46;
+        }
+
 
         public void RegresarBordeOriginal()
         {
@@ -227,50 +361,73 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
         }
 
 
-
-        private void MostrarPreview()
+        private async void MostrarPreviewDesdeRuta(string portadaRelativePath)
         {
-            grd_DropContent.Children.Clear();
-            brd_DropArea.Background = Brushes.White;
-
-            _pdfCargado = true;
-            brd_DropArea.Cursor = Cursors.Arrow;
-
-            var preview = new Image
+            try
             {
-                Source = new BitmapImage(new Uri("/Vistas/Recursos/Iconos/ImagenSubido.png", UriKind.Relative)),
-                Width = 130,
-                Height = 130,
-                Margin = new Thickness(5),
-                Stretch = Stretch.Uniform,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
+                _pdfCargado = true;
+                brd_DropArea.Cursor = Cursors.Arrow;
+                brd_DropArea.Background = Brushes.White;
+                grd_DropContent.Children.Clear();
 
-            var deleteIcon = new Button
+                FileServiceClientHandler grpcHandler = new();
+                var (bytes, _) = await grpcHandler.DownloadCoverAsync(portadaRelativePath);
+
+                if (bytes == null)
+                {
+                    MostrarMensajePersonalizado("No se pudo cargar la portada del documento.", DialogType.Warning);
+                    return;
+                }
+
+                var portadaImage = new BitmapImage();
+                using (var stream = new MemoryStream(bytes))
+                {
+                    portadaImage.BeginInit();
+                    portadaImage.CacheOption = BitmapCacheOption.OnLoad;
+                    portadaImage.StreamSource = stream;
+                    portadaImage.EndInit();
+                }
+
+                var preview = new Image
+                {
+                    Source = portadaImage,
+                    Width = 130,
+                    Height = 130,
+                    Margin = new Thickness(5),
+                    Stretch = Stretch.Uniform,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+
+                var deleteIcon = new Button
+                {
+                    Content = "🗑",
+                    Width = 24,
+                    Height = 24,
+                    Background = Brushes.Transparent,
+                    Foreground = Brushes.Red,
+                    BorderThickness = new Thickness(0),
+                    FontSize = 16,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Cursor = Cursors.Hand,
+                    ToolTip = "Eliminar archivo"
+                };
+
+                deleteIcon.Click += (s, e) => LimpiarPreview();
+
+                var panel = new Grid();
+                panel.Children.Add(preview);
+                panel.Children.Add(deleteIcon);
+
+                grd_DropContent.Children.Add(panel);
+            }
+            catch
             {
-                Content = "🗑",
-                Width = 24,
-                Height = 24,
-                Background = Brushes.Transparent,
-                Foreground = Brushes.Red,
-                BorderThickness = new Thickness(0),
-                FontSize = 16,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Top,
-                Cursor = Cursors.Hand,
-                ToolTip = "Eliminar archivo"
-            };
-
-            deleteIcon.Click += (s, e) => LimpiarPreview();
-
-            var panel = new Grid();
-            panel.Children.Add(preview);
-            panel.Children.Add(deleteIcon);
-
-            grd_DropContent.Children.Add(panel);
-
+                MostrarMensajePersonalizado("Error al mostrar la portada del PDF.", DialogType.Error);
+            }
         }
+
 
         private void LimpiarPreview()
         {

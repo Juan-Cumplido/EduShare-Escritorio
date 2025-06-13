@@ -1,9 +1,14 @@
-﻿using EduShare_Escritorio.Utilidades;
+﻿using EduShare_Escritorio.Modelos;
+using EduShare_Escritorio.Modelos.Perfil;
+using EduShare_Escritorio.Servicio;
+using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,11 +27,13 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
     {
         private bool _isPasswordVisible1 = false;
         private bool _isPasswordVisible2 = false;
-
-        public RestablecerContraseña()
+        private readonly string _correo;
+        public RestablecerContraseña(string correo)
         {
             InitializeComponent();
-        }
+            _correo = correo;
+        }   
+
 
         private void MostrarMensajePersonalizado(string message, DialogType type)
         {
@@ -41,9 +48,10 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
         {
             string contraseña = pwb_Contraseña.Password;
             string confirmarContraseña = pwb_ConfirmarContraseña.Password;
+            string codigo = txtb_Codigo.Text.Trim();
             bool esValido = true;
 
-            if (string.IsNullOrWhiteSpace(contraseña) || string.IsNullOrWhiteSpace(confirmarContraseña))
+            if (string.IsNullOrWhiteSpace(contraseña) || string.IsNullOrWhiteSpace(confirmarContraseña) )
             {
                 MostrarMensajePersonalizado("¡Campos vacíos!\r\nPor favor, complete ambos campos de contraseña.", DialogType.Warning);
                 esValido = false;
@@ -55,23 +63,75 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
             }
             else if (!Validador.ValidarContraseña(contraseña))
             {
-                MostrarMensajePersonalizado("La contraseña no cumple con los requisitos especificados arriba", DialogType.Warning);
+                MostrarMensajePersonalizado("La contraseña no cumple con los requisitos especificados abajo", DialogType.Warning);
 
+                esValido = false;
+            }else if (string.IsNullOrEmpty(codigo) || codigo == "Código de Verificación")
+            {
+                MostrarMensajePersonalizado("¡Campos vacíos!\r\nPor favor, ingrese el código de verificación que se le envio", DialogType.Warning);
                 esValido = false;
             }
             return esValido;
         }
 
 
-        private void CambiarContraseña(object sender, RoutedEventArgs e)
+        private async void CambiarContraseña(object sender, RoutedEventArgs e)
         {
             if (ValidarEntrada())
             {
-                MostrarMensajePersonalizado("¡Éxito!\r\nContraseña restablecida correctamente, ya podrá iniciar sesión", DialogType.Warning);
-                Login login = new ();
-                this.NavigationService.Navigate(login);
+                string contrasenia = _isPasswordVisible1 ? txt_ContraseñaVisible.Text : pwb_Contraseña.Password;
+                string contraseniaHashed = Hasher.HashToSHA2(contrasenia);
+                string codigo = txtb_Codigo.Text.Trim();
+
+                var solicitud = new SolicitudCambioContrasena
+                {
+                    Correo = _correo,
+                    Codigo = codigo,
+                    NuevaContrasenia = contraseniaHashed
+                };
+
+                Respuesta respuesta = await UsuarioServicio.VerificarCodigoYCambiarContrasenaAsync(solicitud);
+                switch (respuesta.Codigo)
+                {
+                    case (int)HttpStatusCode.OK:
+                        MostrarMensajePersonalizado("¡Éxito!\r\nContraseña restablecida correctamente, ya podrá iniciar sesión", DialogType.Warning);
+                        Login login = new();
+                        this.NavigationService.Navigate(login);
+                        break;
+                    case (int)HttpStatusCode.NotFound:
+                        MostrarMensajePersonalizado("¡No hay una solicitud de recuperación para este correo o ha expirado", DialogType.Warning);
+                        break;
+                    case (int)HttpStatusCode.BadRequest:
+                        MostrarMensajePersonalizado("¡El código de verificación es incorrecto", DialogType.Warning);
+                        break;
+                    case (int)HttpStatusCode.Unauthorized:
+                        MostrarMensajePersonalizado("¡El código de verificación ha expirado", DialogType.Warning);
+                        break;
+                    case (int)HttpStatusCode.InternalServerError:
+                        MostrarMensajePersonalizado("¡Correo no enviado!\r\nError interno del servidor. Inténtelo más tarde.", DialogType.Error);
+                        break;
+                }
+
             }
 
+        }
+
+        private void UserIdTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (txtb_Codigo.Text == "Código de Verificación")
+            {
+                txtb_Codigo.Text = "";
+                txtb_Codigo.Foreground = Brushes.Black;
+            }
+        }
+
+        private void UserIdTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtb_Codigo.Text))
+            {
+                txtb_Codigo.Text = "Código de Verificación";
+                txtb_Codigo.Foreground = Brushes.Gray;
+            }
         }
 
 
@@ -174,6 +234,24 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
             if (_isPasswordVisible2)
             {
                 pwb_ConfirmarContraseña.Password = txt_ConfirmarContraseñaVisible.Text;
+            }
+        }
+
+        private void CodigoPreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !Regex.IsMatch(e.Text, "^[0-9]+$");
+        }
+
+        private void CodigoPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+
+            if (e.Key == Key.Space ||
+                (e.Key == Key.V && Keyboard.Modifiers == ModifierKeys.Control) ||
+                (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control) ||
+                (e.Key == Key.X && Keyboard.Modifiers == ModifierKeys.Control))
+            {
+                e.Handled = true;
             }
         }
 

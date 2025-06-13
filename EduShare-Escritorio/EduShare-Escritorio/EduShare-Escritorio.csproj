@@ -8,15 +8,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
+  <ItemGroup>
+    <Protobuf Include="Protos\file_service.proto" GrpcServices="Client" />
+  </ItemGroup>
   <ItemGroup>
     <None Remove="Vistas\Recursos\Fondos\Arte.jpg" />
     <None Remove="Vistas\Recursos\Fondos\Derecho.jpg" />
     <None Remove="Vistas\Recursos\Fondos\Ingenieria.jpg" />
+    <None Remove="Vistas\Recursos\Fondos\Loading.gif" />
     <None Remove="Vistas\Recursos\Fondos\MenuPrincipal.jpg" />
     <None Remove="Vistas\Recursos\Fondos\Programacion.gif" />
     <None Remove="Vistas\Recursos\Fondos\SubirDocumento.gif" />
     <None Remove="Vistas\Recursos\Iconos\A.jpg" />
+    <None Remove="Vistas\Recursos\Iconos\Admin.jpg" />
     <None Remove="Vistas\Recursos\Iconos\Alerta.png" />
     <None Remove="Vistas\Recursos\Iconos\Amigos.gif" />
     <None Remove="Vistas\Recursos\Iconos\Camara.png" />
@@ -46,10 +50,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Vistas\Recursos\Fondos\Loading.gif">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Vistas\Recursos\Fondos\SubirDocumento.gif">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Vistas\Recursos\Iconos\Amigos.gif">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Vistas\Recursos\Iconos\Codigo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Vistas\Recursos\Iconos\Correo.png">
@@ -58,9 +68,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.31.1" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.72.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="log4net" Version="3.1.0" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3240.44" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.6" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
   </ItemGroup>
 
@@ -93,9 +110,6 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Vistas\Recursos\Iconos\Carrera.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Vistas\Recursos\Iconos\Codigo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Vistas\Recursos\Iconos\CorreoEnviado.png">
@@ -158,7 +172,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Proto\" />
+    <Resource Include="Vistas\Recursos\Iconos\Admin.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

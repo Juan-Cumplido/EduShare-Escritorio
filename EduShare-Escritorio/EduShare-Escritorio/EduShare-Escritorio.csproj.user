@@ -10,7 +10,13 @@
     <Compile Update="Vistas\Menus\MenuAdministrador.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Vistas\ModuloDocumentos\EvaluarPublicacion.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Vistas\ModuloDocumentos\MisDocumentos.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Vistas\ModuloDocumentos\RevisarPublicaciones.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Vistas\ModuloDocumentos\SubirDocumento.xaml.cs">
@@ -33,7 +39,13 @@
     <Page Update="Vistas\Menus\MenuAdministrador.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Vistas\ModuloDocumentos\EvaluarPublicacion.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Vistas\ModuloDocumentos\MisDocumentos.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Vistas\ModuloDocumentos\RevisarPublicaciones.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Vistas\ModuloDocumentos\SubirDocumento.xaml">

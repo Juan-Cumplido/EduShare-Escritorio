@@ -4,6 +4,7 @@ using EduShare_Escritorio.Vistas.ModuloLogin;
 using EduShare_Escritorio.Vistas.ModuloUsuario;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,36 @@ namespace EduShare_Escritorio.Vistas.Menus
         public MenuPrincipal()
         {
             InitializeComponent();
+            PerfilSingleton.Instance.PropertyChanged += Perfil_PropertyChanged;
+
             this.Loaded += VerificarSiInicioSesion;
+        }
+
+        private void Perfil_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                tgbtn_MenuPerfil.ApplyTemplate();
+
+                if (e.PropertyName == nameof(PerfilSingleton.FotoPerfilBinaria))
+                {
+                    var foto = PerfilSingleton.Instance.FotoPerfilBinaria;
+                    var bitmap = ConvertirFotoABitmap(foto);
+
+                    if (tgbtn_MenuPerfil.Template.FindName("img_Perfil", tgbtn_MenuPerfil) is ImageBrush brush)
+                    {
+                        brush.ImageSource = bitmap;
+                    }
+                }
+
+                if (e.PropertyName == nameof(PerfilSingleton.NombreUsuario))
+                {
+                    if (tgbtn_MenuPerfil.Template.FindName("txtb_Perfil", tgbtn_MenuPerfil) is TextBlock textBlock)
+                    {
+                        textBlock.Text = PerfilSingleton.Instance.NombreUsuario;
+                    }
+                }
+            });
         }
 
         private void MostrarMensajePersonalizado(string message, DialogType type)
@@ -36,6 +66,11 @@ namespace EduShare_Escritorio.Vistas.Menus
                 Owner = Window.GetWindow(this)
             };
             dialog.ShowDialog();
+        }
+
+        ~MenuPrincipal()
+        {
+            PerfilSingleton.Instance.PropertyChanged -= Perfil_PropertyChanged;
         }
 
         private void VerificarSiInicioSesion(object sender, RoutedEventArgs e)
@@ -55,10 +90,26 @@ namespace EduShare_Escritorio.Vistas.Menus
                 {
                     textBlock.Text = perfil.NombreUsuario;
                 }
+
+                if (tgbtn_MenuPerfil.Template.FindName("img_Perfil", tgbtn_MenuPerfil) is ImageBrush brush)
+                {
+                    brush.ImageSource = ConvertirFotoABitmap(perfil.FotoPerfilBinaria);
+                }
             }
         }
 
+        public ImageSource ConvertirFotoABitmap(byte[] binario)
+        {
+            if (binario == null || binario.Length == 0) return null;
 
+            using var ms = new MemoryStream(binario);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.StreamSource = ms;
+            bitmap.EndInit();
+            return bitmap;
+        }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
