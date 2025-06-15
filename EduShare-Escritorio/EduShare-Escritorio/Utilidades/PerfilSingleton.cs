@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Documents;
 
 namespace EduShare_Escritorio.Utilidades
 {
@@ -23,6 +24,7 @@ namespace EduShare_Escritorio.Utilidades
 
         public static PerfilSingleton Instance => _instanciaSingleton;
         public string Correo { get; set; }
+
         private string nombreUsuario;
         public string NombreUsuario
         {

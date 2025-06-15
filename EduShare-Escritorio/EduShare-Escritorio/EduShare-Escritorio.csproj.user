@@ -16,7 +16,7 @@
     <Compile Update="Vistas\ModuloDocumentos\MisDocumentos.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Vistas\ModuloDocumentos\RevisarPublicaciones.xaml.cs">
+    <Compile Update="Vistas\Menus\RevisarPublicaciones.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Vistas\ModuloDocumentos\SubirDocumento.xaml.cs">
@@ -45,7 +45,7 @@
     <Page Update="Vistas\ModuloDocumentos\MisDocumentos.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Vistas\ModuloDocumentos\RevisarPublicaciones.xaml">
+    <Page Update="Vistas\Menus\RevisarPublicaciones.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Vistas\ModuloDocumentos\SubirDocumento.xaml">

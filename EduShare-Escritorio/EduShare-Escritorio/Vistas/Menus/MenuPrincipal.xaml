@@ -289,12 +289,12 @@
                 <StackPanel>
                     <TextBlock Text="📂 Categoría de documento" Margin="5" FontWeight="Bold" FontSize="16"/>
                     <Separator Margin="5" Height="1" Background="#DDD"/>
-                    <TextBlock Text="Apuntes" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Resúmenes" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Guías de estudio" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Exámenes" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Tareas" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Presentaciones" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Apuntes" Tag="1" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Resúmenes" Tag="2" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Guías de estudio" Tag="3" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Exámenes" Tag="4" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Tareas" Tag="5" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Presentaciones" Tag="6" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
                 </StackPanel>
             </Border>
         </Popup>
@@ -346,13 +346,13 @@
                 <StackPanel>
                     <TextBlock Text="🎓 Nivel académico del contenido" Margin="5" FontWeight="Bold" FontSize="16"/>
                     <Separator Margin="5" Height="1" Background="#DDD"/>
-                    <TextBlock Text="Preparatoria" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Universidad" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Preparatoria" Cursor="Hand" MouseDown="NivelEducativo_MouseDown" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Universidad" Cursor="Hand" MouseDown="NivelEducativo_MouseDown" Margin="5" FontFamily="Calibri" FontSize="15"/>
                 </StackPanel>
             </Border>
         </Popup>
 
-        <ToggleButton x:Name="tgbtn_MenuMaterias"
+        <ToggleButton x:Name="tgbtn_MenuRamas"
                 Cursor="Hand"
                 FontWeight="Bold"
                 FontSize="15"
@@ -388,10 +388,10 @@
             </ToggleButton.Template>
         </ToggleButton>
 
-        <Popup PlacementTarget="{Binding ElementName=tgbtn_MenuMaterias}"
+        <Popup PlacementTarget="{Binding ElementName=tgbtn_MenuRamas}"
                Placement="Bottom"
                HorizontalOffset="-59"
-               IsOpen="{Binding IsChecked, ElementName=tgbtn_MenuMaterias, Mode=TwoWay}"
+               IsOpen="{Binding IsChecked, ElementName=tgbtn_MenuRamas, Mode=TwoWay}"
                StaysOpen="False"
                AllowsTransparency="True"
                PopupAnimation="Slide">
@@ -399,18 +399,18 @@
                 <StackPanel>
                     <TextBlock Text="📚 Área de conocimiento" Margin="5" FontWeight="Bold" FontSize="16"/>
                     <Separator Margin="5" Height="1" Background="#DDD"/>
-                    <TextBlock Text="Informática" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Derecho" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Medicina" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Arte" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Ingeniería" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Informática" Tag="1" MouseDown="Rama_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Derecho" Tag="2" MouseDown="Rama_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Medicina" Tag="3" MouseDown="Rama_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Arte" Tag="4" MouseDown="Rama_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Ingeniería" Tag="5" MouseDown="Rama_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
                 </StackPanel>
             </Border>
         </Popup>
 
 
 
-        <ToggleButton x:Name="tgbtn_MenuFecha"
+        <ToggleButton x:Name="tgbtn_MenuPopularidad"
                 Cursor="Hand"
                 FontWeight="Bold"
                 FontSize="15"
@@ -445,10 +445,10 @@
                 </ControlTemplate>
             </ToggleButton.Template>
         </ToggleButton>
-        <Popup PlacementTarget="{Binding ElementName=tgbtn_MenuFecha}"
+        <Popup PlacementTarget="{Binding ElementName=tgbtn_MenuPopularidad}"
                Placement="Bottom"
                HorizontalOffset="20"
-               IsOpen="{Binding IsChecked, ElementName=tgbtn_MenuFecha, Mode=TwoWay}"
+               IsOpen="{Binding IsChecked, ElementName=tgbtn_MenuPopularidad, Mode=TwoWay}"
                StaysOpen="False"
                AllowsTransparency="True"
                PopupAnimation="Slide" Cursor="">
@@ -456,10 +456,9 @@
                 <StackPanel>
                     <TextBlock Text="⭐ Ordenar por" Margin="5" FontWeight="Bold" FontSize="16"/>
                     <Separator Margin="5" Height="1" Background="#DDD"/>
-                    <TextBlock Text="Más recientes" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Más descargados" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Mejor calificados" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Más comentados" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                   <TextBlock Text="Más descargados" Cursor="Hand"  MouseDown="Popularidad_MouseDown" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Mejor calificados" Cursor="Hand"  MouseDown="Popularidad_MouseDown" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Más vistos" Cursor="Hand"  MouseDown="Popularidad_MouseDown" Margin="5" FontFamily="Calibri" FontSize="15"/>
                 </StackPanel>
             </Border>
         </Popup>

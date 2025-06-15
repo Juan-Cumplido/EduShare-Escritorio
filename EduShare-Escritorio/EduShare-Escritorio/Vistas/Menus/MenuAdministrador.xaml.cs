@@ -1,6 +1,7 @@
 ﻿using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas.ModuloDocumentos;
 using EduShare_Escritorio.Vistas.ModuloLogin;
+using EduShare_Escritorio.Vistas.ModuloMenus;
 using EduShare_Escritorio.Vistas.ModuloUsuario;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,12 @@ namespace EduShare_Escritorio.Vistas.Menus
         public MenuAdministrador()
         {
             InitializeComponent();
+            CargarVentana();
+        }
+        
+        private void CargarVentana()
+        {
+            fra_MenuAdmin.Navigate(new RevisarPublicaciones(fra_MenuAdmin));
         }
 
         private void MostrarPantallaPrincipal(object sender, MouseButtonEventArgs e)

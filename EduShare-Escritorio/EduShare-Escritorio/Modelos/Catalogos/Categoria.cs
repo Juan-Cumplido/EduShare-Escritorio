@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.IO.Packaging;
 
 
 namespace EduShare_Escritorio.Modelos.Catalogos
@@ -12,4 +13,5 @@ namespace EduShare_Escritorio.Modelos.Catalogos
         public string NombreCategoria { get; set; } = string.Empty;
 
     }
+
 }

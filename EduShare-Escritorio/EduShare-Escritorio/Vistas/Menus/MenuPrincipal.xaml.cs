@@ -1,4 +1,5 @@
-﻿using EduShare_Escritorio.Utilidades;
+﻿using EduShare_Escritorio.Modelos.Catalogos;
+using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas.ModuloDocumentos;
 using EduShare_Escritorio.Vistas.ModuloLogin;
 using EduShare_Escritorio.Vistas.ModuloUsuario;
@@ -98,19 +99,6 @@ namespace EduShare_Escritorio.Vistas.Menus
             }
         }
 
-        public ImageSource ConvertirFotoABitmap(byte[] binario)
-        {
-            if (binario == null || binario.Length == 0) return null;
-
-            using var ms = new MemoryStream(binario);
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.StreamSource = ms;
-            bitmap.EndInit();
-            return bitmap;
-        }
-
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             if (txtb_BuscarTextBox.Text == "Buscar")
@@ -143,35 +131,38 @@ namespace EduShare_Escritorio.Vistas.Menus
         private void IrASubirArchivo(object sender, RoutedEventArgs e)
         {
             fra_Menu.Navigate(new SubirDocumento(fra_Menu));
+            BusquedaSingleton.Instance.LimpiarBusqueda();
         }
 
         private void IrAMisDocumentos(object sender, RoutedEventArgs e)
         {
             fra_Menu.Navigate(new MisDocumentos(fra_Menu));
+            BusquedaSingleton.Instance.LimpiarBusqueda();
         }
         
 
         private void IrALaCuenta(object sender, MouseButtonEventArgs e)
         {
             fra_Menu.Navigate(new Perfil(fra_Menu));
-
+            BusquedaSingleton.Instance.LimpiarBusqueda();
         }
 
         private void IrALaComunidad(object sender, MouseButtonEventArgs e)
         {
             fra_Menu.Navigate(new BuscarPerfil(fra_Menu));
-
+            BusquedaSingleton.Instance.LimpiarBusqueda();
         }
         private void IrATusAmigos(object sender, MouseButtonEventArgs e)
         {
             fra_Menu.Navigate(new Amigos());
-
+            BusquedaSingleton.Instance.LimpiarBusqueda();
         }
         
 
         private void MostrarPantallaPrincipal(object sender, MouseButtonEventArgs e)
         {
             fra_Menu.Source = new System.Uri("SubMenu.xaml", System.UriKind.Relative);
+            BusquedaSingleton.Instance.LimpiarBusqueda();
         }
 
         private void BuscarRecurso(object sender, MouseButtonEventArgs e)
@@ -180,12 +171,74 @@ namespace EduShare_Escritorio.Vistas.Menus
 
             if (string.IsNullOrWhiteSpace(texto) || texto == "Buscar")
             {
-                 return;
+                return;
             }
 
-            fra_Menu.Navigate(new EduShare_Escritorio.Vistas.ModuloDocumentos.ExplorarDocumentos(texto));
+            string tipoBusqueda = "PorNombre";
+            int id = 0;
+
+            
+            BusquedaSingleton.Instance.EstablecerBusqueda(tipoBusqueda, texto, id);
+
+            fra_Menu.Navigate(new ExplorarDocumentos(texto, tipoBusqueda, id));
         }
 
+
+        private void Categoria_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBlock tb && int.TryParse(tb.Tag?.ToString(), out int categoriaId))
+            {
+                string texto = "";
+                string tipoBusqueda = "Categoria";
+                int id = categoriaId;
+                BusquedaSingleton.Instance.EstablecerBusqueda(tipoBusqueda, texto, id);
+                fra_Menu.Navigate(new ExplorarDocumentos(texto, tipoBusqueda, id));
+               
+
+            }
+        }
+
+        private void Rama_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBlock tb && int.TryParse(tb.Tag?.ToString(), out int ramaId))
+            {
+                string texto = "";
+                string tipoBusqueda = "Rama";
+                int id = ramaId;
+                BusquedaSingleton.Instance.EstablecerBusqueda(tipoBusqueda, texto, id);
+                fra_Menu.Navigate(new ExplorarDocumentos(texto, tipoBusqueda, id));
+              
+            }
+        }
+
+        private void NivelEducativo_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBlock tb)
+            {
+
+                string nombreRama = tb.Text.Trim();
+                string tipoBusqueda = "NivelEducativo";
+                int id = 0;
+                BusquedaSingleton.Instance.EstablecerBusqueda(tipoBusqueda, nombreRama, id);
+                fra_Menu.Navigate(new ExplorarDocumentos(nombreRama, tipoBusqueda, id));
+
+            }
+        }
+
+        private void Popularidad_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is TextBlock tb)
+            {
+
+                string nombreRama = tb.Text.Trim();
+                string tipoBusqueda = "Popularidad";
+                int id = 0;
+                BusquedaSingleton.Instance.EstablecerBusqueda(tipoBusqueda, nombreRama, id);
+                fra_Menu.Navigate(new ExplorarDocumentos(nombreRama, tipoBusqueda, id));
+
+                
+            }
+        }
 
         private void CerrarSesion(object sender, MouseButtonEventArgs e)
         {
@@ -195,19 +248,17 @@ namespace EduShare_Escritorio.Vistas.Menus
             this.NavigationService.Navigate(login);
         }
 
-        public static BitmapImage? ConvertirABitmap(byte[] datos)
+        public ImageSource ConvertirFotoABitmap(byte[] binario)
         {
-            if (datos == null || datos.Length == 0) return null;
+            if (binario == null || binario.Length == 0) return null;
 
-            using (var stream = new MemoryStream(datos))
-            {
-                var image = new BitmapImage();
-                image.BeginInit();
-                image.CacheOption = BitmapCacheOption.OnLoad;
-                image.StreamSource = stream;
-                image.EndInit();
-                return image;
-            }
+            using var ms = new MemoryStream(binario);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.StreamSource = ms;
+            bitmap.EndInit();
+            return bitmap;
         }
 
 

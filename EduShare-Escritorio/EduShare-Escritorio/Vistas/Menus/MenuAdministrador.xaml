@@ -13,7 +13,7 @@
         <Label Content="Publicacio" FontWeight="Bold" FontSize="30" Margin="241,12,607,639"/>
         <Label Content="nes" FontWeight="Bold" Foreground="#16b555" FontSize="30" Margin="387,12,755,639"/>
 
-        <Frame x:Name="fra_MenuAdmin" NavigationUIVisibility="Hidden" Margin="0,86,0,0" Source="RevisarPublicaciones.xaml"/>
+        <Frame x:Name="fra_MenuAdmin" NavigationUIVisibility="Hidden" Margin="0,86,0,0"/>
 
         <ToggleButton x:Name="tgbtn_MenuPerfil"
            Cursor="Hand"

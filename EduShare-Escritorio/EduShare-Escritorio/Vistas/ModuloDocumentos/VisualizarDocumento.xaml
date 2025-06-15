@@ -26,34 +26,35 @@
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                 <TextBlock  Margin="0,0,20,0">
                 <Run Text="👍 "/>
-                <Run Text="2"  Foreground="#3b3b3b" FontSize="15"/>
+                <Run x:Name="txtb_Likes" Foreground="#3b3b3b" FontSize="15"/>
                 </TextBlock>
                 <TextBlock Text="•" Foreground="#3b3b3b" Margin="0,0,3,0" FontSize="15"/>
-                <TextBlock Text="510" Margin="0,0,0,0" FontSize="15" Foreground="#3b3b3b"/>
-                <TextBlock Text="k Vistas " Margin="0,0,10,0" FontSize="15" Foreground="#3b3b3b"/>
+                <TextBlock x:Name="txtb_Vistas" Margin="0,0,0,0" FontSize="15" Foreground="#3b3b3b"/>
+                <TextBlock Text=" Vistas " Margin="0,0,10,0" FontSize="15" Foreground="#3b3b3b"/>
 
 
                 <TextBlock Text="•" Foreground="#3b3b3b" Margin="0,0,3,0" FontSize="15"/>
-                <TextBlock Text="40" Margin="0,0,0,0" FontSize="15" Foreground="#3b3b3b"/>
+                <TextBlock x:Name="txtb_Descargas" Margin="0,0,0,0" FontSize="15" Foreground="#3b3b3b"/>
                 <TextBlock Text="Descargas " Margin="5,0,10,0" FontSize="15" Foreground="#3b3b3b"/>
             </StackPanel>
 
-            <TextBlock Text="HILOS" FontSize="30" FontWeight="Bold" Margin="0,10,0,40"/>
+            <TextBlock TextWrapping="Wrap" x:Name="txtb_Titulo" FontSize="30" FontWeight="Bold" Margin="0,10,0,40"/>
 
-            <TextBlock TextWrapping="Wrap" FontFamily="Calibri" FontSize="18">
-                Este documento describe los diferentes tipos de hilos, incluyendo hilos de filamentos lisos e hilados, 
-                hilos texturizados voluminizados, elásticos y estabilizados, y hilos hilados de fibras ...
+            <TextBlock TextWrapping="Wrap" x:Name="txtb_Resumen" FontFamily="Calibri" FontSize="18">
+
             </TextBlock>
 
             <TextBlock TextWrapping="Wrap" Margin="0,20,0,0">
                 <Run Text="Cargado por "/>
-                <Run Text="Max" FontWeight="Bold" Foreground="#007ACC"/>
+                <Run x:Name="txtb_Autor" FontWeight="Bold" Foreground="#007ACC"/>
                 <Run Text=" el "/>
-                <Run Text="23/02/2029"/>
+                <Run x:Name="txtb_Fecha"/>
             </TextBlock>
 
-            <StackPanel x:Name="stckp_Accesorios" Visibility="Collapsed" Orientation="Horizontal" Margin="0,50,0,0" HorizontalAlignment="Left">
+            <StackPanel x:Name="stckp_Accesorios" Visibility="Collapsed" Orientation="Horizontal" Margin="0,50,0,0" HorizontalAlignment="Left" Cursor="">
                 <ToggleButton
+                            x:Name="btn_SegDescargar"
+                            Click="DescargarDocumento_Click"
                            Visibility="Visible"
                            Cursor="Hand"
                            Width="60"
@@ -92,6 +93,8 @@
                 </ToggleButton>
 
                 <ToggleButton
+                    x:Name="btn_Like"
+                    Click="btn_Like_Click"
                     Visibility="Visible"
                     Cursor="Hand"
                     Width="60"
@@ -105,16 +108,16 @@
                     <ToggleButton.Template>
                         <ControlTemplate TargetType="ToggleButton">
                             <Border x:Name="border"
-                    CornerRadius="10"
-                    Background="#f9f8f4"
-                    BorderBrush="Transparent"
-                    BorderThickness="0"
-                    Padding="10" Cursor="Hand" Margin="0,0,0,0">
+                                    CornerRadius="10"
+                                    Background="#f9f8f4"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="0"
+                                    Padding="10" Cursor="Hand" Margin="0,0,0,0">
                                 <StackPanel Margin="-10,-10,-10,-10">
                                     <Image x:Name="likeImage"
-                           Source="/Vistas/Recursos/Iconos/DisLike.png"
-                           Width="25" Height="25" Margin="0,5,0,0"
-                           VerticalAlignment="Center"/>
+                                           Source="/Vistas/Recursos/Iconos/DisLike.png"
+                                           Width="25" Height="25" Margin="0,5,0,0"
+                                           VerticalAlignment="Center"/>
                                     <TextBlock Text="Me gusta" 
                                VerticalAlignment="Center"
                                Margin="6,10,6,0"/>
@@ -141,7 +144,7 @@
             <Border x:Name="brd_Descargar" Background="Gray" CornerRadius="6" Margin="10,29,514,517" Cursor="No">
                 <Button x:Name="btn_Descargar"  FontSize="18" FontFamily="Calibri" IsEnabled="False"
                         Background="Transparent" Foreground="White" FontWeight="Bold"
-                        BorderThickness="0" Cursor="Hand"
+                        BorderThickness="0" Cursor="Hand" Click="DescargarDocumento_Click"
                         OverridesDefaultStyle="True" >
                     <Button.Content>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="3,0,3,0">
@@ -180,7 +183,7 @@
 
             <wv2:WebView2 x:Name="PdfWebView" Margin="0,78,0,78" Visibility="Collapsed"/>
             
-            <TextBlock x:Name="txtb_Frase" TextWrapping="Wrap" FontFamily="Calibri" FontStyle="Italic" FontWeight="Bold" Text="¿Te interesa el contenido completo? Regístrate gratis y accede al documento completo al instante."  Margin="178,132,180,287" FontSize="30"/>
+            <TextBlock x:Name="txtb_Frase" TextWrapping="Wrap" FontFamily="Calibri" FontStyle="Italic" FontWeight="Bold" Text="¿Te interesa el contenido completo? Regístrate gratis y accede al documento completo"  Margin="178,132,180,287" FontSize="30"/>
 
             <Image x:Name="img_Visualizar" Source="/Vistas/Recursos/Iconos/Login.png" Margin="224,314,224,94"/>
         </Grid>
@@ -202,9 +205,9 @@
                            FontWeight="Bold"
                            Foreground="Gray"
                            Margin="10"
-                           Visibility="Visible" Width="214"/>
+                           Visibility="Collapsed" Width="214"/>
 
-                        
+
 
                         <ItemsControl x:Name="ListaComentarios" Margin="0,10,0,10">
                             <ItemsControl.ItemTemplate>
@@ -219,7 +222,13 @@
                                                 </Ellipse>
 
                                                 <StackPanel Width="220">
-                                                    <TextBlock Text="{Binding Usuario}" FontWeight="Bold" />
+                                                    <TextBlock>
+                                                        
+                                                        <Run Text="{Binding Usuario}" FontWeight="Bold" />
+                                                        <Run Text="    Fecha " Foreground="Gray"/>
+                                                        <Run Text="{Binding Fecha}" Foreground="Gray"/>
+                                                    </TextBlock>
+                                                    
                                                     <TextBlock Text="{Binding Texto}" 
                                                        TextWrapping="Wrap" 
                                                        TextTrimming="None"
@@ -241,10 +250,9 @@
                     </StackPanel>
                 </ScrollViewer>
 
-
                 <Ellipse x:Name="elp_Perfil" Visibility="Collapsed" Width="38" Height="38" VerticalAlignment="Top" Margin="0,370,222,0">
                     <Ellipse.Fill>
-                        <ImageBrush ImageSource="/Vistas/Recursos/Iconos/A.jpg"/>
+                        <ImageBrush x:Name="img_FotoPerfil" />
                     </Ellipse.Fill>
                 </Ellipse>
                 <Border x:Name="brd_Comentarios" Visibility="Collapsed" Background="#f0f1f4" CornerRadius="8" Margin="41,370,0,104">

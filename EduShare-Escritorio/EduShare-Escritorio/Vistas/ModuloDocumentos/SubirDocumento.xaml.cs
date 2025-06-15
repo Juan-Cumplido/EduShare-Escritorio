@@ -1,4 +1,5 @@
 ﻿using EduShare_Escritorio.Modelos.Catalogos;
+using EduShare_Escritorio.Modelos.Publicaciones;
 using EduShare_Escritorio.Servicio;
 using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas.Menus;
@@ -23,15 +24,18 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static EduShare_Escritorio.Vistas.VentanaEmergentePersonalizada;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EduShare_Escritorio.Vistas.ModuloDocumentos
 {
     public partial class SubirDocumento : Page
     {
+        private static readonly LoggerManager _logger = new LoggerManager(typeof(Login));
         private List<Categoria> _todasLasCategorias = new();
         private List<Rama> _todasLasRamas = new();
 
         private string _rutaPDF;
+        private string _rutaDocumento;
         private bool _pdfCargado = false;
         private Frame _frame;
         public SubirDocumento(Frame frame)
@@ -72,10 +76,6 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
 
         }
 
-        private void Cmb_CategoriaSeleccion(object sender, SelectionChangedEventArgs e)
-        {
-       
-        }
 
         private async void Cmb_RamaSeleccion(object sender, SelectionChangedEventArgs e)
         {
@@ -91,7 +91,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 grd_Materia.Visibility = Visibility.Visible;
                 cmb_Materia.ItemsSource = respuesta.Datos;
                 cmb_Materia.DisplayMemberPath = "NombreMateria";
-                cmb_Materia.SelectedValuePath = "idMateriaYRama";
+                cmb_Materia.SelectedValuePath = "IdMateriaYRama";
             }
             else
             {
@@ -99,18 +99,6 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 cmb_Materia.ItemsSource = null;
             }
         }
-
-
-        private void Cmb_MateriaSeleccion(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private void Cmb_NivelEducativoSeleccion(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
 
         private void MostrarMensajePersonalizado(string message, DialogType type)
         {
@@ -121,63 +109,123 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
             dialog.ShowDialog();
         }
 
-        private void SubirPublicacion(object sender, RoutedEventArgs e)
+        private async void SubirPublicacion(object sender, RoutedEventArgs e)
         {
             RegresarBordeOriginal();
-            if (ValidarCamposVacios())
-            {
-                MostrarMensajePersonalizado("Documento subido con exito", DialogType.Success);
-                _frame.Navigate(new MisDocumentos(_frame));
-            }
-            else
+
+            if (!ValidarCamposVacios())
             {
                 MostrarMensajePersonalizado("Por favor, llena todos los campos que se solicitan", DialogType.Warning);
+                return;
+            }
+
+            var rutaArchivo = _rutaDocumento;
+            if (string.IsNullOrEmpty(rutaArchivo)) return;
+
+            var idDocumento = await CrearDocumentoAsync(rutaArchivo);
+            if (idDocumento == null) return;
+
+            await CrearPublicacionAsync(idDocumento.Value);
+        }
+
+        private async Task<int?> CrearDocumentoAsync(string filePath)
+        {
+            string token = PerfilSingleton.Instance.TokenJwt;
+
+            var respuesta = await PublicacionServicio.CrearDocumentoAsync(token, txtb_Titulo.Text.Trim(), _rutaDocumento);
+
+            
+            if (respuesta.Resultado == (int)HttpStatusCode.Unauthorized)
+            {
+                    MostrarMensajePersonalizado("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.", DialogType.Error);
+                    NavigationService.Navigate(new Login());
+                    PerfilSingleton.Instance.Reset();
+                    return null;
+            }
+            if (respuesta.Resultado != (int)HttpStatusCode.Created)
+            {
+                MostrarMensajePersonalizado("Error a subir su documento. Intente más tarde", DialogType.Error);
+                return null;
+            }
+
+            return respuesta.IdDocumento;
+        }
+
+        private async Task CrearPublicacionAsync(int idDocumento)
+        {
+            var publicacion = new Publicacion
+            {
+                ResuContenido = txtb_Contenido.Text.Trim(),
+                IdDocumento = idDocumento,
+                IdMateriaYRama = (int)cmb_Materia.SelectedValue,
+                IdCategoria = (int)cmb_Categoria.SelectedValue,
+                NivelEducativo = cmb_NivelEducativo.Text
+            };
+
+            string token = PerfilSingleton.Instance.TokenJwt;
+            var respuesta = await PublicacionServicio.CrearPublicacionAsync(token, publicacion);
+
+            switch (respuesta.Resultado)
+            {
+                case (int)HttpStatusCode.Created:
+                    MostrarMensajePersonalizado("Documento subido con éxito", DialogType.Success);
+                    _frame.Navigate(new MisDocumentos(_frame));
+                    break;
+                case (int)HttpStatusCode.Unauthorized:
+                    MostrarMensajePersonalizado("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.", DialogType.Error);
+                    NavigationService.Navigate(new Login());
+                    PerfilSingleton.Instance.Reset();
+                    break;
+                case 500:
+                    MostrarMensajePersonalizado("Error en el servidor. Intente más tarder", DialogType.Error);
+                    break;
+
+                default:
+                    MostrarMensajePersonalizado("Error  al crear la publicación.", DialogType.Error);
+                    break;
             }
         }
 
-        private async Task<bool> SubirArchivoPDFAsync()
+
+
+        private async Task SubirArchivoPDFAsync(string rutaPDF)
         {
             try
             {
-                if (string.IsNullOrEmpty(_rutaPDF) || !File.Exists(_rutaPDF))
-                {
-                    MostrarMensajePersonalizado("Archivo no encontrado.", DialogType.Error);
-                    return false;
-                }
-
-                byte[] pdfBytes = File.ReadAllBytes(_rutaPDF);
+                byte[] pdfBytes = File.ReadAllBytes(rutaPDF);
 
                 if (!EsPDFValido(pdfBytes))
                 {
                     MostrarMensajePersonalizado("El archivo seleccionado no es un PDF.", DialogType.Error);
-                    return false;
+                    return;
                 }
 
                 string usuario = PerfilSingleton.Instance.NombreUsuario;
-
-                string nombreArchivo = System.IO.Path.GetFileName(_rutaPDF);
+                string nombreArchivo = System.IO.Path.GetFileName(rutaPDF);
 
                 var grpc = new FileServiceClientHandler();
-
                 var resultado = await grpc.UploadPdfAsync(usuario, nombreArchivo, pdfBytes);
 
                 if (string.IsNullOrWhiteSpace(resultado.filePath) || string.IsNullOrWhiteSpace(resultado.coverPath))
                 {
                     MostrarMensajePersonalizado("Error al subir el archivo.", DialogType.Error);
-                    return false;
+                    return;
                 }
+                _rutaDocumento = resultado.filePath;
+                MostrarPreviewDesdeRuta(resultado.coverPath);
 
-                return true;
             }
             catch (Grpc.Core.RpcException ex)
             {
+                _logger.LogFatal(ex);
                 MostrarMensajePersonalizado("El servidor de archivos no está disponible. Intenta más tarde.", DialogType.Error);
-                return false;
+                LimpiarPreview();
             }
             catch (Exception ex)
             {
+                _logger.LogFatal(ex);
                 MostrarMensajePersonalizado("Ocurrió un error al subir el archivo.", DialogType.Error);
-                return false;
+                LimpiarPreview();
             }
         }
 
@@ -319,7 +367,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
             }
         }
 
-        private void ProcesarPDF(string ruta)
+        private async void ProcesarPDF(string ruta)
         {
             FileInfo fileInfo = new FileInfo(ruta);
             long sizeInBytes = fileInfo.Length;
@@ -343,7 +391,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 txtb_Titulo.Foreground = Brushes.Black;
             }
 
-            MostrarPreview();
+            await SubirArchivoPDFAsync(ruta);
         }
 
         private string SanitizarNombreArchivo(string nombre)
@@ -391,9 +439,9 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 var preview = new Image
                 {
                     Source = portadaImage,
-                    Width = 130,
-                    Height = 130,
-                    Margin = new Thickness(5),
+                    Width = 150,
+                    Height = 150,
+                    Margin = new Thickness(1),
                     Stretch = Stretch.Uniform,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
@@ -433,7 +481,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
         {
             _rutaPDF = null;
             _pdfCargado = false;
-
+            _rutaDocumento = null;
             txtb_Titulo.Text = "Escribe un título";
             txtb_Titulo.Foreground = Brushes.Gray;
 

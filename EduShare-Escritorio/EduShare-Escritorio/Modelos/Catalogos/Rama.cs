@@ -16,4 +16,5 @@ namespace EduShare_Escritorio.Modelos.Catalogos
         public string NombreRama { get; set; } = string.Empty;
 
     }
+
 }

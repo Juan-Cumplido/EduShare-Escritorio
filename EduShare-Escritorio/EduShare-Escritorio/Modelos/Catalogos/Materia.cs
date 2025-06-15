@@ -16,13 +16,13 @@ namespace EduShare_Escritorio.Modelos.Catalogos
         public string NombreMateria { get; set; } = string.Empty;
 
         [JsonProperty("idRama")]
-        public string IdRama { get; set; } = string.Empty;
+        public int IdRama { get; set; }
 
         [JsonProperty("nombreRama")]
         public string NombreRama { get; set; } = string.Empty;
 
         [JsonProperty("idMateriaYRama")]
-        public string IdMateriaYRama { get; set; } = string.Empty;
+        public int IdMateriaYRama { get; set; }
 
     }
 }

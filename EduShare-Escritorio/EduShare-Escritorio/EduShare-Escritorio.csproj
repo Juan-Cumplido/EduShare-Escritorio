@@ -18,6 +18,7 @@
     <None Remove="Vistas\Recursos\Fondos\Loading.gif" />
     <None Remove="Vistas\Recursos\Fondos\MenuPrincipal.jpg" />
     <None Remove="Vistas\Recursos\Fondos\Programacion.gif" />
+    <None Remove="Vistas\Recursos\Fondos\Publicacion.png" />
     <None Remove="Vistas\Recursos\Fondos\SubirDocumento.gif" />
     <None Remove="Vistas\Recursos\Iconos\A.jpg" />
     <None Remove="Vistas\Recursos\Iconos\Admin.jpg" />
@@ -39,6 +40,7 @@
     <None Remove="Vistas\Recursos\Iconos\ImagenSubido.png" />
     <None Remove="Vistas\Recursos\Iconos\Institucion.png" />
     <None Remove="Vistas\Recursos\Iconos\Like.png" />
+    <None Remove="Vistas\Recursos\Iconos\ListaNegra.png" />
     <None Remove="Vistas\Recursos\Iconos\Login.png" />
     <None Remove="Vistas\Recursos\Iconos\LogoEduShare.png" />
     <None Remove="Vistas\Recursos\Iconos\Lupa.jpg" />
@@ -51,6 +53,9 @@
 
   <ItemGroup>
     <Resource Include="Vistas\Recursos\Fondos\Loading.gif">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Vistas\Recursos\Fondos\Publicacion.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Vistas\Recursos\Fondos\SubirDocumento.gif">
@@ -143,6 +148,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Vistas\Recursos\Iconos\Like.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Vistas\Recursos\Iconos\ListaNegra.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Vistas\Recursos\Iconos\Login.png">

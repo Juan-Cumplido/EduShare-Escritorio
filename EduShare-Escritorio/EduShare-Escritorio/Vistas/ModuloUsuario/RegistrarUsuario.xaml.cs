@@ -162,10 +162,10 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
             string contrasenia = isPasswordVisible ? txt_ContraseñaVisible.Text : pwb_PasswordBox.Password;
             string hashedPassword = Hasher.HashToSHA2(contrasenia);
             perfil.Contrasenia = hashedPassword;
-            perfil.NombreUsuario = txtb_Usuario.Text;
-            perfil.Nombre = txtb_Nombre.Text;   
-            perfil.PrimerApellido = txtb_PrimerApellido.Text;
-            perfil.SegundoApellido = txtb_SegundoApellido.Text;
+            perfil.NombreUsuario = txtb_Usuario.Text.Trim();
+            perfil.Nombre = txtb_Nombre.Text.Trim();   
+            perfil.PrimerApellido = txtb_PrimerApellido.Text.Trim();
+            perfil.SegundoApellido = txtb_SegundoApellido.Text.Trim();
             string fotoPorDefecto = "Imagen/porDefecto/1.png";
             perfil.FotoPerfil = fotoPorDefecto;
             if (cmb_Institución.SelectedItem is Institucion seleccionada)

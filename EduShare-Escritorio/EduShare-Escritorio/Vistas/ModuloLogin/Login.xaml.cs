@@ -24,7 +24,7 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
 {
     public partial class Login : Page
     {
-        private static readonly LoggerManager _logger = new LoggerManager(typeof(CatalogosServicio));
+        private static readonly LoggerManager _logger = new LoggerManager(typeof(Login));
         public Login()
         {
             InitializeComponent();
@@ -206,6 +206,7 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
 
         private async Task CrearPerfilSingletonAsync(DatosUsuario datos, string token)
         {
+            BusquedaSingleton.Instance.LimpiarBusqueda();
             var perfil = PerfilSingleton.Instance;
             perfil.IdUsuarioRegistrado = datos.IdUsuario;
             perfil.Nombre = datos.Nombre;

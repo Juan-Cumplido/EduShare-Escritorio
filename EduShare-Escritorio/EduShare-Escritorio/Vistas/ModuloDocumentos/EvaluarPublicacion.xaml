@@ -20,35 +20,33 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Column="0" Margin="20,30,20,0" VerticalAlignment="Top">
-            <TextBlock Text="HILOS" FontSize="30" FontWeight="Bold" Margin="0,10,0,40"/>
+            <TextBlock TextWrapping="Wrap" x:Name="txtb_Titulo" FontSize="30" FontWeight="Bold" Margin="0,10,0,40"/>
 
-            <TextBlock TextWrapping="Wrap" FontFamily="Calibri" FontSize="18">
-                Este documento describe los diferentes tipos de hilos, incluyendo hilos de filamentos lisos e hilados, 
-                hilos texturizados voluminizados, elásticos y estabilizados, y hilos hilados de fibras ...
-            </TextBlock>
+            <TextBlock TextWrapping="Wrap" x:Name="txtb_Resumen" FontFamily="Calibri" FontSize="18">
+             </TextBlock>
 
-            <TextBlock TextWrapping="Wrap" FontSize="15" Margin="0,70,0,0">
+            <TextBlock TextWrapping="Wrap" FontSize="12" Margin="0,20,0,0">
                 <Run Text="Cargado por "/>
-                <Run Text="Juan Eduardo" FontWeight="Bold" Foreground="#007ACC"/>
+                <Run x:Name="txtb_Autor" FontWeight="Bold" Foreground="#007ACC"/>
             </TextBlock>
 
-            <TextBlock TextWrapping="Wrap" FontSize="15" Margin="0,40,0,0">
+            <TextBlock TextWrapping="Wrap" FontSize="12" Margin="0,20,0,0">
                 <Run Text="Fecha de la publicación"/>
-                <Run Text="23/02/2029" FontWeight="Bold" Foreground="#007ACC"/>
+                <Run x:Name="txtb_Fecha" FontWeight="Bold" Foreground="#007ACC"/>
             </TextBlock>
 
-            <StackPanel Orientation="Horizontal" Margin="0,50,0,0" HorizontalAlignment="Left" Width="160" Height="57">
+            <StackPanel Orientation="Horizontal"  Margin="0,50,0,0" HorizontalAlignment="Left" Width="160" Height="57">
                 <ToggleButton
                        Visibility="Visible"
                        Cursor="Hand"
-                       Width="146"
+                       Width="160"
                        FontFamily="Calibri"
                        FontSize="12"
                        Foreground="#2e2b2b"
                        HorizontalContentAlignment="Right"
                        VerticalContentAlignment="Center"
                        Background="Transparent"
-                       BorderThickness="0" Margin="0,0,20,0" Height="45">
+                       BorderThickness="0" Margin="0,0,20,0" Height="57" Checked="ToggleButton_Checked">
                     <ToggleButton.Template>
                         <ControlTemplate TargetType="ToggleButton">
                             <Border x:Name="border"
@@ -79,14 +77,14 @@
 
         </StackPanel>
 
-        <Grid Grid.Column="1" Margin="0,30,300,30">
+        <Grid Grid.Column="1" Margin="0,0,300,30">
             <wv2:WebView2 x:Name="PdfWebView" Margin="0,78,0,78" Visibility="Collapsed"/>
         </Grid>
 
         <Border Background="#16b555" CornerRadius="8" Margin="737,91,53,501" Grid.Column="1">
             <Button x:Name="btn_Guardar" Content="Aceptar publicación" FontSize="20" FontFamily="Calibri" 
                     Background="Transparent" Foreground="White" FontWeight="Bold"
-                    BorderThickness="0" Cursor="Hand"  Margin="0,-4,0,-6">
+                    BorderThickness="0" Cursor="Hand"  Margin="0,-4,0,-6" Click="btn_Guardar_Click">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Background" Value="Transparent"/>
@@ -109,7 +107,7 @@
             </Button>
         </Border>
 
-        <Label Content="Rechazar publicación" FontWeight="Bold" FontSize="20" FontFamily="Calibri" Cursor="Hand" Margin="740,178,50,422" MouseDown="MostrarPantallaPrincipal" Grid.Column="1"/>
+        <Label Content="Rechazar publicación" FontWeight="Bold" FontSize="20" FontFamily="Calibri" Cursor="Hand" Margin="740,178,50,422" MouseDown="RechazarPublicacion" Grid.Column="1"/>
 
 
     </Grid>

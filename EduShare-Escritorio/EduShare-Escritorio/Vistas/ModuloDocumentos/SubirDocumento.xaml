@@ -31,7 +31,7 @@
         <Border x:Name="brd_Categoria" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8"  Margin="358,138,358,393">
             <DockPanel Margin="0,0,0,-1">
                 <Image Source="/Vistas/Recursos/Iconos/Institucion.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                <ComboBox x:Name="cmb_Categoria" Width="224" Height="26" FontSize="18" Cursor="Hand" SelectionChanged="Cmb_CategoriaSeleccion"
+                <ComboBox x:Name="cmb_Categoria" Width="224" Height="26" FontSize="18" Cursor="Hand" 
                    Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
                 </ComboBox>
             </DockPanel>
@@ -66,7 +66,7 @@
         <Border x:Name="brd_NivelEducativo" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="26,403,690,128">
             <DockPanel Margin="0,0,0,-1">
                 <Image Source="/Vistas/Recursos/Iconos/NivelEducativo.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                <ComboBox x:Name="cmb_NivelEducativo" Width="225" Height="26" FontSize="18" Cursor="Hand" SelectionChanged="Cmb_NivelEducativoSeleccion"
+                <ComboBox x:Name="cmb_NivelEducativo" Width="225" Height="26" FontSize="18" Cursor="Hand" 
                    Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
                     <ComboBoxItem Content="Preparatoria" Cursor="Hand" />
                     <ComboBoxItem Content="Universidad" Cursor="Hand" />
@@ -90,7 +90,7 @@
             <Border x:Name="brd_Materia" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="690,403,26,128">
                 <DockPanel Margin="0,0,0,-1">
                     <Image Source="/Vistas/Recursos/Iconos/Institucion.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                    <ComboBox x:Name="cmb_Materia" Width="224" Height="26" FontSize="18" Cursor="Hand" SelectionChanged="Cmb_MateriaSeleccion"
+                    <ComboBox x:Name="cmb_Materia" Width="224" Height="26" FontSize="18" Cursor="Hand" 
             Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
                     </ComboBox>
                 </DockPanel>
