@@ -11,14 +11,20 @@
     <Grid Margin="157,0,157,0">
 
         <!-- Título -->
-        <Label Content="Tu Per" FontWeight="Bold" FontSize="40" Margin="153,59,530,453" />
-        <Label Content="fil" FontWeight="Bold" Foreground="#16b555" FontSize="40" Margin="272,59,639,453" />
+        <Label Content="Tu Per" FontWeight="Bold" FontSize="40" Margin="153,19,530,493" />
+        <Label Content="fil" FontWeight="Bold" Foreground="#16b555" FontSize="40" Margin="272,21,639,491" />
+        
+        <TextBox x:Name="txtb_Seguidores" FontSize="25" BorderThickness="0" FontWeight="Bold" FontFamily="Calibri" MaxLength="30" Margin="165,100,731,448" />
+        <Label Content="Seguidores" FontFamily="Calibri" FontSize="15" Margin="162,122,658,424" />
 
-        <Grid Width="120" Height="120" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,30,0,0">
-            <!-- Imagen circular -->
+        <TextBox x:Name="txtb_Seguidos" FontSize="25" BorderThickness="0" FontWeight="Bold" FontFamily="Calibri" MaxLength="30" Margin="275,100,621,448" />
+
+        <Label Content="Seguidos" FontFamily="Calibri" FontSize="15" Margin="272,122,548,424" />
+
+        <Grid x:Name="grd_Foto" Width="120" Height="120" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,30,0,0">
             <Ellipse Width="120" Height="120" Cursor="Hand" MouseDown="CambiarImagen">
                 <Ellipse.Fill>
-                    <ImageBrush x:Name="img_FotoPerfil" ImageSource="/Vistas/Recursos/Iconos/A.jpg"/>
+                    <ImageBrush x:Name="img_FotoPerfil"/>
                 </Ellipse.Fill>
             </Ellipse>
 
@@ -77,16 +83,6 @@
             <DockPanel Margin="0,0,0,-1">
                 <Image Source="/Vistas/Recursos/Iconos/Institucion.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
                 <TextBox x:Name="txtb_Institucion" Height="26" FontSize="18" Background="Transparent" IsReadOnly="True"
-                     BorderThickness="0" Foreground="Black" FontFamily="Calibri" MaxLength="30" Margin="3,9,3,6" />
-            </DockPanel>
-        </Border>
-
-        <!-- Carrera -->
-        <Label Content="Carrera" FontFamily="Calibri" FontWeight="Bold" FontSize="18" Margin="685,364,159,176" />
-        <Border x:Name="brd_Carrera" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="690,403,26,128">
-            <DockPanel Margin="0,0,0,-1">
-                <Image Source="/Vistas/Recursos/Iconos/Carrera.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                <TextBox x:Name="Carrera" Height="26" FontSize="18" Background="Transparent" IsReadOnly="True"
                      BorderThickness="0" Foreground="Black" FontFamily="Calibri" MaxLength="30" Margin="3,9,3,6" />
             </DockPanel>
         </Border>

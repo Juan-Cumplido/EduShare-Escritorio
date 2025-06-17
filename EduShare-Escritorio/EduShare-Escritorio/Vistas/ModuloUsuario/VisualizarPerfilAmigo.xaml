@@ -1,0 +1,152 @@
+﻿<Page x:Class="EduShare_Escritorio.Vistas.ModuloUsuario.VisualizarPerfilAmigo"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EduShare_Escritorio.Vistas.ModuloUsuario"
+      mc:Ignorable="d" 
+      Background="White"
+      d:DesignHeight="574" d:DesignWidth="1280">
+
+    <Grid Margin="157,0,157,0">
+        <!-- Título -->
+        <Label Content="¡Mira quién" FontWeight="Bold" FontSize="25" Margin="390,0,392,512" />
+        <Label Content="es!" FontWeight="Bold" Foreground="#16b555" FontSize="25" Margin="527,0,285,512" />
+
+        <Label Content="← Volver a la comunidad" FontFamily="Calibri" FontWeight="Bold" MouseDown="RegresarAlLaComunidad" Cursor="Hand" FontSize="16" Margin="0,26,747,514" />
+        <Line X1="0" Y1="20" X2="164" Y2="20" Stroke="Gray" StrokeThickness="1"
+          HorizontalAlignment="Left" VerticalAlignment="Top" Width="164" Canvas.Top="10" Margin="6,30,0,0" />
+
+        <!-- Datos del perfil del usuario -->
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Width="522" Margin="88,89,0,0" Height="146">
+            <TextBlock x:Name="txt_NombreCompleto" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left"/>
+            <TextBlock x:Name="txt_Usuario" FontSize="18" Foreground="Gray" HorizontalAlignment="Left"/>
+            <TextBlock x:Name="txt_NivelEducativo" FontSize="18" HorizontalAlignment="Left"/>
+            <TextBlock x:Name="txt_Institucion" FontSize="18" HorizontalAlignment="Left"/>
+            <TextBlock>
+                <Run x:Name="txt_Seguidores" FontWeight="Bold" FontSize="18"/>
+                <Run Text=" Seguidores       "/>
+                <Run x:Name="txt_Seguidos" FontWeight="Bold" FontSize="18" />
+                <Run Text=" Seguidos "/>
+
+            </TextBlock>
+            <TextBlock  />
+            <TextBlock  FontSize="18" HorizontalAlignment="Left"/>
+        </StackPanel>
+
+
+        <Grid Width="120" Height="120" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="762,72,0,0">
+
+            <Ellipse Width="120" Height="118" Cursor="Hand" >
+                <Ellipse.Fill>
+                    <ImageBrush x:Name="img_FotoPerfil"/>
+                </Ellipse.Fill>
+            </Ellipse>
+        </Grid>
+
+        <!-- Línea de separación -->
+        <Canvas Margin="0,252,0,287">
+            <TextBlock FontFamily="Calibri" FontWeight="Bold" Foreground="Black" Text="Publicaciones"
+               FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Top" Width="294" Canvas.Top="10" />
+            <Line X1="0" Y1="20" X2="970" Y2="20" Stroke="Green" StrokeThickness="1"
+          HorizontalAlignment="Left" VerticalAlignment="Center" Width="966" Canvas.Top="10" />
+        </Canvas>
+
+        <Grid x:Name="grd_SinPublicaciones" Margin="0,287,0,50" Visibility="Collapsed" >
+            <Image Source="/Vistas/Recursos/Fondos/Publicacion.png" Margin="417,18,412,87"/>
+            <Label 
+               Content="Este usuario aún no tiene publicaciones."
+               Foreground="Gray"
+               FontStyle="Italic"
+               FontSize="16"
+               HorizontalAlignment="Center"
+               Margin="0,150,0,0" Height="64" VerticalAlignment="Top"/>
+
+        </Grid>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,287,0,50">
+            <ItemsControl x:Name="itmc_DocumentosControl">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="#DDD" BorderThickness="1" Margin="0 10" Padding="10" CornerRadius="8">
+                            <Grid>
+                                <!-- CONTENIDO PRINCIPAL -->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="250" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Imagen -->
+                                    <StackPanel>
+                                        <Image Source="{Binding Imagen}" Width="120" Height="120"/>
+                                    </StackPanel>
+
+                                    <!-- Info -->
+                                    <StackPanel Grid.Column="1" Margin="10,0">
+                                        <TextBlock Text="{Binding Titulo}" FontSize="20" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding Descripcion}" TextWrapping="Wrap" Foreground="Black" Margin="0,5,0,0"/>
+                                        <TextBlock Text="Interés: ninguno" Foreground="Gray" Margin="0,0,0,10"/>
+                                        <TextBlock>
+                                    <Run Text="Cargado por "/>
+                                    <Run Text="{Binding Autor}" FontWeight="Bold" Foreground="#007ACC"/>
+                                    <Run Text=" el "/>
+                                    <Run Text="{Binding Fecha}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <!-- Estadísticas -->
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Top" Margin="10,0,0,0">
+                                        
+
+                                        <TextBlock Margin="0,5,0,0">
+                                    <Run Text="👍 " FontWeight="Bold"/>
+                                    <Run Text="{Binding Likes}" FontWeight="Bold"/>
+                                        </TextBlock>
+                                        <TextBlock Margin="0,5,0,0">
+                                    <Run Text="{Binding Descargas}" FontWeight="Bold"/>
+                                    <Run Text=" Descargas " FontWeight="Bold"/>
+                                        </TextBlock>
+                                        <TextBlock Margin="0,5,0,0">
+                                    <Run Text="Vistas: " FontWeight="Bold"/>
+                                    <Run Text="{Binding Vistas}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                    </DataTemplate>
+
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <Border x:Name="brd_Seguir" Background="#16b555" CornerRadius="8" Margin="784,204,106,340" Visibility="Visible">
+            <Button x:Name="btn_Seguir" Content="Seguir" FontSize="16" FontFamily="Calibri"
+                Background="Transparent" Foreground="White" FontWeight="Bold"
+                BorderThickness="0" Cursor="Hand" Click="SeguirPerfil" Margin="0,-4,0,-6">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontSize" Value="22"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="Transparent" CornerRadius="15" Padding="10" Width="NaN" Height="NaN" Margin="0,-4,0,2">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Border>
+    </Grid>
+</Page>

@@ -1,0 +1,130 @@
+﻿<Page x:Class="EduShare_Escritorio.Vistas.ModuloDocumentos.SubirDocumento"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EduShare_Escritorio.Vistas.ModuloDocumentos"
+      xmlns:wpfGif="http://wpfanimatedgif.codeplex.com"
+      mc:Ignorable="d" 
+      Background="White"
+      d:DesignHeight="574" d:DesignWidth="1280">
+
+    <Grid Margin="157,0,157,0">
+        <Image wpfGif:ImageBehavior.AnimatedSource="/Vistas/Recursos/Fondos/SubirDocumento.gif" Margin="754,0,0,477" Stretch="UniformToFill" />
+        <!-- Título -->
+        <Label Content="Inspira con tu contenido:" FontWeight="Bold" FontSize="25" Margin="0,16,439,496" />
+        <Label Content="súbelo ahora " FontWeight="Bold" Foreground="#16b555" FontSize="25" Margin="298,16,422,496" />
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="72,97,870,436" Foreground="Red"/>
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="426,97,516,436" Foreground="Red"/>
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="143,364,799,169" Foreground="Red"/>
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="102,201,840,332" Foreground="Red"/>
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="402,364,540,169" Foreground="Red"/>
+
+        
+        <Label Content="Título" FontFamily="Calibri" FontSize="18" Margin="20,100,799,446" />
+        <Border x:Name="brd_Titulo" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="26,138,690,393">
+            <TextBox x:Name="txtb_Titulo" Height="26" FontSize="18" Background="Transparent"  GotFocus="TituloGotFocus" LostFocus="TituloLostFocus" Text="Escribe un título"
+                     BorderThickness="0" Foreground="Gray" FontFamily="Calibri" MaxLength="100" Margin="3,9,3,6" />
+        </Border>
+
+        <Label Content="Categoría" FontFamily="Calibri" FontSize="18" Margin="352,100,467,441" />
+        <Border x:Name="brd_Categoria" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8"  Margin="358,138,358,393">
+            <DockPanel Margin="0,0,0,-1">
+                <Image Source="/Vistas/Recursos/Iconos/Institucion.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
+                <ComboBox x:Name="cmb_Categoria" Width="224" Height="26" FontSize="18" Cursor="Hand" 
+                   Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
+                </ComboBox>
+            </DockPanel>
+        </Border>
+
+        <Label Content="Contenido" FontFamily="Calibri" FontSize="18" Margin="20,204,799,342" />
+        <Border x:Name="brd_Contenido" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="26,238,358,243">
+            <TextBox x:Name="txtb_Contenido" FontSize="18" Background="Transparent" TextWrapping="Wrap" GotFocus="ResumenGotFocus" LostFocus="ResumenLostFocus" 
+                    BorderThickness="0" Foreground="Gray" FontFamily="Calibri" MaxLength="200" Margin="9,9,9,9" Text="Escribe un resumen rápido: ¿De qué se trata este documento? ¿Dónde se originó? ¿Quién podría encontrar esta información útil? ¿Cuáles son los aspectos más destacados?" />
+        </Border>
+
+        <Grid x:Name="grd_Documento" Margin="690,138,0,243">
+            <Border x:Name="brd_DropArea" BorderBrush="#16b555" BorderThickness="2" CornerRadius="10" Cursor="Hand"
+                AllowDrop="True" MouseLeftButtonUp="AbrirExplorador" Drop="DropAreaDrop"
+                DragEnter="DropAreaDragEnter" DragLeave="DropAreaDragLeave" Background="#f0f0f0"
+                HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid x:Name="grd_DropContent">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Image Source="/Vistas/Recursos/Iconos/SubirPdf.png" Width="80" Height="80" Opacity="0.6"/>
+                        <TextBlock Text="Haz clic o arrastra aquí para subir tu PDF"   TextWrapping="Wrap"
+                       FontFamily="Calibri" FontSize="16" Foreground="Gray" 
+                       HorizontalAlignment="Center" TextAlignment="Center" Margin="10"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+
+        </Grid>
+
+        <!-- Nivel Educativo -->
+        <Label Content="Nivel Educativo" FontFamily="Calibri"  FontSize="18" Margin="20,364,795,176" />
+        <Border x:Name="brd_NivelEducativo" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="26,403,690,128">
+            <DockPanel Margin="0,0,0,-1">
+                <Image Source="/Vistas/Recursos/Iconos/NivelEducativo.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
+                <ComboBox x:Name="cmb_NivelEducativo" Width="225" Height="26" FontSize="18" Cursor="Hand" 
+                   Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
+                    <ComboBoxItem Content="Preparatoria" Cursor="Hand" />
+                    <ComboBoxItem Content="Universidad" Cursor="Hand" />
+                </ComboBox>
+            </DockPanel>
+        </Border>
+
+        <Label Content="Rama" FontFamily="Calibri" FontSize="18" Margin="352,364,435,176" />
+        <Border x:Name="brd_Rama" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="358,403,358,128">
+            <DockPanel Margin="0,0,0,-1">
+                <Image Source="/Vistas/Recursos/Iconos/Institucion.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
+                <ComboBox x:Name="cmb_Rama" Width="224" Height="26" FontSize="18" Cursor="Hand" SelectionChanged="Cmb_RamaSeleccion"
+                   Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
+                </ComboBox>
+            </DockPanel>
+        </Border>
+
+        <Grid x:Name="grd_Materia" Visibility="Collapsed">
+            <Label Content="Materia" FontFamily="Calibri" FontSize="18" Margin="684,364,103,176" />
+            <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="750,364,192,169" Foreground="Red"/>
+            <Border x:Name="brd_Materia" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="690,403,26,128">
+                <DockPanel Margin="0,0,0,-1">
+                    <Image Source="/Vistas/Recursos/Iconos/Institucion.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
+                    <ComboBox x:Name="cmb_Materia" Width="224" Height="26" FontSize="18" Cursor="Hand" 
+            Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
+                    </ComboBox>
+                </DockPanel>
+            </Border>
+        </Grid>
+       
+
+
+
+        <Border Background="#16b555" CornerRadius="8" Margin="843,500,26,34">
+            <Button x:Name="btn_Guardar" Content="Subir" FontSize="20" FontFamily="Calibri" 
+            Background="Transparent" Foreground="White" FontWeight="Bold"
+            BorderThickness="0" Cursor="Hand" Click="SubirPublicacion" Margin="0,-4,0,-6">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontSize" Value="22"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="Transparent" CornerRadius="15" Padding="10" Width="90" Height="NaN" Margin="0,0,0,6">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Border>
+
+    </Grid>
+</Page>

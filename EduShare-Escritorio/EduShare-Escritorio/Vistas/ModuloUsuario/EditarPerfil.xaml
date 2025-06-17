@@ -15,10 +15,16 @@
         <Label Content="Editar Per" FontWeight="Bold" FontSize="40" Margin="366,16,367,496" />
         <Label Content="fil" FontWeight="Bold" Foreground="#16b555" FontSize="40" Margin="550,16,361,496" />
 
-
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="103,100,837,442" Foreground="Red"/>
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="78,208,862,334" Foreground="Red"/>
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="418,208,522,334" Foreground="Red"/>
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="141,365,799,177" Foreground="Red"/>
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="509,364,431,178" Foreground="Red"/>
 
         <!-- Nombre -->
         <Label Content="Nombre(s)" FontFamily="Calibri" FontSize="18" Margin="20,100,799,446" />
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="470,100,470,442" Foreground="Red"/>
+
         <Border x:Name="brd_Nombre" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="26,138,690,393">
             <TextBox x:Name="txtb_Nombre" Height="26" FontSize="18" Background="Transparent"
                      BorderThickness="0" Foreground="Black" FontFamily="Calibri" MaxLength="30" Margin="3,9,3,6" />
@@ -72,10 +78,8 @@
         <Border x:Name="brd_NivelEducativo" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="26,403,690,128">
             <DockPanel Margin="0,0,0,-1">
                 <Image Source="/Vistas/Recursos/Iconos/NivelEducativo.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                <ComboBox x:Name="cmb_NivelEducativo" Width="225" Height="26" FontSize="18" Cursor="Hand"
+                <ComboBox x:Name="cmb_NivelEducativo" Width="225" Height="26" FontSize="18" Cursor="Hand" SelectionChanged="Cmb_NivelEducativoSeleccion"
                           Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
-                    <ComboBoxItem Content="Preparatoria" Cursor="Hand" />
-                    <ComboBoxItem Content="Universidad" Cursor="Hand" />
                 </ComboBox>
             </DockPanel>
         </Border>
@@ -85,23 +89,8 @@
         <Border x:Name="brd_Institucion" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="358,403,358,128">
             <DockPanel Margin="0,0,0,-1">
                 <Image Source="/Vistas/Recursos/Iconos/Institucion.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                <ComboBox x:Name="cmb_Institución" Width="224" Height="26" FontSize="18" Cursor="Hand"
+                <ComboBox x:Name="cmb_Institución" Width="224" Height="26" FontSize="18" Cursor="Hand" SelectionChanged="Cmb_InstitucionSeleccion"
                           Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
-                    <ComboBoxItem Content="UV" Cursor="Hand" />
-                    <ComboBoxItem Content="UNAM" Cursor="Hand" />
-                </ComboBox>
-            </DockPanel>
-        </Border>
-
-        <!-- Carrera -->
-        <Label Content="Carrera" FontFamily="Calibri"  FontSize="18" Margin="685,364,159,176" />
-        <Border x:Name="brd_Carrera" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="690,403,26,128">
-            <DockPanel Margin="0,0,0,-1">
-                <Image Source="/Vistas/Recursos/Iconos/Carrera.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                <ComboBox x:Name="cmb_Carrera" Width="223" Height="26" FontSize="18" Cursor="Hand"
-                          Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
-                    <ComboBoxItem Content="LIS" Cursor="Hand" />
-                    <ComboBoxItem Content="Redes" Cursor="Hand" />
                 </ComboBox>
             </DockPanel>
         </Border>

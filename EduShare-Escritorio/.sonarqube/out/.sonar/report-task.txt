@@ -1,0 +1,6 @@
+projectKey=EduShare-Escritorio
+serverUrl=http://localhost:9000
+serverVersion=10.6.0.92116
+dashboardUrl=http://localhost:9000/dashboard?id=EduShare-Escritorio
+ceTaskId=5b94a127-a944-41c5-814f-8b2594159098
+ceTaskUrl=http://localhost:9000/api/ce/task?id=5b94a127-a944-41c5-814f-8b2594159098
