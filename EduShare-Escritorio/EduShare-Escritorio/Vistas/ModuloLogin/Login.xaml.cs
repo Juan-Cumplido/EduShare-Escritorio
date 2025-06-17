@@ -1,9 +1,14 @@
-﻿using EduShare_Escritorio.Utilidades;
+﻿using EduShare_Escritorio.Modelos.Perfil;
+using EduShare_Escritorio.NotificacionesYChat;
+using EduShare_Escritorio.Servicio;
+using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas.Menus;
 using EduShare_Escritorio.Vistas.ModuloUsuario;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,9 +26,12 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
 {
     public partial class Login : Page
     {
+        private NotificacionSocketService socket = App.SocketNotificaciones;
+        private static readonly LoggerManager _logger = new LoggerManager(typeof(Login));
         public Login()
         {
             InitializeComponent();
+
         }
 
         private void MostrarMensajePersonalizado(string message, DialogType type)
@@ -116,39 +124,6 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
             }
         }
 
-        private static void CrearPerfilSingleton()
-        {
-            var perfil = PerfilSingleton.Instance;
-
-            perfil.IdAcceso = 1;
-            perfil.Correo = "cumplidonegrete@gmail.com";
-            perfil.NombreUsuario = "Juancho1";
-            perfil.IdUsuarioRegistrado = 1;
-            perfil.Nombre = "Juan Eduardo";
-            perfil.PrimerApellido = "Cumplido";
-            perfil.SegundoApellido = "Negrete";
-        }
-
-
-        private void BtnLoginClick(object sender, RoutedEventArgs e)
-        {
-            RegresarBordeNormal();
-
-            if (VerificarCampos())
-            {
-                CrearPerfilSingleton();
-                NavigationService.Navigate(new MenuPrincipal());
-            }
-            else
-            {
-                MostrarMensajePersonalizado("Por favor, asegúrate de ingresar su correo o nombre de usuario y una contraseña.", DialogType.Warning);
-            }
-
-        }
-
-
-
-
         private bool VerificarCampos()
         {
             bool usuario = !string.IsNullOrWhiteSpace(txtb_Usuario.Text) && txtb_Usuario.Text != "Ingrese su correo o usuario";
@@ -168,6 +143,117 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
             brd_Usuario.BorderBrush = verde;
             brd_Contraseña.BorderBrush= verde;
         }
-            
+
+        private void BtnLoginClick(object sender, RoutedEventArgs e)
+        {
+            RegresarBordeNormal();
+
+            if (VerificarCampos())
+            {
+                string usuario = txtb_Usuario.Text;
+                string contrasenia = isPasswordVisible ? txt_ContraseñaVisible.Text : pwb_PasswordBox.Password;
+                string contraseniaHashed = Hasher.HashToSHA2(contrasenia);
+
+                var credenciales = new UsuarioLogin { Identifier = usuario, Contrasenia = contraseniaHashed };
+
+                RespuestaLogin(credenciales);
+            }
+            else
+            {
+                MostrarMensajePersonalizado("Por favor, asegúrate de ingresar usuario y contraseña.", DialogType.Warning);
+               
+            }
+
+        }
+
+        private async void RespuestaLogin(UsuarioLogin login)
+        {
+            btn_Login.IsEnabled = false;
+            img_Loading.Visibility = Visibility.Visible;
+
+            try
+            {
+                var respuesta = await UsuarioServicio.IniciarSesionAsync(login);
+
+                switch (respuesta.Estado)
+                {
+                    case (int)HttpStatusCode.OK:
+                        await CrearPerfilSingletonAsync(respuesta.Datos, respuesta.Token);
+                        DesplegarMenu(respuesta.Datos.TipoAcceso);
+                        await App.SocketNotificaciones.ConectarAsync(PerfilSingleton.Instance.IdUsuarioRegistrado.ToString());
+                        break;
+                    case (int)HttpStatusCode.Unauthorized:
+                    case (int)HttpStatusCode.BadRequest:
+                        MostrarMensajePersonalizado("Usuario o contraseña incorrectos. Revisa tus credenciales.", DialogType.Warning);
+                        break;
+                    case (int)HttpStatusCode.Forbidden:
+                        MostrarMensajePersonalizado("Estimado estudiante, su cuenta fue agregada a la lista negra por incumplir las normas en un documento", DialogType.Warning);
+                        break;
+                    case (int)HttpStatusCode.InternalServerError:
+                        MostrarMensajePersonalizado("Error interno del servidor. Inténtalo más tarde.", DialogType.Error);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MostrarMensajePersonalizado("Ocurrió un error inesperado: " + ex.Message, DialogType.Error);
+            }
+            finally
+            {
+                btn_Login.IsEnabled = true;
+                img_Loading.Visibility = Visibility.Collapsed;
+            }
+        }
+
+
+
+
+        private async Task CrearPerfilSingletonAsync(DatosUsuario datos, string token)
+        {
+            BusquedaSingleton.Instance.LimpiarBusqueda();
+            var perfil = PerfilSingleton.Instance;
+            perfil.IdUsuarioRegistrado = datos.IdUsuario;
+            perfil.Nombre = datos.Nombre;
+            perfil.PrimerApellido = datos.PrimerApellido;
+            perfil.SegundoApellido = datos.SegundoApellido;
+            perfil.NombreUsuario = datos.NombreUsuario;
+            perfil.Correo = datos.Correo;
+            perfil.TokenJwt = token;
+            perfil.RutaPerfil = datos.FotoPerfil;
+
+            if (!string.IsNullOrEmpty(datos.FotoPerfil))
+            {
+                try
+                {
+                    var grpcClient = new FileServiceClientHandler();
+                    var (fotoBinaria, _) = await grpcClient.DownloadImageAsync(datos.FotoPerfil);
+
+                    perfil.FotoPerfilBinaria = fotoBinaria ?? Array.Empty<byte>();
+                }
+                catch (Exception ex)
+                {
+                    perfil.FotoPerfilBinaria = Array.Empty<byte>();
+
+                    _logger.LogFatal(ex);
+                    MostrarMensajePersonalizado("Error interno del servidor. Su foto de perfil no se pudo recuperar", DialogType.Warning);
+                }
+            }
+        }
+
+
+
+        private void DesplegarMenu(string role)
+        {
+            switch (role)
+            {
+                case "Registrado":
+                    NavigationService.Navigate(new MenuPrincipal());
+                    break;
+
+                case "Administrador":
+                    NavigationService.Navigate(new MenuAdministrador());
+                    break;
+            }
+        }
     }
 }

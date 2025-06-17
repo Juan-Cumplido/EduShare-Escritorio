@@ -19,9 +19,9 @@
                     <StackPanel VerticalAlignment="Stretch">
                         <TextBlock Text="Arte" FontSize="25" FontWeight="Bold" FontFamily="Calibri" Margin="30,30,0,0" />
 
-                        <Label x:Name="btn_VerTodoArte" Content="Ver todo →" Background="Transparent" FontSize="16" FontFamily="Calibri" BorderThickness="0" Foreground="Black"
-                             HorizontalAlignment="Left" Margin="30,64,0,40"
-                             Cursor="Hand" />
+                        <TextBlock Text="Explora más sobre arte en EduShare. ¡Usa la barra de búsqueda!"  TextWrapping="Wrap"
+                           Background="Transparent" FontSize="14" FontFamily="Calibri"  Foreground="Black"
+                           HorizontalAlignment="Left" Margin="30,43,0,40" />
 
                         <Image Source="/Vistas/Recursos/Fondos/Arte.jpg" Margin="5,0,5,0" Stretch="UniformToFill" Height="99" />
                     </StackPanel>
@@ -31,9 +31,9 @@
                     <StackPanel VerticalAlignment="Stretch">
                         <TextBlock Text="Programación" FontSize="25" FontWeight="Bold" FontFamily="Calibri" Margin="30,30,0,0" />
 
-                        <Label x:Name="btn_VerTodoProgramacion" Content="Ver todo →" Background="Transparent" FontSize="16" FontFamily="Calibri" BorderThickness="0" Foreground="Black"
-                         HorizontalAlignment="Left" Margin="30,64,0,40"
-                         Cursor="Hand" />
+                        <TextBlock Text="EduShare está lleno de contenido sobre programación. ¡Búscalo arriba!"  TextWrapping="Wrap"
+                           Background="Transparent" FontSize="14" FontFamily="Calibri"  Foreground="Black"
+                           HorizontalAlignment="Left" Margin="30,43,0,40" />
                         <Image wpfGif:ImageBehavior.AnimatedSource="/Vistas/Recursos/Fondos/Programacion.gif" Margin="5,0,5,0" Stretch="UniformToFill" Height="99" />
 
                     </StackPanel>
@@ -43,9 +43,9 @@
                     <StackPanel VerticalAlignment="Stretch">
                         <TextBlock Text="Derecho" FontSize="25" FontWeight="Bold" FontFamily="Calibri" Margin="30,30,0,0" />
 
-                        <Label x:Name="btn_VerTodoDerecho" Content="Ver todo →" Background="Transparent" FontSize="16" FontFamily="Calibri" BorderThickness="0" Foreground="Black"
-                             HorizontalAlignment="Left" Margin="30,64,0,40"
-                             Cursor="Hand" />
+                        <TextBlock Text="¿Buscas más sobre derecho? EduShare lo tiene, ¡búscalo arriba!"  TextWrapping="Wrap"
+                            Background="Transparent" FontSize="14" FontFamily="Calibri"  Foreground="Black"
+                            HorizontalAlignment="Left" Margin="30,43,0,40" />
                         <Image Source="/Vistas/Recursos/Fondos/Derecho.jpg" Margin="5,0,5,0" Stretch="UniformToFill" Height="99" />
                     </StackPanel>
                 </Border>
@@ -55,9 +55,9 @@
                     <StackPanel VerticalAlignment="Stretch">
                         <TextBlock Text="Ingeniería" FontSize="25" FontWeight="Bold" FontFamily="Calibri" Margin="30,30,0,0" />
 
-                        <Label x:Name="btn_VerTodoIngenieria" Content="Ver todo →" Background="Transparent" FontSize="16" FontFamily="Calibri" BorderThickness="0" Foreground="Black"
-                             HorizontalAlignment="Left" Margin="30,64,0,40"
-                             Cursor="Hand" />
+                        <TextBlock Text="Tenemos mucho contenido de ingeniería. ¡Encuéntralo con la búsqueda!"  TextWrapping="Wrap"
+                        Background="Transparent" FontSize="14" FontFamily="Calibri"  Foreground="Black"
+                        HorizontalAlignment="Left" Margin="30,43,0,40" />
                         <Image Source="/Vistas/Recursos/Fondos/Ingenieria.jpg" Margin="5,0,5,0" Stretch="UniformToFill" Height="99" />
                     </StackPanel>
                 </Border>

@@ -1,7 +1,11 @@
-﻿using EduShare_Escritorio.Utilidades;
+﻿using EduShare_Escritorio.Servicio;
+using EduShare_Escritorio.Utilidades;
+using EduShare_Escritorio.Vistas.ModuloLogin;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,84 +18,119 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static EduShare_Escritorio.Vistas.VentanaEmergentePersonalizada;
 
 namespace EduShare_Escritorio.Vistas.ModuloUsuario
 {
-    /// <summary>
-    /// Lógica de interacción para Amigos.xaml
-    /// </summary>
     public partial class Amigos : Page
     {
+        private List<UsuarioPerfil> _todosLosPerfiles = new List<UsuarioPerfil>();
+        private static readonly LoggerManager _logger = new LoggerManager(typeof(Login));
         public Amigos()
         {
             InitializeComponent();
-            CargarUsuariosSimulados();
+            CargarUsuarios();
         }
 
-         private void BuscarAmigo(object sender, MouseButtonEventArgs e)
+        private void MostrarMensajePersonalizado(string message, DialogType type)
         {
-
+            var dialog = new VentanaEmergentePersonalizada(message, type)
+            {
+                Owner = Window.GetWindow(this)
+            };
+            dialog.ShowDialog();
         }
 
-        private void CargarUsuariosSimulados()
+        private void BuscarAmigo(object sender, MouseButtonEventArgs e)
         {
+        }
 
-            var usuarios = new List<UsuarioPerfil>
+        private async void CargarUsuarios()
         {
-            new UsuarioPerfil
+            ListaComentarios.ItemsSource = null;
+
+            try
             {
-                Nombre = "Ana",
-                ApellidoPaterno = "López",
-                ApellidoMaterno = "García",
-                NombreUsuario = "Carlos123",
-                NivelEducativo = "Licenciatura en Pedagogía",
-                Institucion = "Universidad Nacional",
-                Imagen = "/Vistas/Recursos/Fondos/Arte.jpg"
-            },
-            new UsuarioPerfil
-            {
-                Nombre = "Carlos",
-                ApellidoPaterno = "Ramírez",
-                ApellidoMaterno = "Morales",
-                NombreUsuario = "Ana123",
-                NivelEducativo = "Ingeniería en Sistemas",
-                Institucion = "Tecnológico de Monterrey",
-                Imagen = "/Vistas/Recursos/Fondos/Derecho.jpg"
-            },
-            new UsuarioPerfil
-            {
-                Nombre = "María",
-                ApellidoPaterno = "Fernández",
-                ApellidoMaterno = "Ortiz",
-                NombreUsuario = "Maria1334",
-                NivelEducativo = "Maestría en Educación",
-                Institucion = "UNAM",
-                Imagen = "/Vistas/Recursos/Fondos/Ingenieria.jpg"
-            },
-            new UsuarioPerfil
-            {
-                Nombre = "Luis",
-                ApellidoPaterno = "Sánchez",
-                ApellidoMaterno = "Martínez",
-                NombreUsuario = "Luis123",
-                NivelEducativo = "Doctorado en Ciencias de la Computación",
-                Institucion = "IPN",
-                Imagen = "/Vistas/Recursos/Fondos/Arte.jpg"
-            },
-            new UsuarioPerfil
-            {
-                Nombre = "Paola",
-                ApellidoPaterno = "Vega",
-                ApellidoMaterno = "Domínguez",
-                NombreUsuario = "Paola1233",
-                NivelEducativo = "Licenciatura en Psicología",
-                Institucion = "Universidad Autónoma de Puebla",
-                Imagen = "/Vistas/Recursos/Fondos/Arte.jpg"
+                string token = PerfilSingleton.Instance.TokenJwt;
+
+                var respuesta = await PerfilServicio.ObtenerSeguidos(token);
+
+                switch (respuesta.Estado)
+                {
+                    case 200:
+                        var listaPerfiles = new List<UsuarioPerfil>();
+
+                        foreach (var perfil in respuesta.Datos)
+                        {
+
+                            if (perfil.IdUsuarioRegistrado == PerfilSingleton.Instance.IdUsuarioRegistrado)
+                                continue;
+
+                            byte[] imagenBinaria = Array.Empty<byte>();
+                            try
+                            {
+                                var grpc = new FileServiceClientHandler();
+                                var (imagen, _) = await grpc.DownloadImageAsync(perfil.FotoPerfil);
+                                imagenBinaria = imagen ?? Array.Empty<byte>();
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError(ex);
+                                MostrarMensajePersonalizado("Error del servidor. No se pudieron recuperar las fotos de perfiles.", DialogType.Error);
+                            }
+
+                            listaPerfiles.Add(new UsuarioPerfil
+                            {
+                                IdUsuarioRegistrado = perfil.IdUsuarioRegistrado,
+                                Nombre = perfil.Nombre,
+                                PrimerApellido = perfil.PrimerApellido,
+                                SegundoApellido = perfil.SegundoApellido,
+                                NombreUsuario = perfil.NombreUsuario,
+                                NivelEducativo = perfil.NivelEducativo,
+                                NombreInstitucion = perfil.NombreInstitucion,
+                                FotoPerfilRuta = perfil.FotoPerfil,
+                                Imagen = ConvertirABitmap(imagenBinaria)
+                            });
+                        }
+
+                        _todosLosPerfiles = listaPerfiles;
+                        ListaComentarios.ItemsSource = listaPerfiles;
+                        break;
+
+                    case (int)HttpStatusCode.Unauthorized:
+                        MostrarMensajePersonalizado("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.", DialogType.Error);
+                        NavigationService.Navigate(new Login());
+                        PerfilSingleton.Instance.Reset();
+                        break;
+
+                    case 500:
+                        MostrarMensajePersonalizado("Error del servidor. No se pudieron recuperar los perfiles.", DialogType.Error);
+                        break;
+
+                    default:
+                        MostrarMensajePersonalizado($"Error: {respuesta.Mensaje}", DialogType.Warning);
+                        break;
+                }
             }
-        };
+            catch (Exception ex)
+            {
+                _logger.LogFatal(ex);
+                MostrarMensajePersonalizado("Ocurrió un error inesperado.", DialogType.Error);
+            }
 
+        }
 
-            ListaComentarios.ItemsSource = usuarios;
+        public BitmapImage? ConvertirABitmap(byte[] datos)
+        {
+            if (datos == null || datos.Length == 0) return null;
+
+            using var stream = new MemoryStream(datos);
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.StreamSource = stream;
+            image.EndInit();
+            return image;
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)
@@ -112,28 +151,60 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
             }
         }
 
-        private void DejarDeSeguir(object sender, RoutedEventArgs e)
+        private void BuscarPerfil_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (sender is Button boton && boton.Tag is UsuarioPerfil amigo)
+            if (_todosLosPerfiles == null || _todosLosPerfiles.Count == 0)
+                return;
+
+            var texto = txtb_BuscarTextBox.Text?.Trim().ToLower() ?? "";
+
+            if (string.IsNullOrWhiteSpace(texto) || texto == "buscar perfil")
             {
-                var confirmacion = new VentanaEmergentePersonalizada(
-                    $"¿Deseas dejar de seguir a {amigo.Nombre} {amigo.ApellidoPaterno}?",
-                    VentanaEmergentePersonalizada.DialogType.Confirmation);
+                ListaComentarios.ItemsSource = _todosLosPerfiles;
+                return;
+            }
 
-                bool? resultado = confirmacion.ShowDialog();
+            var resultadosFiltrados = _todosLosPerfiles.Where(p =>
+                (!string.IsNullOrWhiteSpace(p.Nombre) && p.Nombre.ToLower().Contains(texto)) ||
+                (!string.IsNullOrWhiteSpace(p.PrimerApellido) && p.PrimerApellido.ToLower().Contains(texto)) ||
+                (!string.IsNullOrWhiteSpace(p.SegundoApellido) && p.SegundoApellido.ToLower().Contains(texto)) ||
+                (!string.IsNullOrWhiteSpace(p.NombreUsuario) && p.NombreUsuario.ToLower().Contains(texto))
+            ).ToList();
 
-                if (resultado == true)
+            ListaComentarios.ItemsSource = resultadosFiltrados;
+        }
+
+        private async void DejarDeSeguir(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button boton && boton.Tag is UsuarioPerfil perfil)
+            {
+                try
                 {
-                    var lista = ListaComentarios.ItemsSource as List<UsuarioPerfil>;
-                    if (lista != null)
+                    string token = PerfilSingleton.Instance.TokenJwt;
+
+                    var respuesta = await PerfilServicio.DejarDeSeguirUsuario(perfil.IdUsuarioRegistrado, token);
+
+                    if (respuesta.Estado == 200)
                     {
-                        lista.Remove(amigo);
+                        MostrarMensajePersonalizado("Has dejado de seguir a este usuario.", DialogType.Success);
+
+                        _todosLosPerfiles.Remove(perfil);
                         ListaComentarios.ItemsSource = null;
-                        ListaComentarios.ItemsSource = lista;
+                        ListaComentarios.ItemsSource = _todosLosPerfiles;
                     }
+                    else
+                    {
+                        MostrarMensajePersonalizado($"Error: {respuesta.Mensaje}", DialogType.Warning);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex);
+                    MostrarMensajePersonalizado("Ocurrió un error al dejar de seguir al usuario.", DialogType.Error);
                 }
             }
         }
+
 
     }
 }

@@ -1,0 +1,129 @@
+﻿<Page x:Class="EduShare_Escritorio.Vistas.ModuloChats.Chat"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EduShare_Escritorio.Vistas.ModuloChats"
+      mc:Ignorable="d" 
+      Background="White"
+      d:DesignHeight="574" d:DesignWidth="1280">
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Page.Resources>
+    <Grid Margin="157,0,157,0">
+        <Label x:Name="lbl_Salir" Content="➡️ Salir" FontFamily="Calibri" FontWeight="Bold" MouseDown="Salir" Cursor="Hand" FontSize="20" Margin="868,8,0,532" Visibility="visible" />
+        <Label x:Name="lbl_Finalizar" Content="➡️ Finalizar" FontFamily="Calibri" FontWeight="Bold" MouseDown="Finalizar" Cursor="Hand" FontSize="20" Margin="851,8,0,532" Visibility="Collapsed" />
+
+        <Line X1="0" Y1="20" X2="110" Y2="20" Stroke="Gray" StrokeThickness="1"
+           HorizontalAlignment="Left" VerticalAlignment="Top" Width="108" Canvas.Top="10" Margin="858,18,0,0" />
+
+        <Image x:Name="img_Visualizar" Source="/Vistas/Recursos/Fondos/Chats.png" Margin="0,0,887,493"/>
+        <TextBlock TextWrapping="Wrap" Text="Chat sobre los hilos" x:Name="txtb_Titulo"  FontSize="20" FontWeight="Bold" Margin="84,0,84,534" />
+        <StackPanel Orientation="Horizontal" Margin="84,32,84,520">
+            <TextBlock  Margin="0,0,20,0" Foreground="#3b3b3b" FontSize="15">
+                <Run Text="Nivel educativo: "/>
+                <Run x:Name="txtb_NivelEducativo" />
+            </TextBlock>
+            <TextBlock  Margin="0,0,20,0" Foreground="#3b3b3b" FontSize="15">
+                <Run Text="Rama: " />
+                <Run x:Name="txtb_Rama" />
+            </TextBlock>
+
+            <TextBlock  Margin="0,0,20,0" Foreground="#3b3b3b" FontSize="15">
+                <Run Text="Materia: " />
+                <Run x:Name="txtb_Materia" />
+            </TextBlock>
+        </StackPanel>
+
+        <TextBlock TextWrapping="Wrap" x:Name="txtb_Descripcion" FontFamily="Calibri" FontSize="18" Margin="84,66,84,474"/>
+
+        <ScrollViewer x:Name="scrol_Mensajes" VerticalScrollBarVisibility="Auto" Margin="84,130,84,154">
+            <StackPanel Orientation="Vertical">
+                <TextBlock x:Name="txtb_SinMnesajes"  TextWrapping="Wrap"
+                           Text="No hay mensajes, ¡sé el primero en comentar!"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Foreground="Gray"
+                           Margin="10"
+                           Visibility="Collapsed" Width="214"/>
+
+                <ItemsControl x:Name="item_Chat" Margin="0,10,0,10">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,5" HorizontalAlignment="{Binding Alineacion}">
+                                <Border Background="#f0f2f5" CornerRadius="20" Padding="10" MaxWidth="500">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Ellipse  Width="56" Height="56" Margin="0,0,10,0">
+                                            <Ellipse.Fill>
+                                                <ImageBrush ImageSource="{Binding Imagen}"/>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+
+                                        <StackPanel Width="420">
+                                            <TextBlock>
+                                                
+                                                <Run Text="{Binding Usuario}" FontWeight="Bold" FontSize="18" />
+                                                <Run Text="    Hora " Foreground="Gray"/>
+                                                <Run Text="{Binding Hora}" Foreground="Gray" FontSize="14"/>
+                                            </TextBlock>
+
+                                            <TextBlock Text="{Binding Texto}" 
+                                               TextWrapping="Wrap" 
+                                               TextTrimming="None"
+                                               FontSize="15"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <Button Content="🗑️" Width="30" Height="30" Background="Transparent" BorderThickness="0"
+                                            HorizontalAlignment="Right" VerticalAlignment="Top" 
+                                            Visibility="Collapsed"
+                                            Click="EliminarComentario"
+                                            Tag="{Binding}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <Ellipse x:Name="elp_Perfil" Height="56" VerticalAlignment="Top" Margin="84,438,827,0">
+            <Ellipse.Fill>
+                <ImageBrush x:Name="img_FotoPerfil" />
+            </Ellipse.Fill>
+        </Ellipse>
+        <Border x:Name="brd_Comentarios" Background="#f0f1f4" CornerRadius="8" Margin="159,438,84,80">
+            <Grid>
+                <TextBox x:Name="txtb_NuevoComentario"
+                        TextWrapping="Wrap"
+                     MaxLength="100"
+                     FontSize="15"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Margin="7,7,87,7"
+                     TextChanged="TxtbNuevoComentario"/>
+
+                <Button x:Name="btn_Emojis"
+                            Content="😄"
+                            Width="36"
+                            Height="28"
+                            FontSize="16"
+                            Margin="644,0,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Click="AbrirEmojis"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Cursor="Hand"/>
+
+                <Image x:Name="img_EnviarComentario"
+                               Source="/Vistas/Recursos/Iconos/EnviarDesactivado.png"
+                               Margin="689,18,6,16"
+                               MouseDown="EnviarComentario"
+                               Cursor="No"/>
+
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

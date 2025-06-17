@@ -11,14 +11,20 @@
     <Grid Margin="157,0,157,0">
 
         <!-- Título -->
-        <Label Content="Tu Per" FontWeight="Bold" FontSize="40" Margin="153,59,530,453" />
-        <Label Content="fil" FontWeight="Bold" Foreground="#16b555" FontSize="40" Margin="272,59,639,453" />
+        <Label Content="Tu Per" FontWeight="Bold" FontSize="40" Margin="153,19,530,493" />
+        <Label Content="fil" FontWeight="Bold" Foreground="#16b555" FontSize="40" Margin="272,21,639,491" />
+        
+        <TextBox x:Name="txtb_Seguidores" FontSize="25" BorderThickness="0" FontWeight="Bold" FontFamily="Calibri" MaxLength="30" Margin="165,100,731,448" />
+        <Label Content="Seguidores" FontFamily="Calibri" FontSize="15" Margin="162,122,658,424" />
 
-        <Grid Width="120" Height="120" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,30,0,0">
-            <!-- Imagen circular -->
+        <TextBox x:Name="txtb_Seguidos" FontSize="25" BorderThickness="0" FontWeight="Bold" FontFamily="Calibri" MaxLength="30" Margin="275,100,621,448" />
+
+        <Label Content="Seguidos" FontFamily="Calibri" FontSize="15" Margin="272,122,548,424" />
+
+        <Grid x:Name="grd_Foto" Width="120" Height="120" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,30,0,0">
             <Ellipse Width="120" Height="120" Cursor="Hand" MouseDown="CambiarImagen">
                 <Ellipse.Fill>
-                    <ImageBrush x:Name="img_FotoPerfil" ImageSource="/Vistas/Recursos/Iconos/A.jpg"/>
+                    <ImageBrush x:Name="img_FotoPerfil"/>
                 </Ellipse.Fill>
             </Ellipse>
 

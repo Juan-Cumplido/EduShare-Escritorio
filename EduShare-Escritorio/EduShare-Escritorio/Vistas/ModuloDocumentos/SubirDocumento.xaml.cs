@@ -1,5 +1,9 @@
-﻿using EduShare_Escritorio.Utilidades;
+﻿using EduShare_Escritorio.Modelos.Catalogos;
+using EduShare_Escritorio.Modelos.Publicaciones;
+using EduShare_Escritorio.Servicio;
+using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas.Menus;
+using EduShare_Escritorio.Vistas.ModuloLogin;
 using EduShare_Escritorio.Vistas.ModuloUsuario;
 using Microsoft.Win32;
 using System;
@@ -7,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,18 +24,80 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static EduShare_Escritorio.Vistas.VentanaEmergentePersonalizada;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EduShare_Escritorio.Vistas.ModuloDocumentos
 {
     public partial class SubirDocumento : Page
     {
+        private static readonly LoggerManager _logger = new LoggerManager(typeof(Login));
+        private List<Categoria> _todasLasCategorias = new();
+        private List<Rama> _todasLasRamas = new();
+
         private string _rutaPDF;
+        private string _rutaDocumento;
         private bool _pdfCargado = false;
         private Frame _frame;
         public SubirDocumento(Frame frame)
         {
             InitializeComponent();
             _frame = frame;
+            this.Loaded += CargarComboBox;
+        }
+
+        private async void CargarComboBox(object sender, RoutedEventArgs e)
+        {
+            await InicializarCombosAsync();
+        }
+
+        private async Task InicializarCombosAsync()
+        {
+
+            var categorias = await CatalogosServicio.ObtenerCategoriasAsync();
+            var ramas = await CatalogosServicio.ObtenerRamasAsync();
+
+            if (categorias.Resultado != (int)HttpStatusCode.OK || categorias.Datos == null || ramas.Datos == null)
+            {
+                MostrarMensajePersonalizado("No hay conexion con el servidor. Intente más tarde cargar su documento.", DialogType.Error);
+                return;
+            }
+
+            _todasLasCategorias = categorias.Datos;
+
+            cmb_Categoria.ItemsSource = _todasLasCategorias;
+            cmb_Categoria.DisplayMemberPath = "NombreCategoria";
+            cmb_Categoria.SelectedValuePath = "IdCategoria";
+
+            _todasLasRamas = ramas.Datos;
+            cmb_Rama.ItemsSource = _todasLasRamas;
+            cmb_Rama.DisplayMemberPath = "NombreRama";
+            cmb_Rama.SelectedValuePath = "IdRama";
+            cmb_Rama.Items.Refresh();
+
+        }
+
+
+        private async void Cmb_RamaSeleccion(object sender, SelectionChangedEventArgs e)
+        {
+            if (cmb_Rama.SelectedValue == null)
+                return;
+
+            int idRamaSeleccionado = (int)cmb_Rama.SelectedValue;
+
+            var respuesta = await CatalogosServicio.ObtenerMateriaPorRamaAsync(idRamaSeleccionado);
+
+            if (respuesta.Resultado == 200 && respuesta.Datos != null)
+            {
+                grd_Materia.Visibility = Visibility.Visible;
+                cmb_Materia.ItemsSource = respuesta.Datos;
+                cmb_Materia.DisplayMemberPath = "NombreMateria";
+                cmb_Materia.SelectedValuePath = "IdMateriaYRama";
+            }
+            else
+            {
+                MostrarMensajePersonalizado("No se pudieron cargar las materias para la rama seleccionada.", DialogType.Warning);
+                cmb_Materia.ItemsSource = null;
+            }
         }
 
         private void MostrarMensajePersonalizado(string message, DialogType type)
@@ -42,19 +109,134 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
             dialog.ShowDialog();
         }
 
-        private void SubirPublicacion(object sender, RoutedEventArgs e)
+        private async void SubirPublicacion(object sender, RoutedEventArgs e)
         {
             RegresarBordeOriginal();
-            if (ValidarCamposVacios())
-            {
-                MostrarMensajePersonalizado("Documento subido con exito", DialogType.Success);
-                _frame.Navigate(new MisDocumentos(_frame));
-            }
-            else
+
+            if (!ValidarCamposVacios())
             {
                 MostrarMensajePersonalizado("Por favor, llena todos los campos que se solicitan", DialogType.Warning);
+                return;
+            }
+
+            var rutaArchivo = _rutaDocumento;
+            if (string.IsNullOrEmpty(rutaArchivo)) return;
+
+            var idDocumento = await CrearDocumentoAsync(rutaArchivo);
+            if (idDocumento == null) return;
+
+            await CrearPublicacionAsync(idDocumento.Value);
+        }
+
+        private async Task<int?> CrearDocumentoAsync(string filePath)
+        {
+            string token = PerfilSingleton.Instance.TokenJwt;
+
+            var respuesta = await PublicacionServicio.CrearDocumentoAsync(token, txtb_Titulo.Text.Trim(), _rutaDocumento);
+
+            
+            if (respuesta.Resultado == (int)HttpStatusCode.Unauthorized)
+            {
+                    MostrarMensajePersonalizado("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.", DialogType.Error);
+                    NavigationService.Navigate(new Login());
+                    PerfilSingleton.Instance.Reset();
+                    return null;
+            }
+            if (respuesta.Resultado != (int)HttpStatusCode.Created)
+            {
+                MostrarMensajePersonalizado("Error a subir su documento. Intente más tarde", DialogType.Error);
+                return null;
+            }
+
+            return respuesta.IdDocumento;
+        }
+
+        private async Task CrearPublicacionAsync(int idDocumento)
+        {
+            var publicacion = new Publicacion
+            {
+                ResuContenido = txtb_Contenido.Text.Trim(),
+                IdDocumento = idDocumento,
+                IdMateriaYRama = (int)cmb_Materia.SelectedValue,
+                IdCategoria = (int)cmb_Categoria.SelectedValue,
+                NivelEducativo = cmb_NivelEducativo.Text
+            };
+
+            string token = PerfilSingleton.Instance.TokenJwt;
+            var respuesta = await PublicacionServicio.CrearPublicacionAsync(token, publicacion);
+
+            switch (respuesta.Resultado)
+            {
+                case (int)HttpStatusCode.Created:
+                    MostrarMensajePersonalizado("Documento subido con éxito", DialogType.Success);
+                    _frame.Navigate(new MisDocumentos(_frame));
+                    break;
+                case (int)HttpStatusCode.Unauthorized:
+                    MostrarMensajePersonalizado("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.", DialogType.Error);
+                    NavigationService.Navigate(new Login());
+                    PerfilSingleton.Instance.Reset();
+                    break;
+                case 500:
+                    MostrarMensajePersonalizado("Error en el servidor. Intente más tarder", DialogType.Error);
+                    break;
+
+                default:
+                    MostrarMensajePersonalizado("Error  al crear la publicación.", DialogType.Error);
+                    break;
             }
         }
+
+
+
+        private async Task SubirArchivoPDFAsync(string rutaPDF)
+        {
+            try
+            {
+                byte[] pdfBytes = File.ReadAllBytes(rutaPDF);
+
+                if (!EsPDFValido(pdfBytes))
+                {
+                    MostrarMensajePersonalizado("El archivo seleccionado no es un PDF.", DialogType.Error);
+                    return;
+                }
+
+                string usuario = PerfilSingleton.Instance.NombreUsuario;
+                string nombreArchivo = System.IO.Path.GetFileName(rutaPDF);
+
+                var grpc = new FileServiceClientHandler();
+                var resultado = await grpc.UploadPdfAsync(usuario, nombreArchivo, pdfBytes);
+
+                if (string.IsNullOrWhiteSpace(resultado.filePath) || string.IsNullOrWhiteSpace(resultado.coverPath))
+                {
+                    MostrarMensajePersonalizado("Error al subir el archivo.", DialogType.Error);
+                    return;
+                }
+                _rutaDocumento = resultado.filePath;
+                MostrarPreviewDesdeRuta(resultado.coverPath);
+
+            }
+            catch (Grpc.Core.RpcException ex)
+            {
+                _logger.LogFatal(ex);
+                MostrarMensajePersonalizado("El servidor de archivos no está disponible. Intenta más tarde.", DialogType.Error);
+                LimpiarPreview();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogFatal(ex);
+                MostrarMensajePersonalizado("Ocurrió un error al subir el archivo.", DialogType.Error);
+                LimpiarPreview();
+            }
+        }
+
+        private bool EsPDFValido(byte[] bytes)
+        {
+            if (bytes == null || bytes.Length < 4)
+                return false;
+
+            return bytes[0] == 0x25 && bytes[1] == 0x50 && bytes[2] == 0x44 && bytes[3] == 0x46;
+        }
+
 
         public void RegresarBordeOriginal()
         {
@@ -185,7 +367,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
             }
         }
 
-        private void ProcesarPDF(string ruta)
+        private async void ProcesarPDF(string ruta)
         {
             FileInfo fileInfo = new FileInfo(ruta);
             long sizeInBytes = fileInfo.Length;
@@ -209,7 +391,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 txtb_Titulo.Foreground = Brushes.Black;
             }
 
-            MostrarPreview();
+            await SubirArchivoPDFAsync(ruta);
         }
 
         private string SanitizarNombreArchivo(string nombre)
@@ -227,56 +409,79 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
         }
 
 
-
-        private void MostrarPreview()
+        private async void MostrarPreviewDesdeRuta(string portadaRelativePath)
         {
-            grd_DropContent.Children.Clear();
-            brd_DropArea.Background = Brushes.White;
-
-            _pdfCargado = true;
-            brd_DropArea.Cursor = Cursors.Arrow;
-
-            var preview = new Image
+            try
             {
-                Source = new BitmapImage(new Uri("/Vistas/Recursos/Iconos/ImagenSubido.png", UriKind.Relative)),
-                Width = 130,
-                Height = 130,
-                Margin = new Thickness(5),
-                Stretch = Stretch.Uniform,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
+                _pdfCargado = true;
+                brd_DropArea.Cursor = Cursors.Arrow;
+                brd_DropArea.Background = Brushes.White;
+                grd_DropContent.Children.Clear();
 
-            var deleteIcon = new Button
+                FileServiceClientHandler grpcHandler = new();
+                var (bytes, _) = await grpcHandler.DownloadCoverAsync(portadaRelativePath);
+
+                if (bytes == null)
+                {
+                    MostrarMensajePersonalizado("No se pudo cargar la portada del documento.", DialogType.Warning);
+                    return;
+                }
+
+                var portadaImage = new BitmapImage();
+                using (var stream = new MemoryStream(bytes))
+                {
+                    portadaImage.BeginInit();
+                    portadaImage.CacheOption = BitmapCacheOption.OnLoad;
+                    portadaImage.StreamSource = stream;
+                    portadaImage.EndInit();
+                }
+
+                var preview = new Image
+                {
+                    Source = portadaImage,
+                    Width = 150,
+                    Height = 150,
+                    Margin = new Thickness(1),
+                    Stretch = Stretch.Uniform,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+
+                var deleteIcon = new Button
+                {
+                    Content = "🗑",
+                    Width = 24,
+                    Height = 24,
+                    Background = Brushes.Transparent,
+                    Foreground = Brushes.Red,
+                    BorderThickness = new Thickness(0),
+                    FontSize = 16,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Cursor = Cursors.Hand,
+                    ToolTip = "Eliminar archivo"
+                };
+
+                deleteIcon.Click += (s, e) => LimpiarPreview();
+
+                var panel = new Grid();
+                panel.Children.Add(preview);
+                panel.Children.Add(deleteIcon);
+
+                grd_DropContent.Children.Add(panel);
+            }
+            catch
             {
-                Content = "🗑",
-                Width = 24,
-                Height = 24,
-                Background = Brushes.Transparent,
-                Foreground = Brushes.Red,
-                BorderThickness = new Thickness(0),
-                FontSize = 16,
-                HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Top,
-                Cursor = Cursors.Hand,
-                ToolTip = "Eliminar archivo"
-            };
-
-            deleteIcon.Click += (s, e) => LimpiarPreview();
-
-            var panel = new Grid();
-            panel.Children.Add(preview);
-            panel.Children.Add(deleteIcon);
-
-            grd_DropContent.Children.Add(panel);
-
+                MostrarMensajePersonalizado("Error al mostrar la portada del PDF.", DialogType.Error);
+            }
         }
+
 
         private void LimpiarPreview()
         {
             _rutaPDF = null;
             _pdfCargado = false;
-
+            _rutaDocumento = null;
             txtb_Titulo.Text = "Escribe un título";
             txtb_Titulo.Foreground = Brushes.Gray;
 

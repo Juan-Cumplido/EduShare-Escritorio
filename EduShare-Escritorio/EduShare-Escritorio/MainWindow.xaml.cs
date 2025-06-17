@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Sockets;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -9,12 +10,14 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using EduShare_Escritorio.NotificacionesYChat;
 using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas;
 namespace EduShare_Escritorio
 {
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
@@ -23,7 +26,7 @@ namespace EduShare_Escritorio
             this.Closing += MainWindow_Closing;
         }
 
-        private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        private async void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             PerfilSingleton.Instance.Reset();
 
