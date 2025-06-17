@@ -20,6 +20,7 @@ namespace EduShare_Escritorio.Utilidades
             TokenJwt = string.Empty;
             NivelEducativo = string.Empty;  
             IdInstitucion = 0;
+            RutaPerfil = string.Empty;  
         }
 
         public static PerfilSingleton Instance => _instanciaSingleton;
@@ -35,6 +36,7 @@ namespace EduShare_Escritorio.Utilidades
         public string Nombre { get; set; }
         public int IdInstitucion { get; set; }
         public string NivelEducativo { get; set; }
+        public string RutaPerfil { get; set; }
         public string PrimerApellido { get; set; }
         public string SegundoApellido { get; set; }
         private byte[] fotoPerfilBinaria;
@@ -73,6 +75,7 @@ namespace EduShare_Escritorio.Utilidades
             TokenJwt = string.Empty;
             NivelEducativo = string.Empty;
             IdInstitucion = 0;
+            RutaPerfil = string.Empty;
         }
 
     }

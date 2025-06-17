@@ -40,6 +40,7 @@ namespace EduShare_Escritorio.Vistas.Menus
 
         private void CerrarSesion(object sender, MouseButtonEventArgs e)
         {
+            
             PerfilSingleton.Instance.Reset();
 
             Login login = new Login();

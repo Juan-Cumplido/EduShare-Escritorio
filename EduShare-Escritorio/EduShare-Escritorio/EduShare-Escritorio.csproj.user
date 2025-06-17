@@ -7,7 +7,19 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="NotificacionesYChat\VentanaNotificacion.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Vistas\Menus\MenuAdministrador.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Vistas\ModuloChats\Chat.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Vistas\ModuloChats\CrearChat.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Vistas\ModuloChats\ListaChst.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Vistas\ModuloDocumentos\EvaluarPublicacion.xaml.cs">
@@ -36,7 +48,19 @@
     <Page Update="MainWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="NotificacionesYChat\VentanaNotificacion.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Vistas\Menus\MenuAdministrador.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Vistas\ModuloChats\Chat.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Vistas\ModuloChats\CrearChat.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Vistas\ModuloChats\ListaChst.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Vistas\ModuloDocumentos\EvaluarPublicacion.xaml">

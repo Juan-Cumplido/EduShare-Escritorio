@@ -1,4 +1,5 @@
 ﻿using EduShare_Escritorio.Modelos.Perfil;
+using EduShare_Escritorio.NotificacionesYChat;
 using EduShare_Escritorio.Servicio;
 using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas.Menus;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,6 +26,7 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
 {
     public partial class Login : Page
     {
+        private NotificacionSocketService socket = App.SocketNotificaciones;
         private static readonly LoggerManager _logger = new LoggerManager(typeof(Login));
         public Login()
         {
@@ -177,6 +180,7 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
                     case (int)HttpStatusCode.OK:
                         await CrearPerfilSingletonAsync(respuesta.Datos, respuesta.Token);
                         DesplegarMenu(respuesta.Datos.TipoAcceso);
+                        await App.SocketNotificaciones.ConectarAsync(PerfilSingleton.Instance.IdUsuarioRegistrado.ToString());
                         break;
                     case (int)HttpStatusCode.Unauthorized:
                     case (int)HttpStatusCode.BadRequest:
@@ -215,6 +219,7 @@ namespace EduShare_Escritorio.Vistas.ModuloLogin
             perfil.NombreUsuario = datos.NombreUsuario;
             perfil.Correo = datos.Correo;
             perfil.TokenJwt = token;
+            perfil.RutaPerfil = datos.FotoPerfil;
 
             if (!string.IsNullOrEmpty(datos.FotoPerfil))
             {

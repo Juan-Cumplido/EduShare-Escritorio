@@ -13,10 +13,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Vistas\Recursos\Fondos\Arte.jpg" />
+    <None Remove="Vistas\Recursos\Fondos\Chats.png" />
     <None Remove="Vistas\Recursos\Fondos\Derecho.jpg" />
     <None Remove="Vistas\Recursos\Fondos\Ingenieria.jpg" />
     <None Remove="Vistas\Recursos\Fondos\Loading.gif" />
     <None Remove="Vistas\Recursos\Fondos\MenuPrincipal.jpg" />
+    <None Remove="Vistas\Recursos\Fondos\Notificacion.png" />
     <None Remove="Vistas\Recursos\Fondos\Programacion.gif" />
     <None Remove="Vistas\Recursos\Fondos\Publicacion.png" />
     <None Remove="Vistas\Recursos\Fondos\SubirDocumento.gif" />
@@ -52,7 +54,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Vistas\Recursos\Fondos\Chats.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Vistas\Recursos\Fondos\Loading.gif">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Vistas\Recursos\Fondos\Notificacion.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Vistas\Recursos\Fondos\Publicacion.png">
@@ -83,6 +91,7 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3240.44" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.6" />
+    <PackageReference Include="System.Net.WebSockets.Client" Version="4.3.2" />
     <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
   </ItemGroup>
 

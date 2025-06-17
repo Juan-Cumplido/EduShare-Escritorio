@@ -1,5 +1,7 @@
 ﻿using EduShare_Escritorio.Modelos.Catalogos;
+using EduShare_Escritorio.NotificacionesYChat;
 using EduShare_Escritorio.Utilidades;
+using EduShare_Escritorio.Vistas.ModuloChats;
 using EduShare_Escritorio.Vistas.ModuloDocumentos;
 using EduShare_Escritorio.Vistas.ModuloLogin;
 using EduShare_Escritorio.Vistas.ModuloUsuario;
@@ -8,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,6 +28,7 @@ namespace EduShare_Escritorio.Vistas.Menus
 {
     public partial class MenuPrincipal : Page
     {
+        
         public MenuPrincipal()
         {
             InitializeComponent();
@@ -139,7 +143,13 @@ namespace EduShare_Escritorio.Vistas.Menus
             fra_Menu.Navigate(new MisDocumentos(fra_Menu));
             BusquedaSingleton.Instance.LimpiarBusqueda();
         }
-        
+
+        private void IrAChats(object sender, RoutedEventArgs e)
+        {
+            fra_Menu.Navigate(new ListaChst(fra_Menu));
+            BusquedaSingleton.Instance.LimpiarBusqueda();
+        }
+
 
         private void IrALaCuenta(object sender, MouseButtonEventArgs e)
         {
@@ -240,8 +250,9 @@ namespace EduShare_Escritorio.Vistas.Menus
             }
         }
 
-        private void CerrarSesion(object sender, MouseButtonEventArgs e)
+        private async void CerrarSesion(object sender, MouseButtonEventArgs e)
         {
+            await App.SocketNotificaciones.DesconectarAsync(PerfilSingleton.Instance.IdUsuarioRegistrado.ToString());
             PerfilSingleton.Instance.Reset();
 
             Login login = new Login();

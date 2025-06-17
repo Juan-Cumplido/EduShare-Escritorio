@@ -1,8 +1,10 @@
 ﻿using EduShare_Escritorio.Modelos.Publicaciones;
 using EduShare_Escritorio.Modelos.Usuarios;
+using EduShare_Escritorio.NotificacionesYChat;
 using EduShare_Escritorio.Servicio;
 using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas.ModuloLogin;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -28,6 +30,8 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
 {
     public partial class VisualizarPerfilAmigo : Page
     {
+       
+
         private static readonly LoggerManager _logger = new LoggerManager(typeof(Login));
         private Frame _frame;
         private UsuarioPerfil _usuario;
@@ -138,46 +142,46 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
             {
                 string token = PerfilSingleton.Instance.TokenJwt;
                 int idUsuarioRegistrado = _usuario.IdUsuarioRegistrado;
-                var respuesta = await PerfilServicio.BuscarPerfilPorId(idUsuarioRegistrado,token);
+                var respuesta = await PerfilServicio.BuscarPerfilPorId(idUsuarioRegistrado, token);
 
                 switch (respuesta.Resultado)
                 {
                     case 200:
                         var listaPerfiles = new List<UsuarioPerfil>();
-                            byte[] imagenBinaria = Array.Empty<byte>();
-                            try
-                            {
-                                var grpc = new FileServiceClientHandler();
-                                var (imagen, _) = await grpc.DownloadImageAsync(respuesta.Datos.FotoPerfil);
-                                imagenBinaria = imagen ?? Array.Empty<byte>();
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.LogError(ex);
-                                MostrarMensajePersonalizado("Error del servidor. No se pudieron recuperar las fotos de perfiles.", DialogType.Error);
-                            }
+                        byte[] imagenBinaria = Array.Empty<byte>();
+                        try
+                        {
+                            var grpc = new FileServiceClientHandler();
+                            var (imagen, _) = await grpc.DownloadImageAsync(respuesta.Datos.FotoPerfil);
+                            imagenBinaria = imagen ?? Array.Empty<byte>();
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex);
+                            MostrarMensajePersonalizado("Error del servidor. No se pudieron recuperar las fotos de perfiles.", DialogType.Error);
+                        }
 
-                             UsuarioPerfil usuario = new UsuarioPerfil
-                            {
-                                IdUsuarioRegistrado = respuesta.Datos.IdUsuarioRegistrado,
-                                Nombre = respuesta.Datos.Nombre,
-                                PrimerApellido = respuesta.Datos.PrimerApellido,
-                                SegundoApellido = respuesta.Datos.SegundoApellido,
-                                FotoPerfilRuta = respuesta.Datos.FotoPerfil,
+                        UsuarioPerfil usuario = new UsuarioPerfil
+                        {
+                            IdUsuarioRegistrado = respuesta.Datos.IdUsuarioRegistrado,
+                            Nombre = respuesta.Datos.Nombre,
+                            PrimerApellido = respuesta.Datos.PrimerApellido,
+                            SegundoApellido = respuesta.Datos.SegundoApellido,
+                            FotoPerfilRuta = respuesta.Datos.FotoPerfil,
 
-                                NombreUsuario = respuesta.Datos.NombreUsuario,
-                                NombreInstitucion = respuesta.Datos.NombreInstitucion,
+                            NombreUsuario = respuesta.Datos.NombreUsuario,
+                            NombreInstitucion = respuesta.Datos.NombreInstitucion,
 
-                                NivelEducativo = respuesta.Datos.NivelEducativo,
-                                Seguidore = respuesta.Datos.NumeroSeguidores,
-                                Seguidos = respuesta.Datos.NumeroSeguidos,
-                               
-                                Imagen = ConvertirABitmap(imagenBinaria)
-                            };
+                            NivelEducativo = respuesta.Datos.NivelEducativo,
+                            Seguidore = respuesta.Datos.NumeroSeguidores,
+                            Seguidos = respuesta.Datos.NumeroSeguidos,
 
-                            
-                            LlenarCampos(usuario);
-                            
+                            Imagen = ConvertirABitmap(imagenBinaria)
+                        };
+
+
+                        LlenarCampos(usuario);
+
                         break;
 
                     case (int)HttpStatusCode.Unauthorized:
@@ -223,8 +227,8 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
 
         private void LlenarCampos(UsuarioPerfil usuario)
         {
-           txt_NombreCompleto.Text = usuario.NombreCompleto;
-           txt_Usuario.Text = usuario.NombreUsuario;
+            txt_NombreCompleto.Text = usuario.NombreCompleto;
+            txt_Usuario.Text = usuario.NombreUsuario;
             txt_NivelEducativo.Text = usuario.NivelEducativo;
             txt_Institucion.Text = usuario.NombreInstitucion;
 
@@ -270,6 +274,8 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
                     {
                         txt_Seguidores.Text = (seguidores + 1).ToString();
                     }
+                    EnviarNotificacion();
+
                 }
                 else if (respuesta.Estado == 400)
                 {
@@ -288,5 +294,45 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
             }
         }
 
+
+        private async void EnviarNotificacion()
+        {
+            try
+            {
+                string token = PerfilSingleton.Instance.TokenJwt;
+                int idOrigen = PerfilSingleton.Instance.IdUsuarioRegistrado;
+                string idDestino = _usuario.IdUsuarioRegistrado.ToString();
+                var respuesta = await PerfilServicio.ObtenerSeguidores(token);
+
+                if (respuesta?.Datos != null)
+                {
+                    List<int> idsSeguidores = respuesta.Datos
+                        .Select(s => s.IdUsuarioRegistrado)
+                        .ToList();
+
+                    var notificacion = new
+                    {
+                        accion = "notificacion",
+                        UsuarioOrigenId = idOrigen,
+                        UsuarioDestinoId = new List<string> { idDestino },
+                        Titulo = "Nueva Seguidor",
+                        Mensaje = $"¡{PerfilSingleton.Instance.NombreUsuario} comenzó a aeguirte! 🎉",
+                        Tipo = "Seguidores",
+                        FechaCreacion = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    };
+
+                    string json = JsonConvert.SerializeObject(notificacion);
+                    await App.SocketNotificaciones.EnviarMensajeAsync(json);
+                    
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+                Console.WriteLine($"❌ Error enviando notificación: {ex.Message}");
+            }
+
+        }
     }
 }

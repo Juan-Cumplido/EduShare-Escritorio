@@ -195,9 +195,6 @@ namespace EduShare_Escritorio.Servicio
 
                     string json = await resultado.Content.ReadAsStringAsync();
                     respuesta = JsonConvert.DeserializeObject<RespuestaApi<List<UsuarioSeguimiento>>>(json);
-
-
-
                 }
                 catch (HttpRequestException httpRequestException)
                 {
