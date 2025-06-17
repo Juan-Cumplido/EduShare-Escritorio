@@ -18,11 +18,20 @@
           HorizontalAlignment="Left" VerticalAlignment="Top" Width="164" Canvas.Top="10" Margin="6,30,0,0" />
 
         <!-- Datos del perfil del usuario -->
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Width="522" Margin="88,89,0,0" Height="121">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top" Width="522" Margin="88,89,0,0" Height="146">
             <TextBlock x:Name="txt_NombreCompleto" FontSize="24" FontWeight="Bold" HorizontalAlignment="Left"/>
             <TextBlock x:Name="txt_Usuario" FontSize="18" Foreground="Gray" HorizontalAlignment="Left"/>
             <TextBlock x:Name="txt_NivelEducativo" FontSize="18" HorizontalAlignment="Left"/>
             <TextBlock x:Name="txt_Institucion" FontSize="18" HorizontalAlignment="Left"/>
+            <TextBlock>
+                <Run x:Name="txt_Seguidores" FontWeight="Bold" FontSize="18"/>
+                <Run Text=" Seguidores       "/>
+                <Run x:Name="txt_Seguidos" FontWeight="Bold" FontSize="18" />
+                <Run Text=" Seguidos "/>
+
+            </TextBlock>
+            <TextBlock  />
+            <TextBlock  FontSize="18" HorizontalAlignment="Left"/>
         </StackPanel>
 
 
@@ -30,7 +39,7 @@
 
             <Ellipse Width="120" Height="118" Cursor="Hand" >
                 <Ellipse.Fill>
-                    <ImageBrush x:Name="img_FotoPerfil" ImageSource="/Vistas/Recursos/Fondos/Arte.jpg"/>
+                    <ImageBrush x:Name="img_FotoPerfil"/>
                 </Ellipse.Fill>
             </Ellipse>
         </Grid>
@@ -42,6 +51,18 @@
             <Line X1="0" Y1="20" X2="970" Y2="20" Stroke="Green" StrokeThickness="1"
           HorizontalAlignment="Left" VerticalAlignment="Center" Width="966" Canvas.Top="10" />
         </Canvas>
+
+        <Grid x:Name="grd_SinPublicaciones" Margin="0,287,0,50" Visibility="Collapsed" >
+            <Image Source="/Vistas/Recursos/Fondos/Publicacion.png" Margin="417,18,412,87"/>
+            <Label 
+               Content="Este usuario aún no tiene publicaciones."
+               Foreground="Gray"
+               FontStyle="Italic"
+               FontSize="16"
+               HorizontalAlignment="Center"
+               Margin="0,150,0,0" Height="64" VerticalAlignment="Top"/>
+
+        </Grid>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,287,0,50">
             <ItemsControl x:Name="itmc_DocumentosControl">
@@ -59,7 +80,7 @@
 
                                     <!-- Imagen -->
                                     <StackPanel>
-                                        <Image Source="{Binding ImagenRuta}" Width="120" Height="120"/>
+                                        <Image Source="{Binding Imagen}" Width="120" Height="120"/>
                                     </StackPanel>
 
                                     <!-- Info -->
@@ -77,10 +98,7 @@
 
                                     <!-- Estadísticas -->
                                     <StackPanel Grid.Column="2" VerticalAlignment="Top" Margin="10,0,0,0">
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
-                                            <TextBlock Text="Estado:" FontWeight="Bold"/>
-                                            <TextBlock Text=" Éxito" Foreground="#16b555" Margin="5,0,0,0"/>
-                                        </StackPanel>
+                                        
 
                                         <TextBlock Margin="0,5,0,0">
                                     <Run Text="👍 " FontWeight="Bold"/>
@@ -106,7 +124,7 @@
         </ScrollViewer>
 
         <Border x:Name="brd_Seguir" Background="#16b555" CornerRadius="8" Margin="784,204,106,340" Visibility="Visible">
-            <Button x:Name="btn_Seguir" Content="Seguir" FontSize="16" FontFamily="Calibri" 
+            <Button x:Name="btn_Seguir" Content="Seguir" FontSize="16" FontFamily="Calibri"
                 Background="Transparent" Foreground="White" FontWeight="Bold"
                 BorderThickness="0" Cursor="Hand" Click="SeguirPerfil" Margin="0,-4,0,-6">
                 <Button.Style>

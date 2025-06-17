@@ -20,6 +20,7 @@ namespace EduShare_Escritorio.Vistas.Menus
         public SubMenu()
         {
             InitializeComponent();
+           
         }
     }
 }

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EduShare_Escritorio.Modelos
+namespace EduShare_Escritorio.Modelos.Usuarios
 {
-    public class RespuestaInstitucion<T>
+    public class RespuestaPerfil<T>
     {
-        [JsonProperty("resultado")]
+        [JsonProperty("estado")]
         public int Resultado { get; set; }
 
         [JsonProperty("mensaje")]

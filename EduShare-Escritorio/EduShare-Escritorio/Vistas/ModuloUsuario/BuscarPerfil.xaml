@@ -28,7 +28,8 @@
                      Foreground="Gray"
                      Text="Buscar perfil"
                      GotFocus="TextBox_GotFocus"
-                     LostFocus="TextBox_LostFocus" Cursor=""/>
+                     LostFocus="TextBox_LostFocus" Cursor=""
+                     TextChanged="BuscarPerfil_TextChanged"/>
                     <Image Source="/Vistas/Recursos/Iconos/Lupa.jpg"
                            MouseDown="BuscarAmigo"
                            Cursor="Hand"
@@ -40,7 +41,6 @@
                 </Grid>
             </Border>
         </Grid>
-        <Image wpfGif:ImageBehavior.AnimatedSource="/Vistas/Recursos/Iconos/Amigos.gif" Margin="655,0,0,461" Stretch="UniformToFill" />
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,144,0,59">
             <StackPanel Orientation="Vertical">
@@ -67,7 +67,13 @@
                                         <TextBlock Text="{Binding NombreCompleto}" FontWeight="Bold" FontSize="14"/>
                                         <TextBlock Text="{Binding NombreUsuario}" FontSize="12" Foreground="Gray"/>
                                         <TextBlock Text="{Binding NivelEducativo}" FontSize="12" Foreground="Gray"/>
-                                        <TextBlock Text="{Binding Institucion}" FontSize="12" Foreground="Gray"/>
+                                        <TextBlock>
+                                            <Run Text="{Binding Seguidore}" FontWeight="Bold"/>
+                                            <Run Text=" Seguidores       "/>
+                                            <Run Text="{Binding Publicaciones}" FontWeight="Bold" />
+                                            <Run Text=" Publicaciones "/>
+                                            
+                                        </TextBlock>
                                     </StackPanel>
 
                                     <Border Grid.Column="2" Background="#16b555" CornerRadius="6" Height="32" VerticalAlignment="Center">

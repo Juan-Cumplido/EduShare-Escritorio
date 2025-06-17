@@ -15,5 +15,13 @@ namespace EduShare_Escritorio.Modelos
 
         [JsonProperty("mensaje")]
         public string Mensaje { get; set; } = string.Empty;
+
+        [JsonProperty("resultado")]
+        public int Resultado { get; set; }
+
+        [JsonProperty("id")]
+        public int IdDocumento { get; set; }
+        [JsonProperty("idPublicacion")]
+        public int IdPublicacion { get; set; }
     }
 }

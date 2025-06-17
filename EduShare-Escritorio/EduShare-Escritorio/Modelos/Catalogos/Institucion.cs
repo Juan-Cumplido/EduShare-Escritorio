@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace EduShare_Escritorio.Modelos
+namespace EduShare_Escritorio.Modelos.Catalogos
 {
     public class Institucion
     {

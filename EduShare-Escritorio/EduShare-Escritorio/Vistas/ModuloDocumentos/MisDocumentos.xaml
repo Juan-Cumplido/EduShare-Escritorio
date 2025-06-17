@@ -10,7 +10,7 @@
       mc:Ignorable="d" 
       Background="White"
       d:DesignHeight="574" d:DesignWidth="1280">
-    
+
     <Page.Resources>
         <util:EscalaConverter x:Key="EscalaConverter" MaxValor="1000" MaxAncho="150"/>
     </Page.Resources>
@@ -20,7 +20,18 @@
     <Grid Margin="157,0,157,0">
         <!-- Título -->
         <Label Content="Subidos" FontWeight="Bold" FontSize="35" Margin="0,16,439,496" />
-        <Label Content="(2)" FontWeight="Bold" Foreground="#16b555" FontSize="35" Margin="140,16,580,496" />
+        <Label x:Name="lbl_NumeroPublicaciones" FontWeight="Bold" Foreground="#16b555" FontSize="35" Margin="140,16,580,496" />
+
+        <Grid x:Name="grd_SinPublicaciones" Margin="0,83,0,50" Visibility="Collapsed" >
+            <Image Source="/Vistas/Recursos/Fondos/Publicacion.png" Margin="378,18,388,227"/>
+            <Label 
+               Content="Aun no tienes publicaciones."
+               Foreground="Gray"
+               FontStyle="Italic"
+               FontSize="16"
+               HorizontalAlignment="Center" Height="64" VerticalAlignment="Top" Margin="0,213,0,0"/>
+
+        </Grid>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,83,0,0">
             <ItemsControl x:Name="itmc_DocumentosControl">
@@ -38,7 +49,7 @@
 
                                     <!-- Imagen -->
                                     <StackPanel>
-                                        <Image Source="{Binding ImagenRuta}" Width="120" Height="150"/>
+                                        <Image Source="{Binding Imagen}" Width="120" Height="150"/>
                                         <TextBlock Text="PDF" Background="Black" Foreground="White" HorizontalAlignment="Left" Padding="5,1" Margin="0,5,0,0" FontWeight="Bold"/>
                                     </StackPanel>
 
@@ -59,7 +70,7 @@
                                     <StackPanel Grid.Column="2" VerticalAlignment="Top" Margin="10,0,0,0">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
                                             <TextBlock Text="Estado:" FontWeight="Bold"/>
-                                            <TextBlock Text=" Éxito" Foreground="#16b555" Margin="5,0,0,0"/>
+                                            <TextBlock Text="{Binding Estado}" Foreground="#16b555" Margin="5,0,0,0"/>
                                         </StackPanel>
 
                                         <TextBlock Margin="0,5,0,0">
@@ -111,7 +122,7 @@
                                 ToolTip="Eliminar documento"
                                 Panel.ZIndex="10"
                                 Click="EliminarDocumento_Click"
-                                Tag="{Binding}"/>
+                                Tag="{Binding IdPublicacion}"/>
                             </Grid>
                         </Border>
 

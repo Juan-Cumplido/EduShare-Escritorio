@@ -4,13 +4,24 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EduShare_Escritorio.Vistas"
+      xmlns:wpfGif="http://wpfanimatedgif.codeplex.com"
       mc:Ignorable="d" 
       d:DesignHeight="720" d:DesignWidth="1280">
 
     <Grid Background="White">
+
         <Image Source="/vistas/Recursos/Iconos/LogoEduShare.png" MouseDown="RegresarAlMenuPrincipal"  Margin="6,7,1154,650" Cursor="Hand"/>
 
         <Image Source="/Vistas/Recursos/Iconos/Login.png" Margin="16,73,506,72"/>
+
+        <Image x:Name="img_Loading"
+               wpfGif:ImageBehavior.AnimatedSource="/Vistas/Recursos/Fondos/loading.gif"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Width="100"
+               Height="100"
+               Visibility="Collapsed"
+               Margin="0,301,0,300"/>
 
         <Label Content="Iniciar sesi" FontWeight="Bold" FontSize="40" Margin="797,75,275,576"/>
         <Label Content="ón" FontWeight="Bold" Foreground="#16b555" FontSize="40" Margin="993,75,225,576"/>

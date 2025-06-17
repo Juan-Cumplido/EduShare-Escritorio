@@ -19,6 +19,7 @@
 
         <!-- Nombre -->
         <Label Content="Nombre(s)" FontFamily="Calibri" FontSize="18" Margin="438,119,743,568" />
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="520,119,736,568" Foreground="Red"/>
         <Border x:Name="brd_Nombre" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="444,157,640,520">
             <TextBox x:Name="txtb_Nombre" Height="26" FontSize="18" Background="Transparent"
                      BorderThickness="0" Foreground="Black" FontFamily="Calibri" MaxLength="30" Margin="0,9,-1,6" />
@@ -26,6 +27,7 @@
 
         <!-- Primer Apellido -->
         <Label Content="Primer apellido" FontFamily="Calibri" FontSize="18" Margin="700,119,457,568" />
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="818,119,438,568" Foreground="Red"/>
         <Border x:Name="brd_PrimerApellido" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="707,157,377,520">
             <TextBox x:Name="txtb_PrimerApellido" Height="26" FontSize="18" Background="Transparent"
                      BorderThickness="0" Foreground="Black" FontFamily="Calibri" MaxLength="30" Margin="0,9,-1,6" />
@@ -40,6 +42,7 @@
 
         <!-- Correo -->
         <Label Content="Correo" FontFamily="Calibri" FontSize="18" Margin="438,229,703,458" />
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="492,229,764,458" Foreground="Red"/>
         <Border x:Name="brd_Correo" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="444,267,640,410">
             <DockPanel Margin="0,0,0,-1">
                 <Image Source="/Vistas/Recursos/Iconos/Correo.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
@@ -50,6 +53,7 @@
 
         <!-- Usuario -->
         <Label Content="Usuario" FontFamily="Calibri" FontSize="18" Margin="700,229,441,458" />
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="762,229,494,458" Foreground="Red"/>
         <Border x:Name="brd_Usuario" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="707,267,377,410">
             <DockPanel Margin="0,0,0,-1">
                 <Image Source="/Vistas/Recursos/Iconos/UsuarioLogin.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
@@ -60,6 +64,7 @@
 
         <!-- Contraseña -->
         <Label Content="Contraseña" FontFamily="Calibri" FontSize="18" Margin="962,229,211,458" />
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="1049,229,207,458" Foreground="Red"/>
         <TextBlock x:Name="txtb_Mensaje"
            FontSize="11"
            FontFamily="Calibri"
@@ -67,20 +72,19 @@
            TextWrapping="Wrap"
            TextAlignment="Left"
            Margin="969,313,115,341">
-            <Run Text="La contraseña no cumple con los requisitos:"/>
-            <LineBreak/>
-            <Run Text="• Al menos 8 caracteres"/>
-            <LineBreak/>
-            <Run Text="• Una letra mayúscula"/>
-            <LineBreak/>
-            <Run Text="• Una letra minúscula"/>
-            <LineBreak/>
-            <Run Text="• Un número"/>
-            <LineBreak/>
-            <Run Text="• Un símbolo especial"/>
-            <LineBreak/>
-            <Run Text="• Sin espacios"/>
+                <Run Text="Requisitos de la contraseña:"/>
+                <LineBreak/>
+                <Run Text="• Mínimo 8 caracteres"/>
+                <LineBreak/>
+                <Run Text="• 1 mayúscula, 1 minúscula"/>
+                <LineBreak/>
+                <Run Text="• 1 número y 1 símbolo"/>
+                <LineBreak/>
+                <Run Text="• Sin espacios"/>
+                <LineBreak/>
+                <Run Text="• Evita datos personales"/>
         </TextBlock>
+
 
         <Border x:Name="brd_Contraseña" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="968,267,116,410">
             <DockPanel>
@@ -110,6 +114,7 @@
 
         <!-- Nivel Educativo -->
         <Label Content="Nivel Educativo" FontFamily="Calibri" FontSize="18" Margin="438,411,703,276" />
+        <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="555,411,701,276" Foreground="Red"/>
         <Border x:Name="brd_NivelEducativo" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="444,449,640,228">
             <DockPanel Margin="0,0,0,-1">
                 <Image Source="/Vistas/Recursos/Iconos/NivelEducativo.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
@@ -119,19 +124,19 @@
             </DockPanel>
         </Border>
 
-        <!-- Institución Educativa -->
-        <Label Content="Institución Educativa" FontFamily="Calibri" FontSize="18" Margin="700,411,397,276" />
-        <Border x:Name="brd_Institucion" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="707,449,378,228">
-            <DockPanel Margin="0,0,0,-1">
-                <Image Source="/Vistas/Recursos/Iconos/Institucion.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
-                <ComboBox x:Name="cmb_Institución" Width="171" Height="26" FontSize="18" Cursor="Hand" SelectionChanged="Cmb_InstitucionSeleccion"
+        <Grid x:Name="grd_Institucion"  Visibility="Collapsed">
+            <Label Content="Institución Educativa" FontFamily="Calibri" FontSize="18" Margin="700,411,397,276" />
+            <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="855,411,401,276" Foreground="Red"/>
+            <Border x:Name="brd_Institucion" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="707,449,378,228">
+                <DockPanel Margin="0,0,0,-1">
+                    <Image Source="/Vistas/Recursos/Iconos/Institucion.png" Width="18" Margin="3" DockPanel.Dock="Right" Height="36" />
+                    <ComboBox x:Name="cmb_Institución" Width="171" Height="26" FontSize="18" Cursor="Hand" SelectionChanged="Cmb_InstitucionSeleccion"
                           Background="Transparent" BorderThickness="0" Foreground="Black" FontFamily="Calibri">
-                </ComboBox>
-            </DockPanel>
-        </Border>
-
+                    </ComboBox>
+                </DockPanel>
+            </Border>
+        </Grid>
        
-
         <!-- Botón Registrarse -->
         <Border Background="#16b555" CornerRadius="8" Margin="637,575,260,98">
             <Button x:Name="btn_Registrar" Content="Registrarse" Width="350" FontSize="20" FontFamily="Calibri"

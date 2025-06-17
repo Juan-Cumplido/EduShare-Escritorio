@@ -1,4 +1,9 @@
-﻿using System;
+﻿using EduShare_Escritorio.Utilidades;
+using EduShare_Escritorio.Vistas.ModuloDocumentos;
+using EduShare_Escritorio.Vistas.ModuloLogin;
+using EduShare_Escritorio.Vistas.ModuloMenus;
+using EduShare_Escritorio.Vistas.ModuloUsuario;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,14 +20,31 @@ using System.Windows.Shapes;
 
 namespace EduShare_Escritorio.Vistas.Menus
 {
-    /// <summary>
-    /// Lógica de interacción para MenuAdministrador.xaml
-    /// </summary>
     public partial class MenuAdministrador : Page
     {
         public MenuAdministrador()
         {
             InitializeComponent();
+            CargarVentana();
+        }
+        
+        private void CargarVentana()
+        {
+            fra_MenuAdmin.Navigate(new RevisarPublicaciones(fra_MenuAdmin));
+        }
+
+        private void MostrarPantallaPrincipal(object sender, MouseButtonEventArgs e)
+        {
+            fra_MenuAdmin.Navigate(new RevisarPublicaciones(fra_MenuAdmin));
+        }
+
+        private void CerrarSesion(object sender, MouseButtonEventArgs e)
+        {
+            
+            PerfilSingleton.Instance.Reset();
+
+            Login login = new Login();
+            this.NavigationService.Navigate(login);
         }
     }
 }
