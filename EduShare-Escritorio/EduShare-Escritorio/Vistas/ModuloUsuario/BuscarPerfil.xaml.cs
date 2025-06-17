@@ -81,7 +81,7 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
                             catch (Exception ex)
                             {
                                 _logger.LogError(ex);
-                                MostrarMensajePersonalizado("Error del servidor. No se pudieron recuperar las fotos de perfiles.", DialogType.Error);
+                                
                             }
 
                             listaPerfiles.Add(new UsuarioPerfil

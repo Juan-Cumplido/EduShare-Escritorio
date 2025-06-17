@@ -11,7 +11,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </Page.Resources>
     <Grid Margin="157,0,157,0">
-        <Label x:Name="lbl_Salir" Content="➡️ Salir" FontFamily="Calibri" FontWeight="Bold" MouseDown="Salir" Cursor="Hand" FontSize="20" Margin="868,8,0,532" Visibility="visible" />
+        <Label x:Name="lbl_Salir" Content="➡️ Salir" FontFamily="Calibri" FontWeight="Bold" MouseDown="Salir" Cursor="Hand" FontSize="20" Margin="868,8,0,532" Visibility="Collapsed" />
         <Label x:Name="lbl_Finalizar" Content="➡️ Finalizar" FontFamily="Calibri" FontWeight="Bold" MouseDown="Finalizar" Cursor="Hand" FontSize="20" Margin="851,8,0,532" Visibility="Collapsed" />
 
         <Line X1="0" Y1="20" X2="110" Y2="20" Stroke="Gray" StrokeThickness="1"

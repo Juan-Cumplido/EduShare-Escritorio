@@ -5,6 +5,7 @@ using EduShare_Escritorio.Modelos.Publicaciones;
 using EduShare_Escritorio.Servicio;
 using EduShare_Escritorio.Utilidades;
 using EduShare_Escritorio.Vistas.ModuloLogin;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -424,6 +425,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 {
                     case (int)HttpStatusCode.OK:
                         txtb_NuevoComentario.Text = string.Empty;
+                        EnviarNotificacion();
                         CargarComentarios();
                      
                         break;
@@ -435,6 +437,47 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
 
                 
             }
+        }
+
+        private async void EnviarNotificacion()
+        {
+            try
+            {
+                string token = PerfilSingleton.Instance.TokenJwt;
+                int idOrigen = PerfilSingleton.Instance.IdUsuarioRegistrado;
+                string nombre = PerfilSingleton.Instance.NombreUsuario;
+                string idDestino = _publicacionActual.IdUsuario.ToString();
+                var respuesta = await PerfilServicio.ObtenerSeguidores(token);
+
+                if (respuesta?.Datos != null)
+                {
+                    List<int> idsSeguidores = respuesta.Datos
+                        .Select(s => s.IdUsuarioRegistrado)
+                        .ToList();
+
+                    var notificacion = new
+                    {
+                        accion = "notificacion",
+                        UsuarioOrigenId = idOrigen,
+                        UsuarioDestinoId = new List<string> { idDestino },
+                        Titulo = "Comentarios",
+                        Mensaje = $"¡{PerfilSingleton.Instance.NombreUsuario} comento un documento tuyo! 🎉",
+                        Tipo = "comentario",
+                        FechaCreacion = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    };
+
+                    string json = JsonConvert.SerializeObject(notificacion);
+                    await App.SocketNotificaciones.EnviarMensajeAsync(json);
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+                Console.WriteLine($"❌ Error enviando notificación: {ex.Message}");
+            }
+
         }
 
         private void EnviarComentario(object sender, MouseButtonEventArgs e)

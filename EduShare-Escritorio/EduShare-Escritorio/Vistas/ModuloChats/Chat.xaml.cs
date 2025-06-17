@@ -321,7 +321,7 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
 
             if (PerfilSingleton.Instance.IdUsuarioRegistrado.ToString() == _DatosChat.IdAutor)
             {
-                lbl_Finalizar.Visibility = Visibility.Collapsed;
+                lbl_Finalizar.Visibility = Visibility.Visible;
             }
             else
             {

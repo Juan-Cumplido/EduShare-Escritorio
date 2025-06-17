@@ -6,6 +6,7 @@ using EduShare_Escritorio.Vistas.Menus;
 using EduShare_Escritorio.Vistas.ModuloLogin;
 using EduShare_Escritorio.Vistas.ModuloUsuario;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
@@ -169,6 +170,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
             {
                 case (int)HttpStatusCode.Created:
                     MostrarMensajePersonalizado("Documento subido con éxito", DialogType.Success);
+                    EnviarNotificacion();
                     _frame.Navigate(new MisDocumentos(_frame));
                     break;
                 case (int)HttpStatusCode.Unauthorized:
@@ -186,6 +188,45 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
             }
         }
 
+        private async void EnviarNotificacion()
+        {
+            try
+            {
+                string token = PerfilSingleton.Instance.TokenJwt;
+                int idOrigen = PerfilSingleton.Instance.IdUsuarioRegistrado;
+                string nombre = PerfilSingleton.Instance.NombreUsuario;
+                var respuesta = await PerfilServicio.ObtenerSeguidores(token);
+
+                if (respuesta?.Datos != null)
+                {
+                    List<int> idsSeguidores = respuesta.Datos
+                        .Select(s => s.IdUsuarioRegistrado)
+                        .ToList();
+
+                    var notificacion = new
+                    {
+                        accion = "notificacion",
+                        UsuarioOrigenId = idOrigen,
+                        UsuarioDestinoId = respuesta,
+                        Titulo = "Nuevo documento",
+                        Mensaje = $"¡{PerfilSingleton.Instance.NombreUsuario} subio un documento que te puede interesar! 🎉",
+                        Tipo = "publicación",
+                        FechaCreacion = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    };
+
+                    string json = JsonConvert.SerializeObject(notificacion);
+                    await App.SocketNotificaciones.EnviarMensajeAsync(json);
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+                Console.WriteLine($"❌ Error enviando notificación: {ex.Message}");
+            }
+
+        }
 
 
         private async Task SubirArchivoPDFAsync(string rutaPDF)
