@@ -247,20 +247,23 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
                         .Select(s => s.IdUsuarioRegistrado)
                         .ToList();
 
+                    List<string> idsSeguidoresString = idsSeguidores
+                        .Select(id => id.ToString())
+                        .ToList();
+
                     var notificacion = new
                     {
                         accion = "notificacion",
                         UsuarioOrigenId = idOrigen,
-                        UsuarioDestinoId = idsSeguidores,
+                        UsuarioDestinoId = idsSeguidoresString,
                         Titulo = "Nuevo chat creado",
-                        Mensaje = $"¡{PerfilSingleton.Instance.NombreUsuario} creo un chat! 🎉",
+                        Mensaje = $"¡{PerfilSingleton.Instance.NombreUsuario} creo un chat! Ve al apartado de CHATS y unete",
                         Tipo = "Publicacion",
                         FechaCreacion = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
                     };
 
                     string json = JsonConvert.SerializeObject(notificacion);
                     await App.SocketNotificaciones.EnviarMensajeAsync(json);
-
 
                 }
             }

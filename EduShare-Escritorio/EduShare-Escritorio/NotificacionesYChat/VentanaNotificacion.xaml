@@ -12,8 +12,8 @@
         <StackPanel Orientation="Horizontal">
             <Image Source="/vistas/Recursos/Fondos/Notificacion.png"  Width="40" Height="40" Margin="5"/>
             <StackPanel>
-                <TextBlock x:Name="TituloTexto" FontWeight="Bold" Foreground="Black" FontSize="16"/>
-                <TextBlock x:Name="MensajeTexto" Foreground="Black" FontSize="14"/>
+                <TextBlock x:Name="TituloTexto" FontWeight="Bold" Foreground="Black" FontSize="13"/>
+                <TextBlock x:Name="MensajeTexto" Foreground="Black" FontSize="11"/>
             </StackPanel>
         </StackPanel>
     </Border>

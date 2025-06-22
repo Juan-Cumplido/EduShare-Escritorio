@@ -10,6 +10,9 @@
     <Compile Update="NotificacionesYChat\VentanaNotificacion.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Vistas\Menus\Informacion.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Vistas\Menus\MenuAdministrador.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -49,6 +52,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="NotificacionesYChat\VentanaNotificacion.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Vistas\Menus\Informacion.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Vistas\Menus\MenuAdministrador.xaml">

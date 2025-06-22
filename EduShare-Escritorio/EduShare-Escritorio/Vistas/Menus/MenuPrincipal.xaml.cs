@@ -255,8 +255,15 @@ namespace EduShare_Escritorio.Vistas.Menus
             await App.SocketNotificaciones.DesconectarAsync(PerfilSingleton.Instance.IdUsuarioRegistrado.ToString());
             PerfilSingleton.Instance.Reset();
 
-            Login login = new Login();
+            Login login = new();
             this.NavigationService.Navigate(login);
+        }
+
+        private async void IrAPreguntas(object sender, MouseButtonEventArgs e)
+        {
+            
+            Informacion informacion = new();
+            this.NavigationService.Navigate(informacion);
         }
 
         public ImageSource ConvertirFotoABitmap(byte[] binario)

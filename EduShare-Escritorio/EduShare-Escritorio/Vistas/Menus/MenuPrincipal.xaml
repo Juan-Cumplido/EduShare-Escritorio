@@ -93,7 +93,8 @@
                 <StackPanel>
                     <TextBlock Text="¡Te damos la bienvenida a EduShare!" Margin="5" FontWeight="Bold" FontSize="16"/>
                     <Separator Margin="5" Height="1" Background="#DDD"/>
-                    <TextBlock Text="🌐 Preguntas frecuentes y ayuda" Cursor="Hand"  Margin="5" FontFamily="Calibri" FontSize="15"/>
+                     <TextBlock Text="🌐 Preguntas frecuentes y ayuda" Cursor="Hand" MouseDown="IrAPreguntas" Margin="5" FontFamily="Calibri" FontSize="15"/>
+
                     <TextBlock Text="👤 Iniciar sesión" Margin="5" MouseDown="IrAlLogin"  Cursor="Hand" FontFamily="Calibri" FontSize="15"/>
                 </StackPanel>
             </Border>
@@ -158,6 +159,8 @@
                     <TextBlock Text="🌐 Comunidad" Margin="5" Cursor="Hand" MouseDown="IrALaComunidad" FontFamily="Calibri" FontSize="15"/>
                     <TextBlock Text="🧑‍🤝‍🧑 Amigos" Margin="5" Cursor="Hand" MouseDown="IrATusAmigos" FontFamily="Calibri" FontSize="15"/>
                     <TextBlock Text="🚪 Cerrar sesión" Margin="5" MouseDown="CerrarSesion" Cursor="Hand" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="🌐 Preguntas frecuentes y ayuda" Cursor="Hand" MouseDown="IrAPreguntas" Margin="5" FontFamily="Calibri" FontSize="15"/>
+
                 </StackPanel>
             </Border>
         </Popup>
@@ -291,9 +294,13 @@
                     <TextBlock Text="Apuntes" Tag="1" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
                     <TextBlock Text="Resúmenes" Tag="2" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
                     <TextBlock Text="Guías de estudio" Tag="3" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Exámenes" Tag="4" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Tareas" Tag="5" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
-                    <TextBlock Text="Presentaciones" Tag="6" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Tareas" Tag="4" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Plantillas" Tag="5" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Infografías" Tag="6" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Cuestionarios" Tag="7" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Mapas conceptuales" Tag="8" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+                    <TextBlock Text="Manuales" Tag="9" MouseDown="Categoria_MouseDown" Cursor="Hand" Margin="5" FontFamily="Calibri" FontSize="15"/>
+
                 </StackPanel>
             </Border>
         </Popup>
