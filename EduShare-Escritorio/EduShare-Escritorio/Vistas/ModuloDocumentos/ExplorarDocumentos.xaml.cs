@@ -290,6 +290,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 lista.Add(new PublicacionVista
                 {
                     Titulo = publicacion.Titulo,
+                    IdUsuario = publicacion.IdUsuarioRegistrado,
                     IdPublicacion = publicacion.IdPublicacion,
                     IdCategoria = publicacion.IdCategoria,
                     Descripcion = publicacion.ResuContenido,

@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-
+using System.Collections.ObjectModel;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -29,6 +29,8 @@ using System.Windows.Shapes;
 using static EduShare_Escritorio.Vistas.VentanaEmergentePersonalizada;
 using Color = System.Windows.Media.Color;
 using ColorConverter = System.Windows.Media.ColorConverter;
+using EduShare_Escritorio.NotificacionesYChat;
+using EduShare_Escritorio.Modelos.Comentario;
 
 namespace EduShare_Escritorio.Vistas.ModuloDocumentos
 {
@@ -38,16 +40,17 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
         {
             public required string Usuario { get; set; }
             public required string Texto { get; set; }
+            public required string Fecha { get; set; }
             public required BitmapImage Imagen { get; set; }
             public string Alineacion => EsPropio ? "Right" : "Left";
             public bool EsPropio { get; set; }
         }
 
-
-
+        private NotificacionSocketService _socketService;
         private bool _yaDioLike = false;
         private bool _cargandoEstadoLike = false;
         private static readonly LoggerManager _logger = new LoggerManager(typeof(VisualizarDocumento));
+        private ObservableCollection<ComentarioVista> _listaComentarioVista;
         private PublicacionVista _publicacionActual;
         private string _rutaPdfTemporal;
         public VisualizarDocumento()
@@ -59,28 +62,191 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
         public VisualizarDocumento(PublicacionVista publicacion) : this()
         {
             _publicacionActual = publicacion;
-
+            _listaComentarioVista = new ObservableCollection<ComentarioVista>();
+            ListaComentarios.ItemsSource = _listaComentarioVista;
+            _socketService = App.SocketNotificaciones;
             CargarDatosPublicacion();
             Perfil_PropertyChanged();
             RegistrarVista();
             VerificarLiker();
-            _ = CargarPdfAsync();
-            CargarComentarios();
+
+            this.Unloaded += VisualizarDocumento_Unloaded;
+            InicializarSocketService();
+            var perfil = PerfilSingleton.Instance;
+            if (!string.IsNullOrEmpty(perfil.Correo))
+            {
+                _ = CargarPdfAsync();
+            }
+
+
+            _ = CargarComentarios();
+
+            
         }
 
-        private async void CargarComentarios()
+        private async void VisualizarDocumento_Unloaded(object sender, RoutedEventArgs e)
         {
-            ListaComentarios.ItemsSource = null;
+            await LimpiarRecursos();
+        }
 
+
+        private async Task LimpiarRecursos()
+        {
             try
             {
+                if (_socketService != null && _publicacionActual != null)
+                {
+                    await _socketService.SalirDocumentoAsync(
+                        _publicacionActual.IdPublicacion.ToString(),
+                        PerfilSingleton.Instance.IdUsuarioRegistrado.ToString()
+                    );
+
+                    _socketService.OnInteraccionDocumentoRecibida -= OnInteraccionDocumentoRecibida;
+                    _socketService.OnDocumentoConectado -= OnDocumentoConectado;
+                    _socketService.OnDocumentoDesconectado -= OnDocumentoDesconectado;
+                }
+
+                if (!string.IsNullOrEmpty(_rutaPdfTemporal) && File.Exists(_rutaPdfTemporal))
+                {
+                    try
+                    {
+                        File.Delete(_rutaPdfTemporal);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex);
+                    }
+                }
+
+                if (PdfWebView?.CoreWebView2 != null)
+                {
+                    PdfWebView.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+            }
+        }
+
+        private void InicializarSocketService()
+        {
+            
+            
+            _socketService.OnInteraccionDocumentoRecibida += OnInteraccionDocumentoRecibida;
+            _socketService.OnDocumentoConectado += OnDocumentoConectado;
+            _socketService.OnDocumentoDesconectado += OnDocumentoDesconectado;
+
+             _ = Task.Run(async () => await _socketService.UnirseeDocumentoAsync(_publicacionActual.IdPublicacion.ToString(), PerfilSingleton.Instance.IdUsuarioRegistrado.ToString()));
+        }
+
+        private void OnDocumentoConectado(string idDocumento, string status)
+        {
+            if (idDocumento == _publicacionActual.IdPublicacion.ToString() && status == "ok")
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    Console.WriteLine($" Conectado al documento {idDocumento} para recibir actualizaciones en tiempo real");
+                });
+            }
+        }
+
+        private void OnDocumentoDesconectado(string idDocumento, string status)
+        {
+            if (idDocumento == _publicacionActual.IdPublicacion.ToString())
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    Console.WriteLine($"Desconectado del documento {idDocumento}");
+                });
+            }
+        }
+
+        private void OnInteraccionDocumentoRecibida(InteraccionDocumentoModel interaccion)
+        {
+             if (interaccion.IdDocumento != _publicacionActual.IdPublicacion.ToString())
+                return;
+
+            Dispatcher.Invoke(() =>
+            {
+                switch (interaccion.TipoInteraccion)
+                {
+                    case "like":
+                        ActualizarContadorLikes(interaccion);
+                        break;
+
+                    case "vista":
+                        _publicacionActual.Vistas++;
+                        txtb_Vistas.Text = _publicacionActual.Vistas.ToString();
+                        break;
+
+                    case "descarga":
+                        _publicacionActual.Descargas++;
+                        txtb_Descargas.Text = _publicacionActual.Descargas.ToString();
+                        break;
+
+                    case "comentario":
+                         _listaComentarioVista.Clear();
+                        RecargarComentarios();
+                        break;
+                }
+            });
+        }
+
+        private async void RecargarComentarios()
+        {
+            try
+            {
+                await CargarComentarios();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+
+            }
+        }
+
+        private void ActualizarContadorLikes(InteraccionDocumentoModel interaccion)
+        {
+            try
+            {
+                if (interaccion.Estado == "agregado")
+                {
+                    _publicacionActual.Likes++;
+                    txtb_Likes.Text = _publicacionActual.Likes.ToString();
+
+                }
+                else if (interaccion.Estado == "removido")
+                {
+                    _publicacionActual.Likes--;
+                    txtb_Likes.Text = _publicacionActual.Likes.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+            }
+        }
+
+
+        private async Task CargarComentarios()
+        {
+            try
+            {
+                 Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _listaComentarioVista.Clear();
+                    txtb_SinComentarios.Visibility = Visibility.Collapsed;
+                });
+
                 string token = PerfilSingleton.Instance.TokenJwt;
                 var respuesta = await ComentarioServicio.ObtenerComentariosPorPublicacionAsync(_publicacionActual.IdPublicacion);
 
                 switch (respuesta.Resultado)
                 {
                     case 200:
-                        var listaComentarioVista = new List<ComentarioVista>();
+                        
+                        var comentariosVista = new List<ComentarioVista>();
 
                         foreach (var comentario in respuesta.Datos)
                         {
@@ -99,43 +265,66 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                                 _logger.LogError(ex);
                             }
 
-                            listaComentarioVista.Add(new ComentarioVista
+                            comentariosVista.Add(new ComentarioVista
                             {
                                 Usuario = comentario.NombreUsuario,
                                 Texto = comentario.Contenido,
+                                Fecha = comentario.Fecha.ToString("dd/MM/yyyy"),
                                 Imagen = ConvertirABitmap(imagenBinaria),
                                 EsPropio = esPropio
-                               
                             });
                         }
 
-                        if (listaComentarioVista.Count == 0)
+                        Application.Current.Dispatcher.Invoke(() =>
                         {
-                            txtb_SinComentarios.Visibility = Visibility.Visible;
-                        }
+                            foreach (var comentario in comentariosVista)
+                            {
+                                _listaComentarioVista.Add(comentario);
+                            }
 
-                        ListaComentarios.ItemsSource = listaComentarioVista;
+                            if (_listaComentarioVista.Count == 0)
+                            {
+                                txtb_SinComentarios.Visibility = Visibility.Visible;
+                            }
+                            else
+                            {
+                                txtb_SinComentarios.Visibility = Visibility.Collapsed;
+                            }
+                        });
+
                         break;
 
                     case (int)HttpStatusCode.Unauthorized:
-                        MostrarMensajePersonalizado("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.", DialogType.Error);
-                        NavigationService.Navigate(new Login());
-                        PerfilSingleton.Instance.Reset();
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            MostrarMensajePersonalizado("Tu sesión ha expirado. Por favor, inicia sesión nuevamente.", DialogType.Error);
+                            NavigationService.Navigate(new Login());
+                            PerfilSingleton.Instance.Reset();
+                        });
                         break;
 
                     case 500:
-                        MostrarMensajePersonalizado("Error del servidor al obtener las publicaciones.", DialogType.Error);
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            MostrarMensajePersonalizado("Error del servidor al obtener las publicaciones.", DialogType.Error);
+                        });
                         break;
 
                     default:
-                        MostrarMensajePersonalizado($"Error: {respuesta.Mensaje}", DialogType.Warning);
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            MostrarMensajePersonalizado($"Error: {respuesta.Mensaje}", DialogType.Warning);
+                        });
                         break;
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogFatal(ex);
-                MostrarMensajePersonalizado("Ocurrió un error inesperado al cargar publicaciones.", DialogType.Error);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    MostrarMensajePersonalizado("Ocurrió un error inesperado al cargar comentarios.", DialogType.Error);
+                });
             }
         }
 
@@ -166,9 +355,17 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 case (int)HttpStatusCode.OK:
                     _publicacionActual.Vistas++;
                     txtb_Vistas.Text = _publicacionActual.Vistas.ToString();
-                    break;
-               
+                
+                    await _socketService.EnviarVistaDocumentoAsync(
+                    _publicacionActual.IdPublicacion.ToString(),
+                     PerfilSingleton.Instance.IdUsuarioRegistrado.ToString(),
+                     PerfilSingleton.Instance.NombreUsuario.ToString());
 
+                    string titulo = "Nueva visita";
+                    string mensaje = $"{PerfilSingleton.Instance.NombreUsuario}, ha visto tu documento {_publicacionActual.Titulo}";
+                    EnviarNotificacion(titulo, mensaje);
+
+                    break;
                 
             }
         }
@@ -200,7 +397,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
         }
 
 
-        private async void btn_Like_Click(object sender, RoutedEventArgs e)
+        private async void Btn_Like_Click(object sender, RoutedEventArgs e)
         {
             if (_cargandoEstadoLike || _publicacionActual == null) return;
 
@@ -212,19 +409,37 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 var respuesta = await PublicacionServicio.QuitarLikeAsync(token, id);
                 if (respuesta.Resultado == (int)HttpStatusCode.OK)
                 {
+                    
                     _yaDioLike = false;
                     _publicacionActual.Likes--;
                     txtb_Likes.Text = _publicacionActual.Likes.ToString();
+
+                    await _socketService.EnviarLikeDocumentoAsync(
+                    _publicacionActual.IdPublicacion.ToString(),
+                    PerfilSingleton.Instance.IdUsuarioRegistrado.ToString(),
+                     PerfilSingleton.Instance.NombreUsuario.ToString(),
+                    "removido");
+
+                    
                 }
             }
             else
             {
                 var respuesta = await PublicacionServicio.DarLikeAsync(token, id);
-                if (respuesta.Resultado == (int)HttpStatusCode.OK)
+                if (respuesta.Resultado == (int)HttpStatusCode.Created)
                 {
                     _yaDioLike = true;
                     _publicacionActual.Likes++;
                     txtb_Likes.Text = _publicacionActual.Likes.ToString();
+                    await _socketService.EnviarLikeDocumentoAsync(
+                    _publicacionActual.IdPublicacion.ToString(),
+                    PerfilSingleton.Instance.IdUsuarioRegistrado.ToString(),
+                     PerfilSingleton.Instance.NombreUsuario.ToString(),
+                    "agregado");
+
+                    string titulo = "Me gusta";
+                    string mensaje = $"{PerfilSingleton.Instance.NombreUsuario} le ha dado me gusta a tu publicación {_publicacionActual.Titulo}";
+                    EnviarNotificacion(titulo, mensaje);
                 }
             }
         }
@@ -267,10 +482,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 elp_Perfil.Visibility = Visibility.Visible;
                 brd_Comentarios.Visibility = Visibility.Visible;
 
-                SolidColorBrush verde = new((Color)ColorConverter.ConvertFromString("#16b555"));
-                brd_Descargar.Background = verde;
-                btn_Descargar.IsEnabled = true;
-                brd_Descargar.Cursor = Cursors.Hand;
+             
             }
         }
 
@@ -400,6 +612,16 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                 case (int)HttpStatusCode.OK:
                     _publicacionActual.Descargas++;
                     txtb_Descargas.Text = _publicacionActual.Descargas.ToString();
+                    await _socketService.EnviarDescargaDocumentoAsync(
+                    _publicacionActual.IdPublicacion.ToString(),
+                    PerfilSingleton.Instance.IdUsuarioRegistrado.ToString(),
+                     PerfilSingleton.Instance.NombreUsuario);
+
+
+                    string titulo = "Nueva Descarga";
+                    string mensaje = $"{PerfilSingleton.Instance.NombreUsuario} ha descargado tu documento {_publicacionActual.Titulo}";
+                    EnviarNotificacion(titulo, mensaje);
+
                     break;
 
 
@@ -413,71 +635,103 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
             if (!string.IsNullOrWhiteSpace(txtb_NuevoComentario.Text))
             {
                 string token = PerfilSingleton.Instance.TokenJwt;
+                string contenidoComentario = txtb_NuevoComentario.Text;
 
                 CrearComentarioRequest comentario = new();
                 comentario.IdPublicacion = _publicacionActual.IdPublicacion;
-                comentario.Contenido = txtb_NuevoComentario.Text;
+                comentario.Contenido = contenidoComentario;
+
+                 txtb_NuevoComentario.Text = string.Empty;
 
                 var respuesta = await ComentarioServicio.CrearComentarioAsync(token, comentario);
-                
 
                 switch (respuesta.Resultado)
                 {
-                    case (int)HttpStatusCode.OK:
-                        txtb_NuevoComentario.Text = string.Empty;
-                        EnviarNotificacion();
-                        CargarComentarios();
-                     
+                    case (int)HttpStatusCode.Created:
+                        await _socketService.EnviarComentarioDocumentoAsync(
+                            _publicacionActual.IdPublicacion.ToString(),
+                            PerfilSingleton.Instance.IdUsuarioRegistrado.ToString(),
+                            PerfilSingleton.Instance.NombreUsuario,
+                            "",
+                            "");
+                        AgregarComentarioALista(contenidoComentario);
+                        
+                        string titulo = "Nuevo comentario";
+                        string mensaje = $"{PerfilSingleton.Instance.NombreUsuario} ha comentado tu publicación {_publicacionActual.Titulo}";
+                        EnviarNotificacion(titulo, mensaje);
+
                         break;
 
                     default:
-                        txtb_NuevoComentario.Text = string.Empty;
+                        MostrarMensajePersonalizado("Error al agregar comentario", DialogType.Error);
+                        txtb_NuevoComentario.Text = contenidoComentario;
                         break;
                 }
-
-                
             }
         }
 
-        private async void EnviarNotificacion()
+        private void AgregarComentarioALista(string contenidoComentario)
         {
             try
             {
-                string token = PerfilSingleton.Instance.TokenJwt;
-                int idOrigen = PerfilSingleton.Instance.IdUsuarioRegistrado;
-                string nombre = PerfilSingleton.Instance.NombreUsuario;
-                string idDestino = _publicacionActual.IdUsuario.ToString();
-                var respuesta = await PerfilServicio.ObtenerSeguidores(token);
+                byte[] imagenBinaria = PerfilSingleton.Instance.FotoPerfilBinaria ?? Array.Empty<byte>();
 
-                if (respuesta?.Datos != null)
+                var nuevoComentario = new ComentarioVista
                 {
-                    List<int> idsSeguidores = respuesta.Datos
-                        .Select(s => s.IdUsuarioRegistrado)
-                        .ToList();
+                    Usuario = PerfilSingleton.Instance.NombreUsuario,
+                    Texto = contenidoComentario,
+                    Fecha = DateTime.Now.ToString("dd/MM/yyyy"),
+                    Imagen = ConvertirABitmap(imagenBinaria),
+                    EsPropio = true
+                };
 
-                    var notificacion = new
+                 Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _listaComentarioVista.Add(nuevoComentario);
+
+                    if (txtb_SinComentarios.Visibility == Visibility.Visible)
                     {
-                        accion = "notificacion",
-                        UsuarioOrigenId = idOrigen,
-                        UsuarioDestinoId = new List<string> { idDestino },
-                        Titulo = "Comentarios",
-                        Mensaje = $"¡{PerfilSingleton.Instance.NombreUsuario} comento un documento tuyo! 🎉",
-                        Tipo = "comentario",
-                        FechaCreacion = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                    };
+                        txtb_SinComentarios.Visibility = Visibility.Collapsed;
+                    }
 
-                    string json = JsonConvert.SerializeObject(notificacion);
-                    await App.SocketNotificaciones.EnviarMensajeAsync(json);
-
-
-                }
+                    ScrollToBottom();
+                });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex);
-                Console.WriteLine($"❌ Error enviando notificación: {ex.Message}");
             }
+        }
 
+        private void ScrollToBottom()
+        {
+            try
+            {
+                var scrollViewer = FindVisualChild<ScrollViewer>(ListaComentarios);
+                scrollViewer?.ScrollToEnd();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+            }
+        }
+
+        private T FindVisualChild<T>(DependencyObject obj) where T : DependencyObject
+        {
+            if (obj == null) return null;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(obj, i);
+
+                if (child is T result)
+                    return result;
+
+                var childOfChild = FindVisualChild<T>(child);
+                if (childOfChild != null)
+                    return childOfChild;
+            }
+            return null;
         }
 
         private void EnviarComentario(object sender, MouseButtonEventArgs e)
@@ -504,30 +758,69 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
         {
             if (sender is Button btn && btn.Tag is ComentarioVista comentarioUI)
             {
-                var comentarioOriginal = await ComentarioServicio.ObtenerComentariosPorPublicacionAsync(_publicacionActual.IdPublicacion);
-
-                var comentarioAEliminar = comentarioOriginal.Datos.FirstOrDefault(c =>
-                    c.NombreUsuario == comentarioUI.Usuario && c.Contenido == comentarioUI.Texto);
-
-                if (comentarioAEliminar != null)
+                try
                 {
-                    var token = PerfilSingleton.Instance.TokenJwt;
+                    var comentarioOriginal = await ComentarioServicio.ObtenerComentariosPorPublicacionAsync(_publicacionActual.IdPublicacion);
 
-                    
+                    var comentarioAEliminar = comentarioOriginal.Datos?.FirstOrDefault(c =>
+                        c.NombreUsuario == comentarioUI.Usuario &&
+                        c.Contenido == comentarioUI.Texto &&
+                        c.Fecha.ToString("dd/MM/yyyy") == comentarioUI.Fecha);
+
+                    if (comentarioAEliminar != null)
+                    {
+                        var token = PerfilSingleton.Instance.TokenJwt;
+
                         var resultado = await ComentarioServicio.EliminarComentarioAsync(token, comentarioAEliminar.IdComentario);
                         if (resultado.Resultado == 200)
                         {
-                        CargarComentarios(); 
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                _listaComentarioVista.Remove(comentarioUI);
+
+                                if (_listaComentarioVista.Count == 0)
+                                {
+                                    txtb_SinComentarios.Visibility = Visibility.Visible;
+                                }
+                            });
+
+                            await _socketService.EnviarComentarioDocumentoAsync(
+                            _publicacionActual.IdPublicacion.ToString(),
+                            PerfilSingleton.Instance.IdUsuarioRegistrado.ToString(),
+                            PerfilSingleton.Instance.NombreUsuario,
+                            "",
+                            "");
+                       
                         }
                         else
                         {
-                            MostrarMensajePersonalizado("Error a eliminar comentario", DialogType.Error);
+                            MostrarMensajePersonalizado("Error al eliminar comentario", DialogType.Error);
                         }
-                    
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex);
+                    MostrarMensajePersonalizado("Error al eliminar comentario", DialogType.Error);
                 }
             }
         }
 
+        private ScrollViewer FindScrollViewer(DependencyObject obj)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                var child = VisualTreeHelper.GetChild(obj, i);
+
+                if (child is ScrollViewer scrollViewer)
+                    return scrollViewer;
+
+                var result = FindScrollViewer(child);
+                if (result != null)
+                    return result;
+            }
+            return null;
+        }
 
         private void Perfil_PropertyChanged()
         {
@@ -549,6 +842,42 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
             return bitmap;
         }
 
-        
+
+        private async void EnviarNotificacion(string titulo, string mensaje)
+        {
+            try
+            {
+
+                string idOrigen = PerfilSingleton.Instance.IdUsuarioRegistrado.ToString();
+                string idDestino = _publicacionActual.IdUsuario.ToString();
+                if (idOrigen != idDestino)
+                {
+                    var notificacion = new
+                    {
+                        accion = "notificacion",
+                        UsuarioOrigenId = idOrigen,
+                        UsuarioDestinoId = new List<string> { idDestino },
+                        Titulo = titulo,
+                        Mensaje = mensaje,
+                        Tipo = "Documentos",
+                        FechaCreacion = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                    };
+
+                    string json = JsonConvert.SerializeObject(notificacion);
+                    await App.SocketNotificaciones.EnviarMensajeAsync(json);
+                }
+                   
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+            }
+
+        }
+
+
     }
 }

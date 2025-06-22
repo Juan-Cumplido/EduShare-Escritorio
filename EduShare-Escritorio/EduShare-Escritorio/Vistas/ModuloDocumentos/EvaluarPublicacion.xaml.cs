@@ -5,6 +5,7 @@ using EduShare_Escritorio.Vistas.Menus;
 using EduShare_Escritorio.Vistas.ModuloLogin;
 using EduShare_Escritorio.Vistas.ModuloMenus;
 using EduShare_Escritorio.Vistas.ModuloUsuario;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +28,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
 {
     public partial class EvaluarPublicacion : Page
     {
-        private static readonly LoggerManager _logger = new LoggerManager(typeof(VisualizarDocumento));
+        private static readonly LoggerManager _logger = new LoggerManager(typeof(EvaluarPublicacion));
         private PublicacionVista _publicacionActual;
         private string _rutaPdfTemporal;
         private Frame _frame;
@@ -80,6 +81,9 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                     case 200:
                         MostrarMensajePersonalizado("La publicación ha sido rechazada.", DialogType.Success);
                         _frame.Navigate(new RevisarPublicaciones(_frame));
+                        string titulo = "Publicación rechazada";
+                        string mensaje = "Tu publicación fue rechazada por incumplir las normas.";
+                        EnviarNotificacion(titulo, mensaje);
                         break;
 
                     case 404:
@@ -153,6 +157,36 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
             }
         }
 
+        private async void EnviarNotificacion(string titulo, string mensaje)
+        {
+            try
+            {
+                int idOrigen = PerfilSingleton.Instance.IdUsuarioRegistrado;
+                string idDestino = _publicacionActual.IdUsuario.ToString();
+                var notificacion = new
+                {
+                        accion = "notificacion",
+                        UsuarioOrigenId = idOrigen,
+                        UsuarioDestinoId = new List<string> { idDestino },
+                        Titulo = titulo,
+                        Mensaje = mensaje,
+                        Tipo = "Documentos",
+                        FechaCreacion = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+                };
+
+                    string json = JsonConvert.SerializeObject(notificacion);
+                    await App.SocketNotificaciones.EnviarMensajeAsync(json);
+
+
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+            }
+
+        }
+
         private async Task InicializarWebView2Async()
         {
             try
@@ -223,6 +257,9 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                     case 200:
                         MostrarMensajePersonalizado("La publicación ha sido aceptada con exito ", DialogType.Success);
                         _frame.Navigate(new RevisarPublicaciones(_frame));
+                        string titulo = "Publicación aceptada";
+                        string mensaje = "Tu publicación ha sido aprobada y ya está disponible. ¡Gracias por compartir!";
+                        EnviarNotificacion(titulo, mensaje);
                         break;
 
                     case 404:
