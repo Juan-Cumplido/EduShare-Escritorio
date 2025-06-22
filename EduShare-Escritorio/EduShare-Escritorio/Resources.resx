@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BASE_URL" xml:space="preserve">
-    <value>http://localhost:1234/edushare/</value>
+    <value>http://192.168.100.24:1234/edushare/</value>
   </data>
   <data name="GRPC_URL" xml:space="preserve">
-    <value>http://192.168.43.30:50051</value>
+    <value>http://192.168.100.24:50051</value>
   </data>
   <data name="NOTI" xml:space="preserve">
-    <value>ws://localhost:8765</value>
+    <value>ws://192.168.100.24:8765</value>
   </data>
 </root>

@@ -5,16 +5,19 @@ using System.Threading.Tasks;
 using Grpc.Net.Client;
 using Google.Protobuf;
 using Fileservice;
+using EduShare_Escritorio;
 
 public class FileServiceClientHandler
 {
     private readonly FileService.FileServiceClient _client;
 
-    public FileServiceClientHandler(string grpcServerAddress = "http://localhost:50051")
+    public FileServiceClientHandler()
     {
+        string grpcServerAddress = Resources.GRPC_URL;
         var channel = GrpcChannel.ForAddress(grpcServerAddress);
         _client = new FileService.FileServiceClient(channel);
     }
+
 
     public byte[] ConvertImageToByteArray(Image image)
     {
