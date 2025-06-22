@@ -224,8 +224,16 @@
                           FontSize="15"
                           Background="Transparent"
                           BorderThickness="0"
-                          Margin="5,5,33,5"
+                          Margin="5,5,34,20"
                           TextChanged="TxtbNuevoComentario"/>
+                        
+                        <TextBlock x:Name="txtb_ContadorComentario"
+                           Text="0/100"
+                           FontSize="12"
+                           Foreground="Gray"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom"
+                           Margin="0,0,28,6" Width="44"/>
 
                         <Image x:Name="img_EnviarComentario"
                            Source="/Vistas/Recursos/Iconos/EnviarDesactivado.png"

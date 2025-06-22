@@ -27,20 +27,17 @@ using static EduShare_Escritorio.Vistas.ModuloChats.Chat;
 using static EduShare_Escritorio.Vistas.VentanaEmergentePersonalizada;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace EduShare_Escritorio.Vistas.ModuloChats
-{
-    public partial class Chat : Page, ICierreAplicacionListener
-    {
+namespace EduShare_Escritorio.Vistas.ModuloChats {
+    public partial class Chat : Page, ICierreAplicacionListener {
         private Frame _frame;
         private string _idChat;
         private static readonly LoggerManager _logger = new LoggerManager(typeof(Chat));
         private ChatVista _DatosChat;
         private ObservableCollection<MensajesVista> mensajes = new ObservableCollection<MensajesVista>();
         private NotificacionSocketService _socketService;
-        private bool _usuarioUnidoAlChat = false;  
+        private bool _usuarioUnidoAlChat = false;
 
-        public class MensajesVista
-        {
+        public class MensajesVista {
             public string IdMensaje { get; set; }
             public string IdUsuario { get; set; }
             public required string Usuario { get; set; }
@@ -51,25 +48,19 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             public bool EsPropio { get; set; }
         }
 
-        public interface ICierreAplicacionListener
-        {
+        public interface ICierreAplicacionListener {
             void OnAplicacionCerrando();
         }
 
-        public async void OnAplicacionCerrando()
-        {
-            try
-            {
+        public async void OnAplicacionCerrando() {
+            try {
                 await SalirDelChatAsync();
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 _logger.LogError(ex);
             }
         }
 
-        public Chat()
-        {
+        public Chat() {
             InitializeComponent();
             item_Chat.ItemsSource = mensajes;
             ActualizarVisibilidadComentarios();
@@ -78,25 +69,19 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             this.Unloaded += Chat_Unloaded;
         }
 
-        private async void Chat_Unloaded(object sender, RoutedEventArgs e)
-        {
+        private async void Chat_Unloaded(object sender, RoutedEventArgs e) {
             App.DesregistrarListener(this);
 
-             if (_usuarioUnidoAlChat)
-            {
-                try
-                {
+            if (_usuarioUnidoAlChat) {
+                try {
                     await SalirDelChatAsync();
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     _logger.LogError(ex);
                 }
             }
         }
 
-        public Chat(ChatVista chatVista, Frame frame, string idChat) : this()
-        {
+        public Chat(ChatVista chatVista, Frame frame, string idChat) : this() {
             _DatosChat = chatVista;
             _frame = frame;
             _idChat = idChat;
@@ -109,10 +94,8 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             _ = UnirseChatAsync();
         }
 
-        private void ConfigurarEventosSocket()
-        {
-            if (_socketService != null)
-            {
+        private void ConfigurarEventosSocket() {
+            if (_socketService != null) {
                 _socketService.OnMensajeChatRecibido += SocketService_OnMensajeChatRecibido;
                 _socketService.OnEventoChatRecibido += SocketService_OnEventoChatRecibido;
                 _socketService.OnRespuestaUnirseChat += SocketService_OnRespuestaUnirseChat;
@@ -122,10 +105,8 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             }
         }
 
-        private void DesconfigurarEventosSocket()
-        {
-            if (_socketService != null)
-            {
+        private void DesconfigurarEventosSocket() {
+            if (_socketService != null) {
                 _socketService.OnMensajeChatRecibido -= SocketService_OnMensajeChatRecibido;
                 _socketService.OnEventoChatRecibido -= SocketService_OnEventoChatRecibido;
                 _socketService.OnRespuestaUnirseChat -= SocketService_OnRespuestaUnirseChat;
@@ -135,46 +116,35 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             }
         }
 
-        private void SocketService_OnMensajeEliminado(ChatMensajeEliminadoModel mensajeEliminado)
-        {
-            if (mensajeEliminado.IdChat == _idChat) 
-            {
-                Dispatcher.Invoke(() =>
-                {
-                     var mensajeAEliminar = mensajes.FirstOrDefault(m => m.IdMensaje == mensajeEliminado.IdMensaje);
+        private void SocketService_OnMensajeEliminado(ChatMensajeEliminadoModel mensajeEliminado) {
+            if (mensajeEliminado.IdChat == _idChat) {
+                Dispatcher.Invoke(() => {
+                    var mensajeAEliminar = mensajes.FirstOrDefault(m => m.IdMensaje == mensajeEliminado.IdMensaje);
 
-                    if (mensajeAEliminar != null)
-                    {
-                        
+                    if (mensajeAEliminar != null) {
+
                     }
-                   
+
                 });
             }
         }
 
-        private void SocketService_OnMensajeEliminadoConfirmado(string idMensaje)
-        {
-            Dispatcher.Invoke(() =>
-            {
+        private void SocketService_OnMensajeEliminadoConfirmado(string idMensaje) {
+            Dispatcher.Invoke(() => {
                 var mensajeAEliminar = mensajes.FirstOrDefault(m => m.IdMensaje == idMensaje);
-                if (mensajeAEliminar != null)
-                {
+                if (mensajeAEliminar != null) {
                     mensajes.Remove(mensajeAEliminar);
                     ActualizarVisibilidadComentarios();
-                   
+
                 }
-               
+
             });
         }
 
-        private  void SocketService_OnMensajeChatRecibido(ChatMensajeModel mensaje)
-        {
-            if (mensaje.IdChat == _idChat)
-            {
-                Application.Current.Dispatcher.Invoke(async () =>
-                {
-                    var mensajeVista = new MensajesVista
-                    {
+        private void SocketService_OnMensajeChatRecibido(ChatMensajeModel mensaje) {
+            if (mensaje.IdChat == _idChat) {
+                Application.Current.Dispatcher.Invoke(async () => {
+                    var mensajeVista = new MensajesVista {
                         IdMensaje = mensaje.IdMensaje,
                         IdUsuario = mensaje.IdUsuario,
                         Usuario = mensaje.NombreUsuario,
@@ -191,20 +161,16 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             }
         }
 
-        private void SocketService_OnEventoChatRecibido(ChatEventoModel evento)
-        {
-            if (evento.IdChat == _idChat)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    switch (evento.TipoEvento)
-                    {
+        private void SocketService_OnEventoChatRecibido(ChatEventoModel evento) {
+            if (evento.IdChat == _idChat) {
+                Application.Current.Dispatcher.Invoke(() => {
+                    switch (evento.TipoEvento) {
                         case "usuario_unido":
                             MostrarNotificacionSistema(evento.Mensaje);
                             break;
                         case "chat_cerrado":
                         case "chat_cancelado":
-                        case "chat_finalizado": 
+                        case "chat_finalizado":
                             MostrarMensajePersonalizado(evento.Mensaje, DialogType.Warning);
                             RegresarAListaChats();
                             break;
@@ -213,18 +179,12 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             }
         }
 
-        private void SocketService_OnRespuestaUnirseChat(bool exito, string idChat, string error)
-        {
-            if (idChat == _idChat)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    if (exito)
-                    {
+        private void SocketService_OnRespuestaUnirseChat(bool exito, string idChat, string error) {
+            if (idChat == _idChat) {
+                Application.Current.Dispatcher.Invoke(() => {
+                    if (exito) {
                         _usuarioUnidoAlChat = true;
-                    }
-                    else
-                    {
+                    } else {
                         MostrarMensajePersonalizado($"No se pudo unir al chat: {error}", DialogType.Error);
                         RegresarAListaChats();
                     }
@@ -232,24 +192,20 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             }
         }
 
-        private void SocketService_OnErrorRecibido(string error)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                
+        private void SocketService_OnErrorRecibido(string error) {
+            Application.Current.Dispatcher.Invoke(() => {
+
             });
         }
 
-        private void MostrarNotificacionSistema(string mensaje)
-        {
-            var mensajeVista = new MensajesVista
-            {
+        private void MostrarNotificacionSistema(string mensaje) {
+            var mensajeVista = new MensajesVista {
                 IdMensaje = Guid.NewGuid().ToString(),
                 Usuario = "Sistema",
                 Texto = mensaje,
                 Hora = DateTime.Now.ToString("HH:mm"),
                 EsPropio = false,
-                Imagen = null 
+                Imagen = null
             };
 
             mensajes.Add(mensajeVista);
@@ -257,17 +213,13 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             DesplazarAlFinal();
         }
 
-        private async Task<BitmapImage> ObtenerImagenPerfil(string rutaImagenMensaje)
-        {
-            try
-            {
+        private async Task<BitmapImage> ObtenerImagenPerfil(string rutaImagenMensaje) {
+            try {
                 var grpc = new FileServiceClientHandler();
                 var (imagenBytes, _) = await grpc.DownloadImageAsync(rutaImagenMensaje);
 
                 return ConvertirFotoABitmap2(imagenBytes);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 _logger.LogError(ex);
                 return null;
             }
@@ -275,52 +227,39 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
 
 
 
-        private async Task UnirseChatAsync()
-        {
-            try
-            {
-                if (_socketService != null && !string.IsNullOrEmpty(_idChat))
-                {
+        private async Task UnirseChatAsync() {
+            try {
+                if (_socketService != null && !string.IsNullOrEmpty(_idChat)) {
                     await _socketService.UnirseChatAsync(
                         _idChat,
                         PerfilSingleton.Instance.IdUsuarioRegistrado.ToString(),
                         PerfilSingleton.Instance.NombreUsuario
                     );
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 _logger.LogError(ex);
                 MostrarMensajePersonalizado("Error al unirse al chat", DialogType.Error);
             }
         }
 
-        private async Task SalirDelChatAsync()
-        {
-            try
-            {
-                if (_socketService != null && !string.IsNullOrEmpty(_idChat) && _usuarioUnidoAlChat)
-                {
+        private async Task SalirDelChatAsync() {
+            try {
+                if (_socketService != null && !string.IsNullOrEmpty(_idChat) && _usuarioUnidoAlChat) {
                     await _socketService.SalirChatAsync(
                         _idChat,
                         PerfilSingleton.Instance.IdUsuarioRegistrado.ToString()
                     );
                     _usuarioUnidoAlChat = false;
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 _logger.LogError(ex);
             }
         }
 
-        private async Task EnviarMensajeAsync(string mensaje)
-        {
-            try
-            {
-                if (_socketService != null && !string.IsNullOrEmpty(_idChat) && _usuarioUnidoAlChat)
-                {
-                    
+        private async Task EnviarMensajeAsync(string mensaje) {
+            try {
+                if (_socketService != null && !string.IsNullOrEmpty(_idChat) && _usuarioUnidoAlChat) {
+
                     string fotoPerfilBase64 = PerfilSingleton.Instance.RutaPerfil;
 
                     await _socketService.EnviarMensajeChatAsync(
@@ -331,24 +270,20 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
                         mensaje
                     );
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 _logger.LogError(ex);
-                 MostrarMensajePersonalizado("El servidor se ha desconectado. Serás regresado a la ventana anterior.", DialogType.Error);
+                MostrarMensajePersonalizado("El servidor se ha desconectado. Serás regresado a la ventana anterior.", DialogType.Error);
 
                 RegresarAListaChats();
             }
         }
 
-        private void ActualizarVisibilidadComentarios()
-        {
+        private void ActualizarVisibilidadComentarios() {
             bool hayMensajes = mensajes.Count > 0;
             txtb_SinMnesajes.Visibility = hayMensajes ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        private void CargarDatosChat()
-        {
+        private void CargarDatosChat() {
             if (_DatosChat == null) return;
 
             txtb_Titulo.Text = _DatosChat.Titulo;
@@ -357,34 +292,27 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             txtb_Materia.Text = _DatosChat.Materia;
             txtb_Descripcion.Text = _DatosChat.Descripcion;
 
-            if (PerfilSingleton.Instance.IdUsuarioRegistrado.ToString() == _DatosChat.IdAutor)
-            {
+            if (PerfilSingleton.Instance.IdUsuarioRegistrado.ToString() == _DatosChat.IdAutor) {
                 lbl_Finalizar.Visibility = Visibility.Visible;
-            }
-            else
-            {
+            } else {
                 lbl_Salir.Visibility = Visibility.Visible;
             }
         }
 
-        private void MostrarMensajePersonalizado(string message, DialogType type)
-        {
-            var dialog = new VentanaEmergentePersonalizada(message, type)
-            {
+        private void MostrarMensajePersonalizado(string message, DialogType type) {
+            var dialog = new VentanaEmergentePersonalizada(message, type) {
                 Owner = Window.GetWindow(this)
             };
             dialog.ShowDialog();
         }
 
-        private void Perfil_PropertyChanged()
-        {
+        private void Perfil_PropertyChanged() {
             var foto = PerfilSingleton.Instance.FotoPerfilBinaria;
             var bitmap = ConvertirFotoABitmap(foto);
             img_FotoPerfil.ImageSource = bitmap;
         }
 
-        public ImageSource ConvertirFotoABitmap(byte[] binario)
-        {
+        public ImageSource ConvertirFotoABitmap(byte[] binario) {
             if (binario == null || binario.Length == 0) return null;
 
             using var ms = new MemoryStream(binario);
@@ -397,8 +325,7 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             return bitmap;
         }
 
-        public BitmapImage ConvertirFotoABitmap2(byte[] binario)
-        {
+        public BitmapImage ConvertirFotoABitmap2(byte[] binario) {
             if (binario == null || binario.Length == 0) return null;
 
             using var ms = new MemoryStream(binario);
@@ -407,17 +334,14 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             bitmap.CacheOption = BitmapCacheOption.OnLoad;
             bitmap.StreamSource = ms;
             bitmap.EndInit();
-            bitmap.Freeze(); // importante si lo usas en bindings
+            bitmap.Freeze();
             return bitmap;
         }
 
 
-        private async void AgregarComentario_Click(object sender, RoutedEventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(txtb_NuevoComentario.Text))
-            {
-                if (!_usuarioUnidoAlChat)
-                {
+        private async void AgregarComentario_Click(object sender, RoutedEventArgs e) {
+            if (!string.IsNullOrWhiteSpace(txtb_NuevoComentario.Text)) {
+                if (!_usuarioUnidoAlChat) {
                     MostrarMensajePersonalizado("No estás conectado al chat", DialogType.Warning);
                     return;
                 }
@@ -428,113 +352,95 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             }
         }
 
-        private void EnviarComentario(object sender, MouseButtonEventArgs e)
-        {
-            if (img_EnviarComentario.Cursor == Cursors.Hand)
-            {
+        private void EnviarComentario(object sender, MouseButtonEventArgs e) {
+            if (img_EnviarComentario.Cursor == Cursors.Hand) {
                 AgregarComentario_Click(sender, e);
             }
         }
 
-        private async void Salir(object sender, MouseButtonEventArgs e)
-        {
+        private async void Salir(object sender, MouseButtonEventArgs e) {
             await SalirDelChatAsync();
             RegresarAListaChats();
         }
 
-        private async void Finalizar(object sender, MouseButtonEventArgs e)
-        {
+        private async void Finalizar(object sender, MouseButtonEventArgs e) {
             var confirmar = new VentanaEmergentePersonalizada(
                    "¿Estás seguro de que quieres finalizar este chat? Esta acción no se puede deshacer.",
-                   DialogType.Confirmation)
-            {
+                   DialogType.Confirmation) {
                 Owner = Window.GetWindow(this)
             };
 
             bool confirmado = confirmar.ShowDialog() == true;
 
 
-            if (confirmado)
-            {                
-                try
-                {
+            if (confirmado) {
+                try {
                     await SalirDelChatAsync();
                     RegresarAListaChats();
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     _logger.LogError(ex);
                     MostrarMensajePersonalizado("Error al finalizar el chat", DialogType.Error);
                 }
             }
         }
 
-        private void RegresarAListaChats()
-        {
+        private void RegresarAListaChats() {
             _frame.Navigate(new ListaChst(_frame));
         }
 
-        private void DesplazarAlFinal()
-        {
+        private void DesplazarAlFinal() {
             ScrollViewer sv = VisualTreeHelperExtensions.FindChild<ScrollViewer>(this, "scrol_Mensajes");
             sv?.ScrollToEnd();
         }
 
-        private void TxtbNuevoComentario(object sender, TextChangedEventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(txtb_NuevoComentario.Text))
-            {
+        private void TxtbNuevoComentario(object sender, TextChangedEventArgs e) {
+            if (!string.IsNullOrWhiteSpace(txtb_NuevoComentario.Text)) {
                 img_EnviarComentario.Source = new BitmapImage(new Uri("/Vistas/Recursos/Iconos/EnviarActivado.png", UriKind.Relative));
                 img_EnviarComentario.Cursor = Cursors.Hand;
-            }
-            else
-            {
+            } else {
                 img_EnviarComentario.Source = new BitmapImage(new Uri("/Vistas/Recursos/Iconos/EnviarDesactivado.png", UriKind.Relative));
                 img_EnviarComentario.Cursor = Cursors.No;
             }
+
+            if (txtb_ContadorComentario == null || txtb_NuevoComentario == null)
+                return;
+
+            int caracteresActuales = txtb_NuevoComentario.Text.Length;
+            txtb_ContadorComentario.Text = $"{caracteresActuales}/100";
         }
 
-        private void TxtbNuevoComentario_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter && !string.IsNullOrWhiteSpace(txtb_NuevoComentario.Text))
-            {
+        private void TxtbNuevoComentario_KeyUp(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Enter && !string.IsNullOrWhiteSpace(txtb_NuevoComentario.Text)) {
                 AgregarComentario_Click(sender, e);
             }
         }
 
-        private async void EliminarComentario(object sender, RoutedEventArgs e)
-        {
-            if (sender is not Button btnEliminar || btnEliminar.Tag is not MensajesVista mensajeVista)
-            {
+        private async void EliminarComentario(object sender, RoutedEventArgs e) {
+            if (sender is not Button btnEliminar || btnEliminar.Tag is not MensajesVista mensajeVista) {
                 MostrarMensajePersonalizado("No se pudo identificar el mensaje a eliminar", DialogType.Warning);
                 return;
             }
 
-            if (!mensajeVista.EsPropio)
-            {
+            if (!mensajeVista.EsPropio) {
                 MostrarMensajePersonalizado("Solo puedes eliminar tus propios mensajes", DialogType.Warning);
                 return;
             }
 
-             if (!mensajes.Contains(mensajeVista))
-            {
+            if (!mensajes.Contains(mensajeVista)) {
                 MostrarMensajePersonalizado("El mensaje ya no existe", DialogType.Warning);
                 return;
             }
 
             var confirmar = new VentanaEmergentePersonalizada(
                    "¿Estás seguro de que quieres eliminar este mensaje?",
-                   DialogType.Confirmation)
-            {
+                   DialogType.Confirmation) {
                 Owner = Window.GetWindow(this)
             };
 
             bool confirmado = confirmar.ShowDialog() == true;
 
-            if (confirmado)
-            {
-                try
-                {
+            if (confirmado) {
+                try {
                     btnEliminar.IsEnabled = false;
 
                     await _socketService.EliminarMensajeChatAsync(
@@ -544,9 +450,7 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
                         PerfilSingleton.Instance.NombreUsuario
                     );
 
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     _logger.LogError(ex);
                     MostrarMensajePersonalizado("Error al eliminar el mensaje", DialogType.Error);
 
@@ -555,8 +459,7 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             }
         }
 
-        private void AbrirEmojis(object sender, RoutedEventArgs e)
-        {
+        private void AbrirEmojis(object sender, RoutedEventArgs e) {
             txtb_NuevoComentario.Focus();
 
             keybd_event(VK_LWIN, 0, 0, 0);
@@ -570,11 +473,9 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
 
         private const byte VK_LWIN = 0x5B;
         private const uint KEYEVENTF_KEYUP = 0x0002;
-        private async void Page_Unloaded(object sender, RoutedEventArgs e)
-        {
+        private async void Page_Unloaded(object sender, RoutedEventArgs e) {
             DesconfigurarEventosSocket();
-            if (_usuarioUnidoAlChat)
-            {
+            if (_usuarioUnidoAlChat) {
                 await SalirDelChatAsync();
             }
         }
