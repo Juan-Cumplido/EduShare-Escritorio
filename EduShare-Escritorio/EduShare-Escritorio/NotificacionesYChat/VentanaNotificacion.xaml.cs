@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media.Animation;
-using EduShare_Escritorio.NotificacionesYChat;
 
 namespace EduShare_Escritorio.NotificacionesYChat
 {
@@ -18,16 +17,13 @@ namespace EduShare_Escritorio.NotificacionesYChat
 
             if (mainWindow != null)
             {
-                var offset = 10;
                 var mainLeft = mainWindow.Left;
                 var mainTop = mainWindow.Top;
                 var mainWidth = mainWindow.ActualWidth;
-                var mainHeight = mainWindow.ActualHeight;
 
-                Left = mainLeft + mainWidth - Width - offset;
-                Top = mainTop + mainHeight - Height - offset;
+                Left = mainLeft + (mainWidth - Width) / 2;
+                Top = mainTop - Height; 
             }
-
 
             Topmost = true;
             ShowInTaskbar = false;
@@ -38,18 +34,39 @@ namespace EduShare_Escritorio.NotificacionesYChat
 
             Loaded += (s, e) =>
             {
-                Opacity = 0;
-                var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromSeconds(1));
-                BeginAnimation(OpacityProperty, fadeIn);
-
-                var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromSeconds(2))
+                 var slideIn = new DoubleAnimation
                 {
-                    BeginTime = TimeSpan.FromSeconds(5)
+                    From = Top,
+                    To = Top + Height + 20,
+                    Duration = TimeSpan.FromSeconds(0.5),
+                    EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
                 };
-                fadeOut.Completed += (s2, e2) => Close();
-                BeginAnimation(OpacityProperty, fadeOut);
+
+                slideIn.Completed += (s1, e1) =>
+                {
+                  
+                    var wait = new System.Windows.Threading.DispatcherTimer
+                    {
+                        Interval = TimeSpan.FromSeconds(3)
+                    };
+                    wait.Tick += (s2, e2) =>
+                    {
+                        wait.Stop();
+                             var slideOut = new DoubleAnimation
+                        {
+                            From = Top,
+                            To = Top - Height - 20,
+                            Duration = TimeSpan.FromSeconds(0.5),
+                            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseIn }
+                        };
+                        slideOut.Completed += (s3, e3) => Close();
+                        BeginAnimation(Window.TopProperty, slideOut);
+                    };
+                    wait.Start();
+                };
+
+                BeginAnimation(Window.TopProperty, slideIn);
             };
         }
     }
-
 }

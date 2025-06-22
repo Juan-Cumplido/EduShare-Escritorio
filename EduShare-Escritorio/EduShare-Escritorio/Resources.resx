@@ -121,6 +121,9 @@
     <value>http://localhost:1234/edushare/</value>
   </data>
   <data name="GRPC_URL" xml:space="preserve">
-    <value>http://localhost:50051</value>
+    <value>http://192.168.43.30:50051</value>
+  </data>
+  <data name="NOTI" xml:space="preserve">
+    <value>ws://localhost:8765</value>
   </data>
 </root>

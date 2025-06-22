@@ -1,0 +1,44 @@
+﻿<Page x:Class="EduShare_Escritorio.Vistas.Menus.Informacion"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      Background="White"
+      d:DesignHeight="574" d:DesignWidth="1280">
+
+    <Grid Margin="157,0,157,0">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="20">
+            <StackPanel>
+
+                <TextBlock FontSize="24" FontWeight="Bold" Text="Preguntas frecuentes sobre documentos académicos" Margin="0 0 0 20"/>
+
+                <Expander Header="¿Qué requisitos debe cumplir un documento para ser aceptado?" IsExpanded="True" Margin="0 0 0 10">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="• Originalidad: El contenido debe ser propio o contar con autorización si es de terceros. No se permite plagio ni reproducción no autorizada." TextWrapping="Wrap" Margin="0 5"/>
+                        <TextBlock Text="• Pertinencia académica: El documento debe estar enfocado al ámbito educativo (resúmenes, apuntes, libros con licencia, etc.)." TextWrapping="Wrap" Margin="0 5"/>
+                        <TextBlock Text="• Estructura mínima sugerida: Título, introducción, desarrollo organizado, y referencias si aplica." TextWrapping="Wrap" Margin="0 5"/>
+                        <TextBlock Text="• Claridad y redacción: Buena ortografía y gramática. No se permite lenguaje vulgar ni ambiguo." TextWrapping="Wrap" Margin="0 5"/>
+                        <TextBlock Text="• Formato técnico: Solo se admiten archivos PDF de máximo 20 MB." TextWrapping="Wrap" Margin="0 5"/>
+                    </StackPanel>
+                </Expander>
+
+                <Expander Header="¿Por qué podría rechazarse un documento?" Margin="0 0 0 10">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="• Si contiene plagio o contenido copiado sin atribución." TextWrapping="Wrap" Margin="0 5"/>
+                        <TextBlock Text="• Si es ilegible, incompleto, borroso o con mala calidad visual." TextWrapping="Wrap" Margin="0 5"/>
+                        <TextBlock Text="• Si el archivo está vacío, dañado, no es educativo o no es PDF." TextWrapping="Wrap" Margin="0 5"/>
+                        <TextBlock Text="• Si reproduce libros completos sin licencia o viola derechos de autor." TextWrapping="Wrap" Margin="0 5"/>
+                        <TextBlock Text="• Si contiene contenido ofensivo o no ético." TextWrapping="Wrap" Margin="0 5"/>
+                    </StackPanel>
+                </Expander>
+
+                <Expander Header="¿Qué pasa si tengo dudas sobre el rechazo de mi documento?" Margin="0 0 0 10">
+                    <TextBlock Margin="10" TextWrapping="Wrap"
+                               Text="Puedes consultar esta sección o contactarnos directamente desde la plataforma."/>
+                </Expander>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

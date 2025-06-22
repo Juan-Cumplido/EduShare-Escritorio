@@ -107,7 +107,6 @@ namespace EduShare_Escritorio.Servicio
             return respuesta;
         }
 
-
         public static async Task<RespuestaPublicacion<List<Publicacion>>> BuscarPublicacionesPorUsuario(int idUsuario, string token)
         {
             var respuestaFinal = new RespuestaPublicacion<List<Publicacion>>();
@@ -121,7 +120,7 @@ namespace EduShare_Escritorio.Servicio
 
                     var httpResponse = await httpClient.GetAsync($"{Resources.BASE_URL}publicaciones/usuario/{idUsuario}");
                     string json = await httpResponse.Content.ReadAsStringAsync();
-                    
+
                     var respuestaApi = JsonConvert.DeserializeObject<RespuestaPublicacion<List<Publicacion>>>(json);
 
                     if (respuestaApi != null)
@@ -135,6 +134,60 @@ namespace EduShare_Escritorio.Servicio
                         respuestaFinal.Resultado = (int)HttpStatusCode.InternalServerError;
                         respuestaFinal.Mensaje = "No se pudo procesar la respuesta del servidor.";
                         respuestaFinal.Datos = new List<Publicacion>();
+                    }
+                }
+                catch (HttpRequestException httpRequestException)
+                {
+                    respuestaFinal.Resultado = (int)HttpStatusCode.InternalServerError;
+                    respuestaFinal.Mensaje = $"Error de red: {httpRequestException.Message}";
+                    _logger.LogFatal(httpRequestException);
+                }
+                catch (JsonException jsonException)
+                {
+                    respuestaFinal.Resultado = (int)HttpStatusCode.InternalServerError;
+                    respuestaFinal.Mensaje = $"Error al procesar la respuesta JSON: {jsonException.Message}";
+                    _logger.LogFatal(jsonException);
+                }
+                catch (System.Exception ex)
+                {
+                    respuestaFinal.Resultado = (int)HttpStatusCode.InternalServerError;
+                    respuestaFinal.Mensaje = $"Error inesperado: {ex.Message}";
+                    _logger.LogFatal(ex);
+                }
+            }
+
+            return respuestaFinal;
+        }
+
+        public static async Task<RespuestaPublicacion<Publicacion>> BuscarPublicacionesPorIdPublicacion(int idPublicacion)
+        {
+            var respuestaFinal = new RespuestaPublicacion<Publicacion>();
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                   
+
+
+                    var httpResponse = await httpClient.GetAsync($"{Resources.BASE_URL}publicaciones/{idPublicacion}");
+                    string json = await httpResponse.Content.ReadAsStringAsync();
+
+                    var respuestaApi = JsonConvert.DeserializeObject<RespuestaPublicacion<Publicacion>>(json);
+
+                   
+
+                    if (respuestaApi != null)
+                    {
+                        respuestaFinal.Resultado = respuestaApi.Resultado;
+                        respuestaFinal.Mensaje = respuestaApi.Mensaje;
+                        respuestaFinal.Datos = respuestaApi.Resultado == 200 ? respuestaApi.Datos : new Publicacion();
+                    }
+                    else
+                    {
+                        respuestaFinal.Resultado = (int)HttpStatusCode.InternalServerError;
+                        respuestaFinal.Mensaje = "No se pudo procesar la respuesta del servidor.";
+                        respuestaFinal.Datos = new Publicacion();
                     }
                 }
                 catch (HttpRequestException httpRequestException)

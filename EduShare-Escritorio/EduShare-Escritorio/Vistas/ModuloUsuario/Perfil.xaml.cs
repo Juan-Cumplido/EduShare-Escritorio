@@ -197,6 +197,7 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
                 {
                     case (int)HttpStatusCode.OK:
                         perfil.FotoPerfilBinaria = nuevaImagenBinaria;
+                        img_FotoPerfil.ImageSource = ConvertirFotoABitmap(nuevaImagenBinaria);
                         return true;
 
                     case (int)HttpStatusCode.Unauthorized:
@@ -205,8 +206,10 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
                         PerfilSingleton.Instance.Reset();
                         break;
 
+
                     default:
-                        perfil.FotoPerfilBinaria = nuevaImagenBinaria;
+                        MostrarMensajePersonalizado("No se pudo subir la imagen al servidor de archivos.", DialogType.Error);
+                       
                         break;
                 }
 

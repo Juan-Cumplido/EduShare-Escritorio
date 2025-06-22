@@ -76,9 +76,9 @@
                                 </Border>
 
                                 <Button Content="🗑️" Width="30" Height="30" Background="Transparent" BorderThickness="0"
-                                            HorizontalAlignment="Right" VerticalAlignment="Top" 
-                                            Visibility="Collapsed"
+                                            HorizontalAlignment="Right" VerticalAlignment="Top"
                                             Click="EliminarComentario"
+                                            Visibility="Collapsed"
                                             Tag="{Binding}"/>
                             </Grid>
                         </DataTemplate>

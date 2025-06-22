@@ -70,11 +70,20 @@ namespace EduShare_Escritorio {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a http://localhost:50051.
+        ///   Busca una cadena traducida similar a http://192.168.43.30:50051.
         /// </summary>
         internal static string GRPC_URL {
             get {
                 return ResourceManager.GetString("GRPC_URL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ws://localhost:8765.
+        /// </summary>
+        internal static string NOTI {
+            get {
+                return ResourceManager.GetString("NOTI", resourceCulture);
             }
         }
     }

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using EduShare_Escritorio.Utilidades;
+using EduShare_Escritorio.Vistas.ModuloDocumentos;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -12,12 +14,16 @@ namespace EduShare_Escritorio.NotificacionesYChat
 {
     public class NotificacionSocketService
     {
+        private static readonly LoggerManager _logger = new LoggerManager(typeof(NotificacionSocketService));
         private ClientWebSocket _webSocket;
         private CancellationTokenSource _cancellationTokenSource;
         private bool _desconexionManual = false;
         private string _ultimoUsuarioIdReconectable;
         private TaskCompletionSource<(bool Exito, string IdChat, string Error)> _tcsCrearChat;
 
+        public event Action<InteraccionDocumentoModel> OnInteraccionDocumentoRecibida;
+        public event Action<string, string> OnDocumentoConectado;
+        public event Action<string, string> OnDocumentoDesconectado;
         public event Action<bool, string, string> OnRespuestaUnirseChat;
         public event Action<NotificacionModel> OnNotificacionRecibida;
         public event Action<ChatMensajeModel> OnMensajeChatRecibido;
@@ -36,7 +42,7 @@ namespace EduShare_Escritorio.NotificacionesYChat
             _webSocket = new ClientWebSocket();
             _cancellationTokenSource = new CancellationTokenSource();
 
-            await _webSocket.ConnectAsync(new Uri("ws://localhost:8765"), _cancellationTokenSource.Token);
+            await _webSocket.ConnectAsync(new Uri(Resources.NOTI), _cancellationTokenSource.Token);
 
             var conectarMsg = JsonConvert.SerializeObject(new
             {
@@ -69,7 +75,7 @@ namespace EduShare_Escritorio.NotificacionesYChat
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error al desconectar: {ex.Message}");
+                _logger.LogFatal(ex);
             }
             finally
             {
@@ -82,40 +88,29 @@ namespace EduShare_Escritorio.NotificacionesYChat
         {
             try
             {
-                Console.WriteLine($"🔵 EnviarMensajeAsync: Iniciando envío de mensaje");
-                Console.WriteLine($"📤 Mensaje a enviar: {mensaje}");
 
                 if (_webSocket == null)
                 {
-                    Console.WriteLine("❌ EnviarMensajeAsync: _webSocket es null");
                     throw new InvalidOperationException("WebSocket es null");
                 }
 
-                Console.WriteLine($"🔍 Estado del WebSocket: {_webSocket.State}");
-
                 if (_webSocket.State != WebSocketState.Open)
-                {
-                    Console.WriteLine($"❌ EnviarMensajeAsync: WebSocket no está abierto. Estado: {_webSocket.State}");
+                { 
                     throw new InvalidOperationException($"WebSocket no está conectado. Estado: {_webSocket.State}");
                 }
 
                 if (_cancellationTokenSource == null)
                 {
-                    Console.WriteLine("❌ EnviarMensajeAsync: _cancellationTokenSource es null");
                     throw new InvalidOperationException("CancellationTokenSource es null");
                 }
 
                 if (_cancellationTokenSource.Token.IsCancellationRequested)
                 {
-                    Console.WriteLine("❌ EnviarMensajeAsync: Token de cancelación ya fue solicitado");
                     throw new OperationCanceledException("El token de cancelación ya fue solicitado");
                 }
 
-                Console.WriteLine("✅ EnviarMensajeAsync: Verificaciones pasadas, enviando...");
-
                 var buffer = Encoding.UTF8.GetBytes(mensaje);
-                Console.WriteLine($"📦 Tamaño del buffer: {buffer.Length} bytes");
-
+               
                 await _webSocket.SendAsync(
                     new ArraySegment<byte>(buffer),
                     WebSocketMessageType.Text,
@@ -123,12 +118,11 @@ namespace EduShare_Escritorio.NotificacionesYChat
                     _cancellationTokenSource.Token
                 );
 
-                Console.WriteLine("✅ EnviarMensajeAsync: Mensaje enviado exitosamente");
+                
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ EnviarMensajeAsync: Error al enviar mensaje: {ex.Message}");
-                Console.WriteLine($"❌ StackTrace: {ex.StackTrace}");
+                _logger.LogFatal(ex);
                 throw;
             }
         }
@@ -148,7 +142,6 @@ namespace EduShare_Escritorio.NotificacionesYChat
                     }
 
                     var mensaje = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                    Console.WriteLine($"📨 Mensaje recibido: {mensaje}");
 
                     try
                     {
@@ -157,10 +150,6 @@ namespace EduShare_Escritorio.NotificacionesYChat
 
                         switch (accion)
                         {
-                            case "conectado":
-                                Console.WriteLine("✅ Conexión confirmada por el servidor");
-                                break;
-
                             case "notificacion":
                                 {
                                     var notificacion = new NotificacionModel
@@ -174,9 +163,9 @@ namespace EduShare_Escritorio.NotificacionesYChat
                                     break;
                                 }
 
-                            case "notificacion_chat_inicio":
-                            case "chat_cancelado":
-                            case "chat_cerrado":
+                                case "notificacion_chat_inicio":
+                                case "chat_cancelado":
+                                case "chat_cerrado":
                                 {
                                     var noti = new NotificacionModel
                                     {
@@ -199,35 +188,27 @@ namespace EduShare_Escritorio.NotificacionesYChat
 
                             case "crear_chat":
                                 {
-                                    Console.WriteLine("🔵 EscucharMensajes: Recibida respuesta crear_chat");
-                                    Console.WriteLine($"📨 JSON completo recibido: {json.ToString()}");
 
                                     string status = json.Value<string>("status");
                                     string idChat = json.Value<string>("IdChat");
                                     string error = json.Value<string>("error");
 
-                                    Console.WriteLine($"📊 Status: {status}");
-                                    Console.WriteLine($"📊 IdChat: {idChat}");
-
                                     if (_tcsCrearChat != null)
                                     {
-                                        Console.WriteLine("✅ _tcsCrearChat existe, procesando respuesta...");
 
                                         if (status == "ok")
                                         {
-                                            Console.WriteLine("✅ Status OK, marcando como exitoso");
                                             _tcsCrearChat.TrySetResult((true, idChat, null));
                                         }
                                         else
                                         {
-                                            Console.WriteLine($"❌ Status no OK: {status}");
                                             string errorMsg = error ?? "No se pudo crear el chat.";
                                             _tcsCrearChat.TrySetResult((false, null, errorMsg));
                                         }
                                     }
                                     else
                                     {
-                                        Console.WriteLine("❌ _tcsCrearChat es null! No se puede procesar la respuesta");
+                                        Console.WriteLine("_tcsCrearChat es null! No se puede procesar la respuesta");
                                     }
                                     break;
                                 }
@@ -286,10 +267,6 @@ namespace EduShare_Escritorio.NotificacionesYChat
                                     break;
                                 }
 
-                            case "mensaje_enviado":
-                                Console.WriteLine("✅ Mensaje de chat enviado correctamente");
-                                break;
-
                             case "respuesta_unirse_chat":
                                 {
                                     var exito = json["exito"].ToObject<bool>();
@@ -331,6 +308,48 @@ namespace EduShare_Escritorio.NotificacionesYChat
                                     break;
                                 }
 
+                            case "interaccion_documento":
+                                {
+                                    var interaccion = new InteraccionDocumentoModel
+                                    {
+                                        IdDocumento = json.Value<string>("IdDocumento"),
+                                        TipoInteraccion = json.Value<string>("TipoInteraccion"),
+                                        IdUsuario = json.Value<string>("IdUsuario"),
+                                        NombreUsuario = json.Value<string>("NombreUsuario"),
+                                        Timestamp = json.Value<string>("Timestamp"),
+                                        Estado = json.Value<string>("Estado"),
+                                        IdComentario = json.Value<string>("IdComentario"),
+                                        TextoComentario = json.Value<string>("TextoComentario"),
+                                        Contador = json.Value<int?>("Contador") ?? 0
+                                    };
+                                    OnInteraccionDocumentoRecibida?.Invoke(interaccion);
+                                    break;
+                                }
+
+                            case "unido_documento":
+                                {
+                                    string idDocumento = json.Value<string>("IdDocumento");
+                                    string status = json.Value<string>("status");
+                                    OnDocumentoConectado?.Invoke(idDocumento, status);
+                                    break;
+                                }
+
+                            case "salido_documento":
+                                {
+                                    string idDocumento = json.Value<string>("IdDocumento");
+                                    string status = json.Value<string>("status");
+                                    OnDocumentoDesconectado?.Invoke(idDocumento, status);
+                                    break;
+                                }
+
+                            case "interaccion_documento_confirmada":
+                                {
+                                    string tipoInteraccion = json.Value<string>("TipoInteraccion");
+                                    Console.WriteLine($" Interacción {tipoInteraccion} confirmada");
+                                    break;
+                                }
+
+
                             case "respuesta_mis_chats":
                                 {
                                     var chatsArray = json["chats"] as JArray;
@@ -351,28 +370,25 @@ namespace EduShare_Escritorio.NotificacionesYChat
                                 }
 
                             default:
-                                Console.WriteLine($"⚠️ Acción no reconocida: {accion}");
                                 OnErrorRecibido?.Invoke($"Mensaje no reconocido: {accion}");
                                 break;
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"❌ Error al procesar mensaje recibido: {ex.Message}\nMensaje: {mensaje}");
                         OnErrorRecibido?.Invoke($"Error al procesar mensaje: {ex.Message}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Error al recibir mensajes: {ex.Message}");
+                Console.WriteLine($"Error al recibir mensajes: {ex.Message}");
             }
             finally
             {
                 if (!_desconexionManual)
                 {
-                    Console.WriteLine("🔁 Intentando reconexión...");
-                    await IntentarReconexionAsync();
+                     await IntentarReconexionAsync();
                 }
             }
         }
@@ -388,22 +404,17 @@ namespace EduShare_Escritorio.NotificacionesYChat
                 try
                 {
                     intentos++;
-                    Console.WriteLine($"🔄 Reintento {intentos} de {maxIntentos}...");
-
                     await ConectarAsync(_ultimoUsuarioIdReconectable);
 
-                    Console.WriteLine("✅ Reconexión exitosa.");
-                    return;
+                     return;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"❌ Fallo reconexión: {ex.Message}");
                     await Task.Delay(delayMilisegundos);
                 }
             }
 
-            Console.WriteLine("❌ Se alcanzó el máximo de intentos de reconexión.");
-
+           
             OnNotificacionRecibida?.Invoke(new NotificacionModel
             {
                 Titulo = "Conexión perdida",
@@ -415,22 +426,17 @@ namespace EduShare_Escritorio.NotificacionesYChat
             OnErrorRecibido?.Invoke("Se perdió la conexión con el servidor.");
         }
 
-        // Métodos para interactuar con el servidor
-
         public async Task<(bool Exito, string IdChat, string Error)> CrearChatAsync(ChatInfoModel chat)
         {
             try
             {
-                Console.WriteLine("🔵 CrearChatAsync: Iniciando método");
-
+               
                 if (_webSocket == null || _webSocket.State != WebSocketState.Open)
                 {
-                    Console.WriteLine("❌ CrearChatAsync: WebSocket no está conectado");
-                    return (false, null, "WebSocket no está conectado");
+                     return (false, null, "WebSocket no está conectado");
                 }
 
-                Console.WriteLine("✅ CrearChatAsync: WebSocket está conectado");
-
+               
                 _tcsCrearChat = new TaskCompletionSource<(bool, string, string)>();
 
                 var mensaje = JsonConvert.SerializeObject(new
@@ -447,50 +453,110 @@ namespace EduShare_Escritorio.NotificacionesYChat
                     Hora = chat.Hora
                 });
 
-                Console.WriteLine($"✅ CrearChatAsync: Mensaje JSON creado: {mensaje}");
+                 await EnviarMensajeAsync(mensaje);
 
-                await EnviarMensajeAsync(mensaje);
-                Console.WriteLine("✅ CrearChatAsync: Mensaje enviado");
-
-                // Timeout para evitar espera infinita
                 var timeoutTask = Task.Delay(30000);
                 var completedTask = await Task.WhenAny(_tcsCrearChat.Task, timeoutTask);
 
                 if (completedTask == timeoutTask)
                 {
-                    Console.WriteLine("⏰ CrearChatAsync: Timeout - No se recibió respuesta en 30 segundos");
-                    return (false, null, "Timeout - No se recibió respuesta del servidor");
+                     return (false, null, "Timeout - No se recibió respuesta del servidor");
                 }
 
                 var resultado = await _tcsCrearChat.Task;
-                Console.WriteLine($"✅ CrearChatAsync: Respuesta recibida - Exito: {resultado.Item1}, IdChat: {resultado.Item2}, Error: {resultado.Item3}");
-
+               
                 return resultado;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ CrearChatAsync: Excepción: {ex.Message}");
-                return (false, null, $"Error interno: {ex.Message}");
+                 return (false, null, $"Error interno: {ex.Message}");
             }
             finally
             {
                 _tcsCrearChat = null;
             }
         }
-
-        public async Task FinalizarChatAsync(string idChat, string idAutor)
-        {
-            var mensaje = JsonConvert.SerializeObject(new
-            {
-                accion = "finalizar_chat",
-                IdChat = idChat,
-                IdAutor = idAutor
-            });
-            await EnviarMensajeAsync(mensaje);
-        }
         public async Task ObtenerChatsActivosAsync()
         {
             var mensaje = JsonConvert.SerializeObject(new { accion = "obtener_chats_activos" });
+            await EnviarMensajeAsync(mensaje);
+        }
+
+        public async Task SalirDocumentoAsync(string idDocumento, string idUsuario)
+        {
+            var mensaje = JsonConvert.SerializeObject(new
+            {
+                accion = "salir_documento",
+                IdDocumento = idDocumento,
+                IdUsuario = idUsuario
+            });
+            await EnviarMensajeAsync(mensaje);
+        }
+
+        public async Task EnviarLikeDocumentoAsync(string idDocumento, string idUsuario, string nombreUsuario, string estado)
+        {
+            var mensaje = JsonConvert.SerializeObject(new
+            {
+                accion = "interaccion_documento",
+                IdDocumento = idDocumento,
+                TipoInteraccion = "like",
+                IdUsuario = idUsuario,
+                NombreUsuario = nombreUsuario,
+                Estado = estado // "agregado" o "removido"
+            });
+            await EnviarMensajeAsync(mensaje);
+        }
+
+        public async Task EnviarVistaDocumentoAsync(string idDocumento, string idUsuario, string nombreUsuario)
+        {
+            var mensaje = JsonConvert.SerializeObject(new
+            {
+                accion = "interaccion_documento",
+                IdDocumento = idDocumento,
+                TipoInteraccion = "vista",
+                IdUsuario = idUsuario,
+                NombreUsuario = nombreUsuario,
+                Contador = 1
+            });
+            await EnviarMensajeAsync(mensaje);
+        }
+
+        public async Task EnviarDescargaDocumentoAsync(string idDocumento, string idUsuario, string nombreUsuario)
+        {
+            var mensaje = JsonConvert.SerializeObject(new
+            {
+                accion = "interaccion_documento",
+                IdDocumento = idDocumento,
+                TipoInteraccion = "descarga",
+                IdUsuario = idUsuario,
+                NombreUsuario = nombreUsuario,
+                Contador = 1
+            });
+            await EnviarMensajeAsync(mensaje);
+        }
+
+        public async Task EnviarComentarioDocumentoAsync(string idDocumento, string idUsuario, string nombreUsuario, string idComentario, string textoComentario)
+        {
+            var mensaje = JsonConvert.SerializeObject(new
+            {
+                accion = "interaccion_documento",
+                IdDocumento = idDocumento,
+                TipoInteraccion = "comentario",
+                IdUsuario = idUsuario,
+                NombreUsuario = nombreUsuario,
+                IdComentario = idComentario,
+                TextoComentario = textoComentario
+            });
+            await EnviarMensajeAsync(mensaje);
+        }
+        public async Task UnirseeDocumentoAsync(string idDocumento, string idUsuario)
+        {
+            var mensaje = JsonConvert.SerializeObject(new
+            {
+                accion = "unirse_documento",
+                IdDocumento = idDocumento,
+                IdUsuario = idUsuario
+            });
             await EnviarMensajeAsync(mensaje);
         }
 
@@ -550,8 +616,6 @@ namespace EduShare_Escritorio.NotificacionesYChat
             await EnviarMensajeAsync(mensaje);
         }
     }
-
-    // Modelos para notificaciones y chats
     public class NotificacionModel
     {
         public string Titulo { get; set; }
@@ -579,6 +643,7 @@ namespace EduShare_Escritorio.NotificacionesYChat
     public class ChatMensajeModel
     {
         public string IdMensaje { get; set; }
+        public string IdUsuario { get; set; }
         public string IdChat { get; set; }
         public string NombreUsuario { get; set; }
         public string Hora { get; set; }
@@ -599,5 +664,20 @@ namespace EduShare_Escritorio.NotificacionesYChat
         public string IdMensaje { get; set; }
         public string EliminadoPor { get; set; }
         public string Hora { get; set; }
+    }
+
+    public class InteraccionDocumentoModel
+    {
+        public string IdDocumento { get; set; }
+        public string TipoInteraccion { get; set; } 
+        public string IdUsuario { get; set; }
+        public string NombreUsuario { get; set; }
+        public string Timestamp { get; set; }
+
+      
+        public string Estado { get; set; } 
+        public string IdComentario { get; set; } 
+        public string TextoComentario { get; set; }
+        public int Contador { get; set; } 
     }
 }

@@ -299,16 +299,9 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
         {
             try
             {
-                string token = PerfilSingleton.Instance.TokenJwt;
                 int idOrigen = PerfilSingleton.Instance.IdUsuarioRegistrado;
                 string idDestino = _usuario.IdUsuarioRegistrado.ToString();
-                var respuesta = await PerfilServicio.ObtenerSeguidores(token);
-
-                if (respuesta?.Datos != null)
-                {
-                    List<int> idsSeguidores = respuesta.Datos
-                        .Select(s => s.IdUsuarioRegistrado)
-                        .ToList();
+              
 
                     var notificacion = new
                     {
@@ -325,12 +318,11 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
                     await App.SocketNotificaciones.EnviarMensajeAsync(json);
                     
 
-                }
+                
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex);
-                Console.WriteLine($"❌ Error enviando notificación: {ex.Message}");
             }
 
         }

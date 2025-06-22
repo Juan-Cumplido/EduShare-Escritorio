@@ -3,6 +3,7 @@ using EduShare_Escritorio.Modelos.ComentarioRespuesta;
 using EduShare_Escritorio.NotificacionesYChat;
 using EduShare_Escritorio.Servicio;
 using EduShare_Escritorio.Utilidades;
+using EduShare_Escritorio.Vistas.Menus;
 using EduShare_Escritorio.Vistas.ModuloDocumentos;
 using System;
 using System.Collections.Generic;
@@ -22,12 +23,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static EduShare_Escritorio.Vistas.ModuloChats.Chat;
 using static EduShare_Escritorio.Vistas.VentanaEmergentePersonalizada;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EduShare_Escritorio.Vistas.ModuloChats
 {
-    public partial class Chat : Page
+    public partial class Chat : Page, ICierreAplicacionListener
     {
         private Frame _frame;
         private string _idChat;
@@ -40,6 +42,7 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
         public class MensajesVista
         {
             public string IdMensaje { get; set; }
+            public string IdUsuario { get; set; }
             public required string Usuario { get; set; }
             public required string Texto { get; set; }
             public required string Hora { get; set; }
@@ -48,11 +51,48 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             public bool EsPropio { get; set; }
         }
 
+        public interface ICierreAplicacionListener
+        {
+            void OnAplicacionCerrando();
+        }
+
+        public async void OnAplicacionCerrando()
+        {
+            try
+            {
+                await SalirDelChatAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+            }
+        }
+
         public Chat()
         {
             InitializeComponent();
             item_Chat.ItemsSource = mensajes;
             ActualizarVisibilidadComentarios();
+            App.RegistrarListener(this);
+
+            this.Unloaded += Chat_Unloaded;
+        }
+
+        private async void Chat_Unloaded(object sender, RoutedEventArgs e)
+        {
+            App.DesregistrarListener(this);
+
+             if (_usuarioUnidoAlChat)
+            {
+                try
+                {
+                    await SalirDelChatAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex);
+                }
+            }
         }
 
         public Chat(ChatVista chatVista, Frame frame, string idChat) : this()
@@ -97,24 +137,17 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
 
         private void SocketService_OnMensajeEliminado(ChatMensajeEliminadoModel mensajeEliminado)
         {
-            if (mensajeEliminado.IdChat == _idChat) // Verificar que es del chat actual
+            if (mensajeEliminado.IdChat == _idChat) 
             {
                 Dispatcher.Invoke(() =>
                 {
-                    Console.WriteLine($"🗑️ Eliminando mensaje: {mensajeEliminado.IdMensaje}");
-
-                    var mensajeAEliminar = mensajes.FirstOrDefault(m => m.IdMensaje == mensajeEliminado.IdMensaje);
+                     var mensajeAEliminar = mensajes.FirstOrDefault(m => m.IdMensaje == mensajeEliminado.IdMensaje);
 
                     if (mensajeAEliminar != null)
                     {
-                        mensajes.Remove(mensajeAEliminar);
-                        ActualizarVisibilidadComentarios();
-                        Console.WriteLine($"✅ Mensaje eliminado de la UI: {mensajeEliminado.IdMensaje}");
+                        
                     }
-                    else
-                    {
-                        Console.WriteLine($"⚠️ No se encontró el mensaje a eliminar: {mensajeEliminado.IdMensaje}");
-                    }
+                   
                 });
             }
         }
@@ -128,26 +161,27 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
                 {
                     mensajes.Remove(mensajeAEliminar);
                     ActualizarVisibilidadComentarios();
-                    item_Chat.Items.Refresh();
+                   
                 }
                
             });
         }
 
-        private void SocketService_OnMensajeChatRecibido(ChatMensajeModel mensaje)
+        private  void SocketService_OnMensajeChatRecibido(ChatMensajeModel mensaje)
         {
             if (mensaje.IdChat == _idChat)
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                Application.Current.Dispatcher.Invoke(async () =>
                 {
                     var mensajeVista = new MensajesVista
                     {
                         IdMensaje = mensaje.IdMensaje,
+                        IdUsuario = mensaje.IdUsuario,
                         Usuario = mensaje.NombreUsuario,
                         Texto = mensaje.Mensaje,
                         Hora = mensaje.Hora,
                         EsPropio = mensaje.NombreUsuario == PerfilSingleton.Instance.NombreUsuario,
-                        Imagen = ObtenerImagenPerfil(mensaje.FotoPerfil)
+                        Imagen = await ObtenerImagenPerfil(mensaje.FotoPerfil)
                     };
 
                     mensajes.Add(mensajeVista);
@@ -223,21 +257,23 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             DesplazarAlFinal();
         }
 
-        private BitmapImage ObtenerImagenPerfil(string fotoPerfilBase64)
+        private async Task<BitmapImage> ObtenerImagenPerfil(string rutaImagenMensaje)
         {
             try
             {
-                if (string.IsNullOrEmpty(fotoPerfilBase64))
-                    return null;
+                var grpc = new FileServiceClientHandler();
+                var (imagenBytes, _) = await grpc.DownloadImageAsync(rutaImagenMensaje);
 
-                byte[] imageBytes = Convert.FromBase64String(fotoPerfilBase64);
-                return (BitmapImage)ConvertirFotoABitmap(imageBytes);
+                return ConvertirFotoABitmap2(imagenBytes);
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex);
                 return null;
             }
         }
+
+
 
         private async Task UnirseChatAsync()
         {
@@ -299,7 +335,9 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             catch (Exception ex)
             {
                 _logger.LogError(ex);
-                MostrarMensajePersonalizado("Error al enviar mensaje", DialogType.Error);
+                 MostrarMensajePersonalizado("El servidor se ha desconectado. Serás regresado a la ventana anterior.", DialogType.Error);
+
+                RegresarAListaChats();
             }
         }
 
@@ -355,8 +393,24 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             bitmap.CacheOption = BitmapCacheOption.OnLoad;
             bitmap.StreamSource = ms;
             bitmap.EndInit();
+            bitmap.Freeze();
             return bitmap;
         }
+
+        public BitmapImage ConvertirFotoABitmap2(byte[] binario)
+        {
+            if (binario == null || binario.Length == 0) return null;
+
+            using var ms = new MemoryStream(binario);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.StreamSource = ms;
+            bitmap.EndInit();
+            bitmap.Freeze(); // importante si lo usas en bindings
+            return bitmap;
+        }
+
 
         private async void AgregarComentario_Click(object sender, RoutedEventArgs e)
         {
@@ -450,18 +504,19 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
 
         private async void EliminarComentario(object sender, RoutedEventArgs e)
         {
-            Button btnEliminar = sender as Button;
-            string idMensajeAEliminar = btnEliminar?.Tag?.ToString();
-
-            if (string.IsNullOrEmpty(idMensajeAEliminar))
+            if (sender is not Button btnEliminar || btnEliminar.Tag is not MensajesVista mensajeVista)
             {
                 MostrarMensajePersonalizado("No se pudo identificar el mensaje a eliminar", DialogType.Warning);
                 return;
             }
 
-            // Verificar que el mensaje existe localmente antes de intentar eliminarlo
-            var mensajeLocal = mensajes.FirstOrDefault(m => m.IdMensaje == idMensajeAEliminar);
-            if (mensajeLocal == null)
+            if (!mensajeVista.EsPropio)
+            {
+                MostrarMensajePersonalizado("Solo puedes eliminar tus propios mensajes", DialogType.Warning);
+                return;
+            }
+
+             if (!mensajes.Contains(mensajeVista))
             {
                 MostrarMensajePersonalizado("El mensaje ya no existe", DialogType.Warning);
                 return;
@@ -480,27 +535,21 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             {
                 try
                 {
-                    Console.WriteLine($"🗑️ Enviando solicitud de eliminación para: {idMensajeAEliminar}");
-
-                    // Deshabilitar el botón mientras se procesa
                     btnEliminar.IsEnabled = false;
 
                     await _socketService.EliminarMensajeChatAsync(
                         _idChat,
-                        idMensajeAEliminar,
+                        mensajeVista.IdMensaje,
                         PerfilSingleton.Instance.IdUsuarioRegistrado.ToString(),
                         PerfilSingleton.Instance.NombreUsuario
                     );
 
-                    Console.WriteLine("✅ Solicitud de eliminación enviada al servidor");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"❌ Error al enviar eliminación: {ex.Message}");
                     _logger.LogError(ex);
                     MostrarMensajePersonalizado("Error al eliminar el mensaje", DialogType.Error);
 
-                    // Rehabilitar el botón si hay error
                     btnEliminar.IsEnabled = true;
                 }
             }

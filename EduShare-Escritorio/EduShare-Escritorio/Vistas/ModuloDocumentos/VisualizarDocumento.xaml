@@ -21,7 +21,6 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Panel Izquierdo: Información del documento -->
         <StackPanel Grid.Column="0" Margin="20,30,20,0" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                 <TextBlock  Margin="0,0,20,0">
@@ -69,7 +68,7 @@
                         <ControlTemplate TargetType="ToggleButton">
                             <Border x:Name="border"
                                  CornerRadius="10"
-                                 Background="#f9f8f4"
+                                 Background="#16b555"
                                  BorderBrush="Transparent"
                                  BorderThickness="0"
                                  Padding="10" Cursor="Hand" Margin="0,0,0,0">
@@ -94,7 +93,7 @@
 
                 <ToggleButton
                     x:Name="btn_Like"
-                    Click="btn_Like_Click"
+                    Click="Btn_Like_Click"
                     Visibility="Visible"
                     Cursor="Hand"
                     Width="60"
@@ -141,47 +140,9 @@
         </StackPanel>
 
         <Grid Grid.Column="1" Margin="0,0,300,0">
-            <Border x:Name="brd_Descargar" Background="Gray" CornerRadius="6" Margin="10,29,514,517" Cursor="No">
-                <Button x:Name="btn_Descargar"  FontSize="18" FontFamily="Calibri" IsEnabled="False"
-                        Background="Transparent" Foreground="White" FontWeight="Bold"
-                        BorderThickness="0" Cursor="Hand" Click="DescargarDocumento_Click"
-                        OverridesDefaultStyle="True" >
-                    <Button.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="3,0,3,0">
-                            <Image Source="/Vistas/Recursos/Iconos/DescargarBlanca.png" Height="20" Width="20" Margin="0,0,3,0"/>
-                            <TextBlock Text="Descargar ahora" VerticalAlignment="Center" Width="127"/>
-                        </StackPanel>
-                    </Button.Content>
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="White"/>
-                            <Setter Property="FontSize" Value="22"/>
-                            <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="Cursor" Value="Hand"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="Transparent"
-                                            CornerRadius="10"
-                                            Padding="10"
-                                            
-                                             Margin="-8,-6,-14,-4">
-                                            <ContentPresenter HorizontalAlignment="Center"
-                                            VerticalAlignment="Center" Height="22" Width="156"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </Button.Style>
-                </Button>
-            </Border>
+            
 
-            <TextBlock Text="Descargar como PDF"  Margin="46,59,550,501" FontSize="9"/>
-
-            <wv2:WebView2 x:Name="PdfWebView" Margin="0,78,0,78" Visibility="Collapsed"/>
+            <wv2:WebView2 x:Name="PdfWebView" Margin="0,0,0,78" Visibility="Collapsed"/>
             
             <TextBlock x:Name="txtb_Frase" TextWrapping="Wrap" FontFamily="Calibri" FontStyle="Italic" FontWeight="Bold" Text="¿Te interesa el contenido completo? Regístrate gratis y accede al documento completo"  Margin="178,132,180,287" FontSize="30"/>
 
