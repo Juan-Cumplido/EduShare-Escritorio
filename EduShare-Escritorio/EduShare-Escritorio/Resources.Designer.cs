@@ -61,7 +61,7 @@ namespace EduShare_Escritorio {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a http://localhost:1234/edushare/.
+        ///   Busca una cadena traducida similar a http://192.168.100.24:1234/edushare/.
         /// </summary>
         internal static string BASE_URL {
             get {
@@ -70,7 +70,7 @@ namespace EduShare_Escritorio {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a http://192.168.43.30:50051.
+        ///   Busca una cadena traducida similar a http://192.168.100.24:50051.
         /// </summary>
         internal static string GRPC_URL {
             get {
@@ -79,7 +79,7 @@ namespace EduShare_Escritorio {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a ws://localhost:8765.
+        ///   Busca una cadena traducida similar a ws://192.168.100.24:8765.
         /// </summary>
         internal static string NOTI {
             get {
