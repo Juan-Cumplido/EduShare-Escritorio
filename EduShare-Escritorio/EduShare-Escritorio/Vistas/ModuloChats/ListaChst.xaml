@@ -132,12 +132,9 @@
                                         </TextBlock>
                                         <TextBlock Text="{Binding Descripcion}" TextWrapping="Wrap" Foreground="Black" Margin="0,0,0,5"/>
                                         <TextBlock>
-                                            <Run Text="Cargado por "/>
+                                            <Run Text="Creado por "/>
                                             <Run Text="{Binding Autor}" FontWeight="Bold" Foreground="#007ACC"/>
-                                            <Run Text=" el "/>
-                                            <Run Text="{Binding Fecha}"/>
-                                            <Run Text="     Hora: "/>
-                                            <Run Text="{Binding Hora}"/>
+                                            
                                         </TextBlock>
                                     </StackPanel>
 
