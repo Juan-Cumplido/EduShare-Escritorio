@@ -261,9 +261,7 @@ namespace EduShare_Escritorio.Vistas.Menus
 
         private async void IrAPreguntas(object sender, MouseButtonEventArgs e)
         {
-            
-            Informacion informacion = new();
-            this.NavigationService.Navigate(informacion);
+            fra_Menu.Navigate(new Informacion());
         }
 
         public ImageSource ConvertirFotoABitmap(byte[] binario)

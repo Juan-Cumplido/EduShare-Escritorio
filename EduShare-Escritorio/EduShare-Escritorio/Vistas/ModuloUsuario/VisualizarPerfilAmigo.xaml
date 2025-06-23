@@ -11,7 +11,7 @@
     <Grid Margin="157,0,157,0">
         <!-- Título -->
         <Label Content="¡Mira quién" FontWeight="Bold" FontSize="25" Margin="390,0,392,512" />
-        <Label Content="es!" FontWeight="Bold" Foreground="#16b555" FontSize="25" Margin="527,0,285,512" />
+        <Label Content="es!" FontWeight="Bold" Foreground="#16b555" FontSize="25" Margin="535,0,277,512" />
 
         <Label Content="← Volver a la comunidad" FontFamily="Calibri" FontWeight="Bold" MouseDown="RegresarAlLaComunidad" Cursor="Hand" FontSize="16" Margin="0,26,747,514" />
         <Line X1="0" Y1="20" X2="164" Y2="20" Stroke="Gray" StrokeThickness="1"
@@ -68,7 +68,7 @@
             <ItemsControl x:Name="itmc_DocumentosControl">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border BorderBrush="#DDD" BorderThickness="1" Margin="0 10" Padding="10" CornerRadius="8">
+                        <Border BorderBrush="#DDD" Cursor="Hand" MouseLeftButtonUp="VerDetallesDocumento" BorderThickness="1" Margin="0 10" Padding="10" CornerRadius="8">
                             <Grid>
                                 <!-- CONTENIDO PRINCIPAL -->
                                 <Grid>

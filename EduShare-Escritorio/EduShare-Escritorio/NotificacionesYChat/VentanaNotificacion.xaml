@@ -13,7 +13,7 @@
             <Image Source="/vistas/Recursos/Fondos/Notificacion.png"  Width="40" Height="40" Margin="5"/>
             <StackPanel>
                 <TextBlock x:Name="TituloTexto" FontWeight="Bold" Foreground="Black" FontSize="13"/>
-                <TextBlock x:Name="MensajeTexto" Foreground="Black" FontSize="11"/>
+                <TextBlock x:Name="MensajeTexto" TextWrapping="Wrap" Foreground="Black" FontSize="11" Height="58" Width="214"/>
             </StackPanel>
         </StackPanel>
     </Border>

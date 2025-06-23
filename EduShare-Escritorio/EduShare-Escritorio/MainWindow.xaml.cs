@@ -28,7 +28,9 @@ namespace EduShare_Escritorio
 
         private async void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
+            App.NotificarCierreAplicacion();
             PerfilSingleton.Instance.Reset();
+
 
         }
         private void NavigationFrame_Navigating(object sender, NavigatingCancelEventArgs e)

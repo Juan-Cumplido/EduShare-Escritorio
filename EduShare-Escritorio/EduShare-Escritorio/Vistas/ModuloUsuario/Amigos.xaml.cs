@@ -92,7 +92,10 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
                                 Imagen = ConvertirABitmap(imagenBinaria)
                             });
                         }
-
+                        if (listaPerfiles.Count == 0)
+                        {
+                            img_SinAmigos.Visibility = Visibility.Visible;
+                        }
                         _todosLosPerfiles = listaPerfiles;
                         ListaComentarios.ItemsSource = listaPerfiles;
                         break;

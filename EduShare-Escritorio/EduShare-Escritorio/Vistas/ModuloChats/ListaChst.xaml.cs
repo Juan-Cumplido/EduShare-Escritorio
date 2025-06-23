@@ -127,6 +127,7 @@ namespace EduShare_Escritorio.Vistas.ModuloChats
             if (sender is Button button && button.Tag is ChatVista chatVista)
             {
                 _frame.Navigate(new Chat(chatVista, _frame, chatVista.IdChat));
+
             }
         }
 
