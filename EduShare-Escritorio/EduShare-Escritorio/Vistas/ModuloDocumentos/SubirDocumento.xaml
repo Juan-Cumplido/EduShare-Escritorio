@@ -20,7 +20,7 @@
         <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="102,201,840,332" Foreground="Red"/>
         <Label Content="*" FontFamily="Calibri" FontSize="23" FontWeight="Bold" Margin="402,364,540,169" Foreground="Red"/>
 
-        
+
         <Label Content="Título" FontFamily="Calibri" FontSize="18" Margin="20,100,799,446" />
         <Border x:Name="brd_Titulo" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="26,138,690,393">
             <TextBox x:Name="txtb_Titulo" Height="26" FontSize="18" Background="Transparent"  GotFocus="TituloGotFocus" LostFocus="TituloLostFocus" Text="Escribe un título"
@@ -39,9 +39,27 @@
 
         <Label Content="Contenido" FontFamily="Calibri" FontSize="18" Margin="20,204,799,342" />
         <Border x:Name="brd_Contenido" BorderThickness="1" BorderBrush="#16b555" CornerRadius="8" Margin="26,238,358,243">
-            <TextBox x:Name="txtb_Contenido" FontSize="18" Background="Transparent" TextWrapping="Wrap" GotFocus="ResumenGotFocus" LostFocus="ResumenLostFocus" 
-                    BorderThickness="0" Foreground="Gray" FontFamily="Calibri" MaxLength="200" Margin="9,9,9,9" Text="Escribe un resumen rápido: ¿De qué se trata este documento? ¿Dónde se originó? ¿Quién podría encontrar esta información útil? ¿Cuáles son los aspectos más destacados?" />
+            <TextBox x:Name="txtb_Contenido"
+         FontSize="18"
+         Background="Transparent"
+         TextWrapping="Wrap"
+         GotFocus="ResumenGotFocus"
+         LostFocus="ResumenLostFocus"
+         TextChanged="txtb_Contenido_TextChanged"
+         BorderThickness="0"
+         Foreground="Gray"
+         FontFamily="Calibri"
+         MaxLength="200"
+         Margin="9,9,9,9"
+         Text="Escribe un resumen rápido: ¿De qué se trata este documento? ¿Dónde se originó? ¿Quién podría encontrar esta información útil? ¿Cuáles son los aspectos más destacados?" />
         </Border>
+        <TextBlock x:Name="txtb_ContadorCaracteres"
+           FontSize="14"
+           FontFamily="Calibri"
+           Foreground="Gray"
+           HorizontalAlignment="Right"
+           Margin="0,309,360,244"
+           Text="0/200" Width="54" />
 
         <Grid x:Name="grd_Documento" Margin="690,138,0,243">
             <Border x:Name="brd_DropArea" BorderBrush="#16b555" BorderThickness="2" CornerRadius="10" Cursor="Hand"
@@ -96,7 +114,7 @@
                 </DockPanel>
             </Border>
         </Grid>
-       
+
 
 
 

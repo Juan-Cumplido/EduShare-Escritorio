@@ -101,8 +101,16 @@
                      FontSize="15"
                      Background="Transparent"
                      BorderThickness="0"
-                     Margin="7,7,87,7"
+                     Margin="7,7,124,7"
                      TextChanged="TxtbNuevoComentario"/>
+
+                <TextBlock x:Name="txtb_ContadorComentario"
+                     Text="0/100"
+                     FontSize="12"
+                     Foreground="Gray"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Center"
+                     Margin="599,0,0,0" Width="45"/>
 
                 <Button x:Name="btn_Emojis"
                             Content="😄"
