@@ -82,7 +82,7 @@ namespace EduShare_Escritorio.Vistas.ModuloDocumentos
                         MostrarMensajePersonalizado("La publicación ha sido rechazada.", DialogType.Success);
                         _frame.Navigate(new RevisarPublicaciones(_frame));
                         string titulo = "Publicación rechazada";
-                        string mensaje = "Tu publicación fue rechazada por incumplir las normas.";
+                        string mensaje = "Tu publicación fue rechazada por incumplir las normas. Consulte el apartado de preguntas y respuestas";
                         EnviarNotificacion(titulo, mensaje);
                         break;
 

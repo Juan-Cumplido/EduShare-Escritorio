@@ -3,6 +3,7 @@ using EduShare_Escritorio.Modelos.Usuarios;
 using EduShare_Escritorio.NotificacionesYChat;
 using EduShare_Escritorio.Servicio;
 using EduShare_Escritorio.Utilidades;
+using EduShare_Escritorio.Vistas.ModuloDocumentos;
 using EduShare_Escritorio.Vistas.ModuloLogin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -89,14 +90,23 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
 
                             listaPublicacionesVista.Add(new PublicacionVista
                             {
+                              
                                 Titulo = publicacion.Titulo,
+                                IdUsuario = publicacion.IdUsuarioRegistrado,
+                                IdPublicacion = publicacion.IdPublicacion,
+                                IdCategoria = publicacion.IdCategoria,
                                 Descripcion = publicacion.ResuContenido,
+                                NivelEducativo = publicacion.NivelEducativo,
+                                Estado = publicacion.Estado,
                                 Autor = publicacion.NombreCompleto,
                                 Fecha = publicacion.Fecha.ToString("dd/MM/yyyy HH:mm"),
                                 Likes = publicacion.NumeroLiker,
                                 Descargas = publicacion.NumeroDescargas,
                                 Vistas = publicacion.NumeroVisualizaciones,
+                                IdRama = publicacion.IdMateriaYRama,
+                                Ruta = publicacion.Ruta,
                                 Imagen = ConvertirABitmap(imagenBinaria)
+
                             });
                         }
 
@@ -325,6 +335,16 @@ namespace EduShare_Escritorio.Vistas.ModuloUsuario
                 _logger.LogError(ex);
             }
 
+        }
+
+        private void VerDetallesDocumento(object sender, MouseButtonEventArgs e)
+        {
+            var border = sender as Border;
+            if (border?.DataContext is PublicacionVista publicacion)
+            {
+                var paginaDetalle = new VisualizarDocumento(publicacion);
+                NavigationService?.Navigate(paginaDetalle);
+            }
         }
     }
 }

@@ -103,5 +103,7 @@
 
             </StackPanel>
         </ScrollViewer>
+
+        <Image x:Name="img_SinAmigos" Source="/Vistas/Recursos/Iconos/SinAmigos.jpg" Margin="378,212,388,227" Visibility="Collapsed"/>
     </Grid>
 </Page>

@@ -48,6 +48,7 @@
     <None Remove="Vistas\Recursos\Iconos\Lupa.jpg" />
     <None Remove="Vistas\Recursos\Iconos\NivelEducativo.png" />
     <None Remove="Vistas\Recursos\Iconos\Pregunta.png" />
+    <None Remove="Vistas\Recursos\Iconos\SinAmigos.jpg" />
     <None Remove="Vistas\Recursos\Iconos\SubirPdf.png" />
     <None Remove="Vistas\Recursos\Iconos\Usuario.png" />
     <None Remove="Vistas\Recursos\Iconos\UsuarioLogin.png" />
@@ -177,6 +178,7 @@
     <Resource Include="Vistas\Recursos\Iconos\Pregunta.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Vistas\Recursos\Iconos\SinAmigos.jpg" />
     <Resource Include="Vistas\Recursos\Iconos\SubirPdf.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

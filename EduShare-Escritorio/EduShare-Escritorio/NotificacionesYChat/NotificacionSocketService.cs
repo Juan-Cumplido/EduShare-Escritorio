@@ -88,26 +88,14 @@ namespace EduShare_Escritorio.NotificacionesYChat
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(mensaje))
+                    return;
 
-                if (_webSocket == null)
-                {
-                    throw new InvalidOperationException("WebSocket es null");
-                }
+                if (_webSocket == null || _webSocket.State != WebSocketState.Open)
+                    return;
 
-                if (_webSocket.State != WebSocketState.Open)
-                { 
-                    throw new InvalidOperationException($"WebSocket no está conectado. Estado: {_webSocket.State}");
-                }
-
-                if (_cancellationTokenSource == null)
-                {
-                    throw new InvalidOperationException("CancellationTokenSource es null");
-                }
-
-                if (_cancellationTokenSource.Token.IsCancellationRequested)
-                {
-                    throw new OperationCanceledException("El token de cancelación ya fue solicitado");
-                }
+                if (_cancellationTokenSource == null || _cancellationTokenSource.Token.IsCancellationRequested)
+                    return;
 
                 var buffer = Encoding.UTF8.GetBytes(mensaje);
                
@@ -123,7 +111,7 @@ namespace EduShare_Escritorio.NotificacionesYChat
             catch (Exception ex)
             {
                 _logger.LogFatal(ex);
-                throw;
+                
             }
         }
 
@@ -502,7 +490,7 @@ namespace EduShare_Escritorio.NotificacionesYChat
                 TipoInteraccion = "like",
                 IdUsuario = idUsuario,
                 NombreUsuario = nombreUsuario,
-                Estado = estado // "agregado" o "removido"
+                Estado = estado 
             });
             await EnviarMensajeAsync(mensaje);
         }

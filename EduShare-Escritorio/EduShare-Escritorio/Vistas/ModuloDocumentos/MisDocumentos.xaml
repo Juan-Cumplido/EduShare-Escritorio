@@ -70,8 +70,29 @@
                                     <StackPanel Grid.Column="2" VerticalAlignment="Top" Margin="10,0,0,0">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
                                             <TextBlock Text="Estado:" FontWeight="Bold"/>
-                                            <TextBlock Text="{Binding Estado}" Foreground="#16b555" Margin="5,0,0,0"/>
+                                            <TextBlock Text="{Binding Estado}" Margin="5,0,0,0">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="Black"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Estado}" Value="Aceptado">
+                                                                <Setter Property="Foreground" Value="#16b555"/>
+                                                                
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Estado}" Value="EnRevisión">
+                                                                <Setter Property="Foreground" Value="Gray"/>
+                                                                
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Estado}" Value="Rechazado">
+                                                                <Setter Property="Foreground" Value="Red"/>
+                                                                
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
                                         </StackPanel>
+
 
                                         <TextBlock Margin="0,5,0,0">
                                             <Run Text="👍 " FontWeight="Bold"/>

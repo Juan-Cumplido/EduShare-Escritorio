@@ -20,11 +20,13 @@ namespace EduShare_Escritorio.Utilidades
             TokenJwt = string.Empty;
             NivelEducativo = string.Empty;  
             IdInstitucion = 0;
-            RutaPerfil = string.Empty;  
+            RutaPerfil = string.Empty; 
+            IdChat = string.Empty;
         }
 
         public static PerfilSingleton Instance => _instanciaSingleton;
         public string Correo { get; set; }
+        public string IdChat { get; set; }  
 
         private string nombreUsuario;
         public string NombreUsuario
@@ -76,6 +78,7 @@ namespace EduShare_Escritorio.Utilidades
             NivelEducativo = string.Empty;
             IdInstitucion = 0;
             RutaPerfil = string.Empty;
+            IdChat = string.Empty;
         }
 
     }

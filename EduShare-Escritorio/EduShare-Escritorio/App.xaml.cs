@@ -1,4 +1,5 @@
 ﻿using EduShare_Escritorio.NotificacionesYChat;
+using EduShare_Escritorio.Utilidades;
 using System.Configuration;
 using System.Data;
 using System.Windows;
@@ -17,26 +18,21 @@ namespace EduShare_Escritorio
             base.OnStartup(e);
            
             this.Exit += App_Exit;
-            this.SessionEnding += App_SessionEnding;
             SocketNotificaciones.OnNotificacionRecibida += MostrarNotificacion;
-        }
-
-        private async void App_SessionEnding(object sender, SessionEndingCancelEventArgs e)
-        {
-            await NotificarCierreAsync();
         }
 
         private async void App_Exit(object sender, ExitEventArgs e)
         {
-            await NotificarCierreAsync();
-            EduShare_Escritorio.Utilidades.PerfilSingleton.Instance.Reset();
+
+            BusquedaSingleton.Instance.LimpiarBusqueda();
+            PerfilSingleton.Instance.Reset();
         }
 
-        private async Task NotificarCierreAsync()
+        public static void NotificarCierreAplicacion()
         {
-            var listenersToNotify = _listeners.ToList();
+           var listenersActuales = new List<ICierreAplicacionListener>(_listeners);
 
-            foreach (var listener in listenersToNotify)
+            foreach (var listener in listenersActuales)
             {
                 try
                 {
@@ -44,7 +40,7 @@ namespace EduShare_Escritorio
                 }
                 catch (Exception ex)
                 {
-                    System.Console.WriteLine($"❌ Error al notificar cierre: {ex.Message}");
+                    
                 }
             }
         }
@@ -80,5 +76,7 @@ namespace EduShare_Escritorio
             }
 
         }
+
+
 
 }
